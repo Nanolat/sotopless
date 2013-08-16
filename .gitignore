@@ -1,0 +1,32 @@
+*.class
+*.log
+*.a
+*.so
+
+.metadata
+
+Debug
+Release
+
+bin/main
+bin/unit_client
+bin/unit_server
+
+RemoteSystemsTempFiles/
+
+deps/build
+deps/include
+deps/lib
+deps/bin
+deps/archives/boost_1_54_0.tar.gz
+
+# sbt specific
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
