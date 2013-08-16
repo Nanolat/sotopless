@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+    <url>
+        <loc>http://www.sotopless.com/blog/archives/</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/blog/</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/join-alpha-test/</loc>
+        <lastmod>2013-08-15T18:34:57-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/robots.txt</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/cpp.html</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/rest.html</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+</urlset>
