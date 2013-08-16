@@ -192,11 +192,11 @@ After the user is created, you can get the user handle of the created user. The 
 
 <h1>Leaderboard Management</h1>
 
-<p>You can create multiple leaderboards, post scores of users based on different criteria. For example, you may want to create leaderboards based on user&rsquo;s country such as USA, Canada, or Germany. Creating weekly, monthly, and daily leaderboards also require you to create multiple leaderboards.</p>
+<p>You can create multiple leaderboards, post scores of users based on different criteria. For example, you may want to create leaderboards based on users&#8217; countries such as USA, Canada, or Germany. Creating weekly, monthly, and daily leaderboards also requires you to create multiple leaderboards.</p>
 
-<p>Leaderboard management APIs help you to create, get, drop, and purge leaderboards. After creating a leaderboard, you can get the handle of the created leaderboard. The handle will be used to purge, drop a leaderboard. Also it will be used to get scores and ranks of a user, or to get top N users on a leaderboard.</p>
+<p>Leaderboard management APIs help you to create, get, drop, and purge leaderboards. After creating a leaderboard, you can get the handle of the created leaderboard. The handle will be used to purge, drop a leaderboard. Also it will be used to get scores and ranks of a user, or to get the top N users on a leaderboard.</p>
 
-<p>In case you have monthly, weekly, or daily leaderboards, you can purge those leaderboards regularly to keep the ranking up-to-date.</p>
+<p>In case you have monthly, weekly, or daily leaderboards, you can purge those leaderboards regularly to keep the rankings up-to-date.</p>
 
 <h2>Create a Leaderboard</h2>
 
@@ -246,7 +246,7 @@ After the user is created, you can get the user handle of the created user. The 
 </span><span class='line'>leaderboard::get("daily",   & daily_handle  );</span></code></pre></td></tr></table></div></figure>
 
 
-<h2>Get the list of leaderboards</h2>
+<h2>Get the List of Leaderboards</h2>
 
 <p>You can get the list of all created leaderboards by using leaderboard::list function.</p>
 
@@ -280,7 +280,7 @@ After the user is created, you can get the user handle of the created user. The 
 
 <h2>Purge Scores on a Leaderboard</h2>
 
-<p>You can purge leaderboards such as monthly, weekly, and daily leaderboards to keep the ranking up-to-date.</p>
+<p>You can purge leaderboards such as monthly, weekly, and daily ones to keep the rankings up-to-date.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -326,9 +326,9 @@ After the user is created, you can get the user handle of the created user. The 
 
 <h1>Posting and Getting Scores</h1>
 
-<p>Whenever a user achieved a new high score, you post the user&rsquo;s score with the handle of the user and the handle of the leaderboard. While you post the user&rsquo;s score, you can provide a string containing the situation of the user such as game items the user used to clear the stage.</p>
+<p>Whenever a user achieves a new high score, you post the user&rsquo;s score with the handle of the user and the handle of the leaderboard. While you post the user&rsquo;s score, you can provide a string containing the situation of the user such as game items the user used to clear the stage.</p>
 
-<p>You can get the ranking and score on the leaderboard where you posted the user&rsquo;s score. Also you can get a range of ranking on a leaderboard. For example, you can get the list of users and scores of top 10 scoreboard by quering the ranking from 1st to 10th.</p>
+<p>You can get the ranking and score on the leaderboard where you posted the user&rsquo;s score. Also you can get a range of ranking on a leaderboard. For example, you can get the list of users and scores of the top 10 scoreboard by quering the rankings from 1st to 10th.</p>
 
 <h2>Post a User Score</h2>
 
@@ -354,7 +354,7 @@ After the user is created, you can get the user handle of the created user. The 
 
 <h2>Get User Score and Ranking</h2>
 
-<p>Following code snippet gets score and ranking on the weekly leaderboard.</p>
+<p>Following code snippet gets a score and a ranking on the weekly leaderboard.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -386,7 +386,7 @@ After the user is created, you can get the user handle of the created user. The 
 
 <h2>Get Top N Users</h2>
 
-<p>The following code snippet prints top 10 scores and users on the weekly leaderboard.</p>
+<p>The following code snippet prints the top 10 scores and users on the weekly leaderboard.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
