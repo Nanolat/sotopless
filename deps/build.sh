@@ -29,7 +29,7 @@ tar xvfz ${EXT_LIB_HOME}/archives/xunit-1.3.2.tar.gz
 
 cd xunit-1.3.2/xUnit++    
 
-cp -r ../xUnit++ ${EXT_LIB_HOME}/include
+cp -r ../xUnit++/xUnit++ ${EXT_LIB_HOME}/include
 
 cd src
 make

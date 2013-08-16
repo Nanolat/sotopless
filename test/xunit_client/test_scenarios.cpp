@@ -82,18 +82,21 @@ THEORY("Top Score Scenarios", (std::string scenario_name, const score_posting_sc
     std::make_tuple( OnlyOneUser.name, OnlyOneUser )
 )
 {
+    // For each leaderboard
+    for(const leaderboard_verification_t & v : scenario.verifications) {
+        // Step 1 : Truncate all leaderboards
+		leaderboard::handle_t lb_handle;
+
+		if ( leaderboard::get(v.leaderboard_name, &lb_handle ) == success ) // If the leaderboard exists
+		{
+			ASSERT_SUCCESS( leaderboard::drop(lb_handle) ); // Drop it.
+		}
+		// And then, create it again.
+		ASSERT_SUCCESS( leaderboard::create(v.leaderboard_name, &lb_handle ) );
+    }
+
     // For each populating operations
     for(const populating_operation_t & op : scenario.populating_operations) {
-        // Step 1 : Truncate all leaderboards
-        for( const leaderboard::identity_t & lb_identity : op.leaderboards ) {
-            leaderboard::handle_t lb_handle;
-            if ( leaderboard::get(lb_identity, &lb_handle ) == success ) // If the leaderboard exists
-            {
-                ASSERT_SUCCESS( leaderboard::drop(lb_handle) ); // Drop it.
-            }
-            // And then, create it again.
-            ASSERT_SUCCESS( leaderboard::create(lb_identity, &lb_handle ) );
-        }
 
         // Step 2 : run operations such as posting score, and purging score.
         for( const leaderboard::identity_t & lb_identity : op.leaderboards ) {
