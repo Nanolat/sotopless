@@ -183,7 +183,7 @@ After the user is created, you can get the user handle of the created user. The 
 </span><span class='line'>user::handle_t user_handle;
 </span><span class='line'>
 </span><span class='line'>// Get the user handle by e-mail.
-</span><span class='line'>user::get("foo.bar@gmail.com", & user_handle) 
+</span><span class='line'>user::get("foo.bar@gmail.com", & user_handle); 
 </span><span class='line'>
 </span><span class='line'>// Get the user handle by device-id or GUID. 
 </span><span class='line'>user::get("2b6f0cc904d137be2e1730235f5664094b831186", & user_handle); 
@@ -214,12 +214,12 @@ After the user is created, you can get the user handle of the created user. The 
 </pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
 </span><span class='line'>
 </span><span class='line'>leaderboard::handle_t monthly_handle;
-</span><span class='line'>leaderboard::handle_t weekly_handle;
-</span><span class='line'>leaderboard::handle_t daily_handle;
+</span><span class='line'>leaderboard::handle_t weekly_handle ;
+</span><span class='line'>leaderboard::handle_t daily_handle  ;
 </span><span class='line'>
 </span><span class='line'>leaderboard::create("monthly", & monthly_handle);
-</span><span class='line'>leaderboard::create("weekly",  & weekly_handle);
-</span><span class='line'>leaderboard::create("daily",   & daily_handle);</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>leaderboard::create("weekly",  & weekly_handle );
+</span><span class='line'>leaderboard::create("daily",   & daily_handle  );</span></code></pre></td></tr></table></div></figure>
 
 
 <h2>Get a Leaderboard Handle</h2>
@@ -238,12 +238,12 @@ After the user is created, you can get the user handle of the created user. The 
 </pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
 </span><span class='line'>
 </span><span class='line'>leaderboard::handle_t monthly_handle;
-</span><span class='line'>leaderboard::handle_t weekly_handle;
-</span><span class='line'>leaderboard::handle_t daily_handle;
+</span><span class='line'>leaderboard::handle_t weekly_handle ;
+</span><span class='line'>leaderboard::handle_t daily_handle  ;
 </span><span class='line'>
 </span><span class='line'>leaderboard::get("monthly", & monthly_handle);
-</span><span class='line'>leaderboard::get("weekly",  & weekly_handle);
-</span><span class='line'>leaderboard::get("daily",   & daily_handle);</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>leaderboard::get("weekly",  & weekly_handle );
+</span><span class='line'>leaderboard::get("daily",   & daily_handle  );</span></code></pre></td></tr></table></div></figure>
 
 
 <h2>Get the list of leaderboards</h2>
@@ -299,8 +299,8 @@ After the user is created, you can get the user handle of the created user. The 
 </span><span class='line'>// 24 hours converted to milliseconds.
 </span><span class='line'>util::timestamp_t one_day_ms = 24 * 60 * 60 * 1000;
 </span><span class='line'>
-</span><span class='line'>util::timestamp_t a_day_ago = util::now() - one_day_ms;
-</span><span class='line'>util::timestamp_t a_week_ago = util::now() - 7 * one_day_ms;
+</span><span class='line'>util::timestamp_t a_day_ago   = util::now() - one_day_ms;
+</span><span class='line'>util::timestamp_t a_week_ago  = util::now() - 7 * one_day_ms;
 </span><span class='line'>util::timestamp_t a_month_ago = util::now() - 30 * one_day_ms;
 </span><span class='line'>
 </span><span class='line'>leaderboard::purge(monthly_handle, a_day_ago  );
