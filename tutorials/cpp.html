@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>C++ API - SoTopless</title>
+  <title>REST Tutorial - SoTopless</title>
   <meta name="author" content="">
 
   
-  <meta name="description" content="C++ API Aug 12th, 2013 Introduction The C++ API corresponds to the REST API for consist usage of APIs. See REST API for actual examples of arguments &hellip;">
+  <meta name="description" content="REST Tutorial Aug 12th, 2013 Introduction This tutorial provides examples of using SoTopless APIs.
+For each function call, you need to check the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -57,8 +58,9 @@
   
 <ul class="main-navigation">
   <li><a href="/">Home</a></li>
+  <li><a href="/tutorials/cpp.html">C++ Tutorial</a></li>
+  <li><a href="/tutorials/cpp-api.html">C++ API</a></li>
   <li><a href="/tutorials/rest.html">REST Tutorial</a></li>
-  <li><a href="/tutorials/cpp.html">C++ API</a></li>
   <li><a href="/join-alpha-test">Join Alpha Test</a></li>
 </ul>
 
@@ -69,7 +71,7 @@
 <article role="article">
   
   <header>
-    <h1 class="entry-title">C++ API</h1>
+    <h1 class="entry-title">REST Tutorial</h1>
     <p class="meta">
 
 
@@ -87,13 +89,306 @@
   
   <h1>Introduction</h1>
 
-<p>The C++ API corresponds to the REST API for consist usage of APIs. See REST API for actual examples of arguments and response data for each operations.</p>
+<p>This tutorial provides examples of using SoTopless APIs.
+For each function call, you need to check the return value and make sure it is topl::success. However, this kind of error checking is not showin in this tutorial to keep the tutorial simple and easy to read.</p>
 
-<h1>The C++ API</h1>
+<h1>Setup SoTopless on EC2</h1>
 
-<p>Following is the header file of the C++ APIs.</p>
+<p>You can deploy and start SoTopless server in your EC2 node running Linux by issuing a command in your laptop.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<h2>Prerequisites</h2>
+
+<p>SoTopless supports Windows, Linux, and OSX platform.
+Java 6 is required for Java SDK and REST service.</p>
+
+<h2>Unzip the tarball</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>tester@bigdatatools$ tar xvfz sotopless-1.0.tar.gz
+</span><span class='line'>tester@bigdatatools$ cd sotopless-1.0
+</span><span class='line'>tester@bigdatatools$</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Deploy SoTopless on EC2 (Linux)</h2>
+
+<p>Run deploy-ec2.sh to deploy SoTopless on your EC2 node.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>tester@bigdatatools$ ./deploy-ec2.sh -node ec2-123-123-123-123.compute-1.amazonaws.com
+</span><span class='line'>SoTopless version 1.0 deployed on ec2-123-123-123-123.compute-1.amazonaws.com.
+</span><span class='line'>
+</span><span class='line'>tester@bigdatatools$</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Deploy SoTopless on Windows</h2>
+
+<p>Unzip the tarball and run bin/sotopless.bat to run the SoTopless server.</p>
+
+<h2>Deploy SoTopless on OSX and Linux</h2>
+
+<p>Unzip the tarball and run bin/sotopless.sh to run the SoTopless server.</p>
+
+<h1>User Management</h1>
+
+<p>To post scores of a user, or get scores and ranks of a user, you need to create the user on SoTopless server. You need to create the user only once, like you sign-up on a web site only once.
+After the user is created, you can get the user handle of the created user. The user handle will be used to post scores, to get scores and ranks of the user on a leaderboard.</p>
+
+<h2>Create a User</h2>
+
+<p>Creating a user is simple. Specify an identity of the user such as e-mail, device-id, or GUID. The user::create API gives you a user handle of the created user.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>user::handle_t user_handle;
+</span><span class='line'>
+</span><span class='line'>// Create a user with an e-mail. 
+</span><span class='line'>user::create("foo.bar@gmail.com", & user_handle);
+</span><span class='line'>
+</span><span class='line'>// Create a user with a device-id or GUID.
+</span><span class='line'>user::create("2b6f0cc904d137be2e1730235f5664094b831186", & user_handle); 
+</span><span class='line'>user::create("759bfd0a-2c91-4e45-a35c-779740ac5e77",     & user_handle);</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get a User Handle</h2>
+
+<p>Once a user is created, you can get the handle of the user by calling user::get function.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>user::handle_t user_handle;
+</span><span class='line'>
+</span><span class='line'>// Get the user handle by e-mail.
+</span><span class='line'>user::get("foo.bar@gmail.com", & user_handle) 
+</span><span class='line'>
+</span><span class='line'>// Get the user handle by device-id or GUID. 
+</span><span class='line'>user::get("2b6f0cc904d137be2e1730235f5664094b831186", & user_handle); 
+</span><span class='line'>user::get("759bfd0a-2c91-4e45-a35c-779740ac5e77",     & user_handle);</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Leaderboard Management</h1>
+
+<p>You can create multiple leaderboards, post scores of users based on different criteria. For example, you may want to create leaderboards based on user&rsquo;s country such as USA, Canada, or Germany. Creating weekly, monthly, and daily leaderboards also require you to create multiple leaderboards.</p>
+
+<p>Leaderboard management APIs help you to create, get, drop, and purge leaderboards. After creating a leaderboard, you can get the handle of the created leaderboard. The handle will be used to purge, drop a leaderboard. Also it will be used to get scores and ranks of a user, or to get top N users on a leaderboard.</p>
+
+<p>In case you have monthly, weekly, or daily leaderboards, you can purge those leaderboards regularly to keep the ranking up-to-date.</p>
+
+<h2>Create a Leaderboard</h2>
+
+<p>Following code snippet creates monthly, weekly, and daily leaderboards. After you create the leaderboard, scores posted to the leaderboard is safely stored so that you do not lose any data even on catastropic situations such as power-off or OS crash.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>leaderboard::handle_t monthly_handle;
+</span><span class='line'>leaderboard::handle_t weekly_handle;
+</span><span class='line'>leaderboard::handle_t daily_handle;
+</span><span class='line'>
+</span><span class='line'>leaderboard::create("monthly", & monthly_handle);
+</span><span class='line'>leaderboard::create("weekly",  & weekly_handle);
+</span><span class='line'>leaderboard::create("daily",   & daily_handle);</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get a Leaderboard Handle</h2>
+
+<p>Once your leaderboard is created, you can use leaderboard::get function to get the handle of the created leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>leaderboard::handle_t monthly_handle;
+</span><span class='line'>leaderboard::handle_t weekly_handle;
+</span><span class='line'>leaderboard::handle_t daily_handle;
+</span><span class='line'>
+</span><span class='line'>leaderboard::get("monthly", & monthly_handle);
+</span><span class='line'>leaderboard::get("weekly",  & weekly_handle);
+</span><span class='line'>leaderboard::get("daily",   & daily_handle);</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get the list of leaderboards</h2>
+
+<p>You can get the list of all created leaderboards by using leaderboard::list function.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>using namespace std;
+</span><span class='line'>
+</span><span class='line'>std::vector&lt;leaderboard::leaderboard_desc_t> leaderboards;
+</span><span class='line'>
+</span><span class='line'>leaderboard::list( & leaderboards);
+</span><span class='line'>
+</span><span class='line'>// The leaderboards vector contains an instance of leaderboard_desc_t for each leaderboard.
+</span><span class='line'>for( const leaderboard::leaderboard_desc_t & leaderboard : leaderboards )
+</span><span class='line'>{
+</span><span class='line'>    cout &lt;&lt; "leaderboard name : " &lt;&lt; leaderboard.identity &lt;&lt; endl;
+</span><span class='line'>    cout &lt;&lt; "leaderboard handle : " &lt;&lt; leaderboard.handle &lt;&lt; endl;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Purge Scores on a Leaderboard</h2>
+
+<p>You can purge leaderboards such as monthly, weekly, and daily leaderboards to keep the ranking up-to-date.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>// 24 hours converted to milliseconds.
+</span><span class='line'>util::timestamp_t one_day_ms = 24 * 60 * 60 * 1000;
+</span><span class='line'>
+</span><span class='line'>util::timestamp_t a_day_ago = util::now() - one_day_ms;
+</span><span class='line'>util::timestamp_t a_week_ago = util::now() - 7 * one_day_ms;
+</span><span class='line'>util::timestamp_t a_month_ago = util::now() - 30 * one_day_ms;
+</span><span class='line'>
+</span><span class='line'>leaderboard::purge(monthly_handle, a_day_ago  );
+</span><span class='line'>leaderboard::purge(weekly_handle,  a_week_ago );
+</span><span class='line'>leaderboard::purge(daily_handle,   a_month_ago);</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Drop a Leaderboard</h2>
+
+<p>Dropping a leaderboard is like dropping a table on a database. You will lose all data on the leaderboard to be dropped.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>leaderboard::drop(monthly_handle); 
+</span><span class='line'>leaderboard::drop(weekly_handle ); 
+</span><span class='line'>leaderboard::drop(daily_handle  );</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Posting and Getting Scores</h1>
+
+<p>Whenever a user achieved a new high score, you post the user&rsquo;s score with the handle of the user and the handle of the leaderboard. While you post the user&rsquo;s score, you can provide a string containing the situation of the user such as game items the user used to clear the stage.</p>
+
+<p>You can get the ranking and score on the leaderboard where you posted the user&rsquo;s score. Also you can get a range of ranking on a leaderboard. For example, you can get the list of users and scores of top 10 scoreboard by quering the ranking from 1st to 10th.</p>
+
+<h2>Post a User Score</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>const int score = 30290;
+</span><span class='line'>const std::string situation = "Black King Sword, White Devil Shield";
+</span><span class='line'>const util::timestamp_t now = util::now();    
+</span><span class='line'>
+</span><span class='line'>score::put(monthly_handle, user_handle, score, situation, now );
+</span><span class='line'>score::put(weekly_handle,  user_handle, score, situation, now );
+</span><span class='line'>score::put(daily_handle,   user_handle, score, situation, now );</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get User Score and Ranking</h2>
+
+<p>Following code snippet gets score and ranking on the weekly leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>using namespace std;
+</span><span class='line'>
+</span><span class='line'>score::rank_desc_t rank_desc;
+</span><span class='line'>
+</span><span class='line'>score::get(weekly_handle, user_handle, & rank_desc);
+</span><span class='line'>
+</span><span class='line'>cout &lt;&lt; "ranking : "      &lt;&lt; rank_desc.rank          &lt;&lt; endl;
+</span><span class='line'>cout &lt;&lt; "user handle : "  &lt;&lt; rank_desc.user_handle   &lt;&lt; endl;
+</span><span class='line'>cout &lt;&lt; "user identity: " &lt;&lt; rank_desc.user_identity &lt;&lt; endl;
+</span><span class='line'>cout &lt;&lt; "score : "        &lt;&lt; rank_desc.score         &lt;&lt; endl;
+</span><span class='line'>cout &lt;&lt; "situation : "    &lt;&lt; rank_desc.situation     &lt;&lt; endl;
+</span><span class='line'>cout &lt;&lt; "time : "         &lt;&lt; rank_desc.when          &lt;&lt; endl;</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get Top N Users</h2>
+
+<p>The following code snippet prints top 10 scores and users on the weekly leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -107,337 +402,20 @@
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
 <span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-<span class='line-number'>47</span>
-<span class='line-number'>48</span>
-<span class='line-number'>49</span>
-<span class='line-number'>50</span>
-<span class='line-number'>51</span>
-<span class='line-number'>52</span>
-<span class='line-number'>53</span>
-<span class='line-number'>54</span>
-<span class='line-number'>55</span>
-<span class='line-number'>56</span>
-<span class='line-number'>57</span>
-<span class='line-number'>58</span>
-<span class='line-number'>59</span>
-<span class='line-number'>60</span>
-<span class='line-number'>61</span>
-<span class='line-number'>62</span>
-<span class='line-number'>63</span>
-<span class='line-number'>64</span>
-<span class='line-number'>65</span>
-<span class='line-number'>66</span>
-<span class='line-number'>67</span>
-<span class='line-number'>68</span>
-<span class='line-number'>69</span>
-<span class='line-number'>70</span>
-<span class='line-number'>71</span>
-<span class='line-number'>72</span>
-<span class='line-number'>73</span>
-<span class='line-number'>74</span>
-<span class='line-number'>75</span>
-<span class='line-number'>76</span>
-<span class='line-number'>77</span>
-<span class='line-number'>78</span>
-<span class='line-number'>79</span>
-<span class='line-number'>80</span>
-<span class='line-number'>81</span>
-<span class='line-number'>82</span>
-<span class='line-number'>83</span>
-<span class='line-number'>84</span>
-<span class='line-number'>85</span>
-<span class='line-number'>86</span>
-<span class='line-number'>87</span>
-<span class='line-number'>88</span>
-<span class='line-number'>89</span>
-<span class='line-number'>90</span>
-<span class='line-number'>91</span>
-<span class='line-number'>92</span>
-<span class='line-number'>93</span>
-<span class='line-number'>94</span>
-<span class='line-number'>95</span>
-<span class='line-number'>96</span>
-<span class='line-number'>97</span>
-<span class='line-number'>98</span>
-<span class='line-number'>99</span>
-<span class='line-number'>100</span>
-<span class='line-number'>101</span>
-<span class='line-number'>102</span>
-<span class='line-number'>103</span>
-<span class='line-number'>104</span>
-<span class='line-number'>105</span>
-<span class='line-number'>106</span>
-<span class='line-number'>107</span>
-<span class='line-number'>108</span>
-<span class='line-number'>109</span>
-<span class='line-number'>110</span>
-<span class='line-number'>111</span>
-<span class='line-number'>112</span>
-<span class='line-number'>113</span>
-<span class='line-number'>114</span>
-<span class='line-number'>115</span>
-<span class='line-number'>116</span>
-<span class='line-number'>117</span>
-<span class='line-number'>118</span>
-<span class='line-number'>119</span>
-<span class='line-number'>120</span>
-<span class='line-number'>121</span>
-<span class='line-number'>122</span>
-<span class='line-number'>123</span>
-<span class='line-number'>124</span>
-<span class='line-number'>125</span>
-<span class='line-number'>126</span>
-<span class='line-number'>127</span>
-<span class='line-number'>128</span>
-<span class='line-number'>129</span>
-<span class='line-number'>130</span>
-<span class='line-number'>131</span>
-<span class='line-number'>132</span>
-<span class='line-number'>133</span>
-<span class='line-number'>134</span>
-<span class='line-number'>135</span>
-<span class='line-number'>136</span>
-<span class='line-number'>137</span>
-<span class='line-number'>138</span>
-<span class='line-number'>139</span>
-<span class='line-number'>140</span>
-<span class='line-number'>141</span>
-<span class='line-number'>142</span>
-<span class='line-number'>143</span>
-<span class='line-number'>144</span>
-<span class='line-number'>145</span>
-<span class='line-number'>146</span>
-<span class='line-number'>147</span>
-<span class='line-number'>148</span>
-<span class='line-number'>149</span>
-<span class='line-number'>150</span>
-<span class='line-number'>151</span>
-<span class='line-number'>152</span>
-<span class='line-number'>153</span>
-<span class='line-number'>154</span>
-<span class='line-number'>155</span>
-<span class='line-number'>156</span>
-<span class='line-number'>157</span>
-<span class='line-number'>158</span>
-<span class='line-number'>159</span>
-<span class='line-number'>160</span>
-<span class='line-number'>161</span>
-<span class='line-number'>162</span>
-<span class='line-number'>163</span>
-<span class='line-number'>164</span>
-<span class='line-number'>165</span>
-<span class='line-number'>166</span>
-<span class='line-number'>167</span>
-<span class='line-number'>168</span>
-<span class='line-number'>169</span>
-<span class='line-number'>170</span>
-<span class='line-number'>171</span>
-<span class='line-number'>172</span>
-</pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="cm">/*! \brief The SoTopless namespace which has C++ API functions.</span>
-</span><span class='line'><span class="cm"> * SoTopless APIs are in the topl namespace. These include creating, purging,</span>
-</span><span class='line'><span class="cm"> * dropping a leaderboard, sending score, querying score and rank of a user,</span>
-</span><span class='line'><span class="cm"> * and querying top N users from rank K.</span>
-</span><span class='line'><span class="cm"> *</span>
-</span><span class='line'><span class="cm"> * Why use namespaces instead of classes and objects?</span>
-</span><span class='line'><span class="cm"> * This is to help C programmers use the C-like API without</span>
-</span><span class='line'><span class="cm"> * any understanding of C++ classes and objects.</span>
-</span><span class='line'><span class="cm"> */</span>
-</span><span class='line'><span class="k">namespace</span> <span class="n">topl</span> <span class="p">{</span>
-</span><span class='line'>   <span class="cm">/*! \brief The enumeration containing the result values of function execution.</span>
-</span><span class='line'><span class="cm">    * They are success and fail. </span>
-</span><span class='line'><span class="cm">    */</span>
-</span><span class='line'>    <span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span>
-</span><span class='line'>       <span class="n">success</span><span class="p">,</span>
-</span><span class='line'>       <span class="n">failure</span>
-</span><span class='line'>    <span class="p">}</span> <span class="n">result</span><span class="p">;</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>using namespace std;
 </span><span class='line'>
-</span><span class='line'>    <span class="cm">/*! \brief The user namespace containing user management.</span>
-</span><span class='line'><span class="cm">     */</span>
-</span><span class='line'>    <span class="k">namespace</span> <span class="n">user</span> <span class="p">{</span>
-</span><span class='line'>        <span class="cm">/*! The handle of a user.</span>
-</span><span class='line'><span class="cm">         * This handle is used by SoTopless APIs instead of the string identity.</span>
-</span><span class='line'><span class="cm">         * Why? Using integer handles boost the performance</span>
-</span><span class='line'><span class="cm">         * for looking up a users in a database.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="n">int64_t</span> <span class="n">handle_t</span><span class="p">;</span>
+</span><span class='line'>std::vector&lt;score::rank_desc_t> top10_scores;
 </span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Create a user by specifying the email or device ID of the user.</span>
-</span><span class='line'><span class="cm">         * \param user_identity [IN] user email or device ID that represents the user.</span>
-</span><span class='line'><span class="cm">         * \param handle [OUT] the handle of the created user.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">create</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">user_identity</span><span class="p">,</span>
-</span><span class='line'>                       <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
+</span><span class='line'>score::list(weekly_handle, 
+</span><span class='line'>            1,  // The starting ranking. Start from 1st ranking. 
+</span><span class='line'>            10, // The number of users from the 1st ranking.  
+</span><span class='line'>            & top10_scores) );
 </span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Get the handle of a user.</span>
-</span><span class='line'><span class="cm">         * The handle is required for using SoTopless APIs related to a specific user.</span>
-</span><span class='line'><span class="cm">         * \param user_identity [IN] user email or device ID that represents the user.</span>
-</span><span class='line'><span class="cm">         * \param  handle [OUT] the handle of a given user specified by user_identity.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">user_identity</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="cm">/*! \brief The util namespace containing utility functions.</span>
-</span><span class='line'><span class="cm">     */</span>
-</span><span class='line'>    <span class="k">namespace</span> <span class="n">util</span> <span class="p">{</span>
-</span><span class='line'>        <span class="cm">/*! The date struct used to create a object which is used by SoTopless APIs.</span>
-</span><span class='line'><span class="cm">         * This is an opaque struct. The fields are not accesable.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">int64_t</span> <span class="n">timestamp_t</span><span class="p">;</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="cm">/*! \brief The leaderboard namespace containing leaderboard management.</span>
-</span><span class='line'><span class="cm">     */</span>
-</span><span class='line'>    <span class="k">namespace</span> <span class="n">leaderboard</span> <span class="p">{</span>
-</span><span class='line'>        <span class="cm">/*! The handle of a leaderboard.</span>
-</span><span class='line'><span class="cm">         * This handle is used by SoTopless APIs</span>
-</span><span class='line'><span class="cm">         * instead of the string identity of a leaderboard.</span>
-</span><span class='line'><span class="cm">         * Why? Using integer handles boost the performance</span>
-</span><span class='line'><span class="cm">         * for looking up a leaderboard in a database.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="n">int16_t</span> <span class="n">handle_t</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Create a leaderboard.</span>
-</span><span class='line'><span class="cm">         * \param leaderboard_identity [IN] the name of the leaderboard to create.</span>
-</span><span class='line'><span class="cm">         * \param handle [OUT] the handle of the created leaderboard.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">create</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">leaderboard_identity</span><span class="p">,</span>
-</span><span class='line'>                       <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Get the handle of a leaderboard.</span>
-</span><span class='line'><span class="cm">         * The handle is required for using SoTopless APIs related to a leaderboard.</span>
-</span><span class='line'><span class="cm">         * \param leaderboard_identity [IN] the name of the leaderboard to create.</span>
-</span><span class='line'><span class="cm">         * \param handle [OUT] the handle of a given leaderboard specified by leaderboard_identity.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">leaderboard_identity</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! The descriptor of a leaderboard.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">leaderboard_desc_t</span> <span class="p">{</span>
-</span><span class='line'>            <span class="n">handle_t</span> <span class="n">handle</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">identity</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span> <span class="n">leaderboard_desc_t</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Get the list of all leaderboards.</span>
-</span><span class='line'><span class="cm">         * \param leaderboards [OUT] the vector containing the list of leaderboard names.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">list</span><span class="p">(</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">leaderboard_desc_t</span><span class="o">&gt;</span> <span class="o">*</span> <span class="n">leaderboards</span> <span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Purge score data on a leaderboard stored before a specific date.</span>
-</span><span class='line'><span class="cm">         * \param handle [IN] the handle of the leaderboard to purge.</span>
-</span><span class='line'><span class="cm">         * \param cut_date [IN] the score date stored before the cut_date is purged.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">purge</span><span class="p">(</span> <span class="k">const</span> <span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">handle</span><span class="p">,</span>
-</span><span class='line'>                      <span class="k">const</span> <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="o">&amp;</span> <span class="n">cut_date</span> <span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Drop a leaderboard.</span>
-</span><span class='line'><span class="cm">         * \param handle [IN] the handle of the leaderboard to drop.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">drop</span><span class="p">(</span> <span class="k">const</span> <span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">handle</span> <span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="cm">/*! \brief The score namespace for functions posting and getting scores and ranks.</span>
-</span><span class='line'><span class="cm">     */</span>
-</span><span class='line'>    <span class="k">namespace</span> <span class="n">score</span> <span class="p">{</span>
-</span><span class='line'>        <span class="cm">/*! score_t; the type of score.</span>
-</span><span class='line'><span class="cm">        */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="n">int64_t</span> <span class="n">score_t</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! rank_t; the type for specifying the rank of a user.</span>
-</span><span class='line'><span class="cm">        */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="n">int64_t</span> <span class="n">rank_t</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Put a new user score. If a score exists for the user, it is overwritten.</span>
-</span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
-</span><span class='line'><span class="cm">         * \param user_handle [IN] the handle of the user to query.</span>
-</span><span class='line'><span class="cm">         * \param score [IN] the score of the given user.</span>
-</span><span class='line'><span class="cm">         * \param situation [IN] a string representation of data to store</span>
-</span><span class='line'><span class="cm">         *        the situation of the user when he/she got the score.</span>
-</span><span class='line'><span class="cm">         * \param when [IN] the date when the user got the score.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">put</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">user</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">user_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">score_t</span> <span class="o">&amp;</span> <span class="n">score</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">situation</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="o">&amp;</span> <span class="n">when</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! The user_score_t struct having score and rank information of a user.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">user_score_t</span> <span class="p">{</span>
-</span><span class='line'>            <span class="n">int64_t</span>           <span class="n">rank</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">int64_t</span>           <span class="n">userid</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">int64_t</span>           <span class="n">score</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">std</span><span class="o">::</span><span class="n">string</span>       <span class="n">situation</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="n">when</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span> <span class="n">user_score_t</span> <span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Get score and rank of a specific user.</span>
-</span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
-</span><span class='line'><span class="cm">         * \param user_handle [IN] the handle of the user to query.</span>
-</span><span class='line'><span class="cm">         * \param score [OUT] the information on the user score including the rank and score.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">user</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">user_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">user_score_t</span> <span class="o">*</span> <span class="n">score</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! List the top N scores from a specific rank.</span>
-</span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
-</span><span class='line'><span class="cm">         * \param from_rank [IN] the beginning rank for the resulting scores.</span>
-</span><span class='line'><span class="cm">         * \param count [IN] the number of scores to fetch. The value N of &#39;top N&#39;.</span>
-</span><span class='line'><span class="cm">         * \param scores [OUT] the array of scores filled in the user_score_t struct.</span>
-</span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
-</span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">list</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
-</span><span class='line'>                     <span class="k">const</span> <span class="n">rank_t</span> <span class="o">&amp;</span> <span class="n">from_rank</span><span class="p">,</span>
-</span><span class='line'>                     <span class="k">const</span> <span class="n">rank_t</span> <span class="o">&amp;</span> <span class="n">count</span><span class="p">,</span>
-</span><span class='line'>                     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">user_score_t</span><span class="o">&gt;</span> <span class="o">*</span> <span class="n">scores</span> <span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>for( const score::rank_desc_t & rank : top10_scores )
+</span><span class='line'>{
+</span><span class='line'>    cout &lt;&lt; "Score : " &lt;&lt; rank.score &lt;&lt; ", Name : " &lt;&lt; rank.user_identity &lt;&lt; endl;
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
 
 
 
