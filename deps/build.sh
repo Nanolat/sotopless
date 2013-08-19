@@ -31,15 +31,15 @@ popd
 #########################################################
 # build myagora
 #########################################################
-pushd .
-tar xvfz ${EXT_LIB_HOME}/archives/pushframework.tar.gz
-cd pushframework
-make clean
-make
-rm -rf ${EXT_LIB_HOME}/include/myagora
-cp -r include ${EXT_LIB_HOME}/include/myagora
-cp ../output/libpushframework.so ${EXT_LIB_HOME}/lib/libmyagora.so
-popd
+#pushd .
+#tar xvfz ${EXT_LIB_HOME}/archives/pushframework.tar.gz
+#cd pushframework
+#make clean
+#make
+#rm -rf ${EXT_LIB_HOME}/include/myagora
+#cp -r include ${EXT_LIB_HOME}/include/myagora
+#cp ../output/libpushframework.so ${EXT_LIB_HOME}/lib/libmyagora.so
+#popd
 
 
 #########################################################
