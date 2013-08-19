@@ -1,7 +1,9 @@
 sotopless
 =========
 
-A RESTful ranking server supporting billions of users.
+A ranking server supporting 100M users per server. REST service is also provided.
+For the details, see http://www.sotopless.com.
+
 
 Prerequisites
 -------------
@@ -12,4 +14,5 @@ http://comments.gmane.org/gmane.os.apple.macports.user/32617
 
 License
 -------
-SoTopless is an open source software with AGPL v3 license. A commercial license which includes Apache v2 is available for project owners not willing to open their source codes.
+SoTopless is an open source software with AGPL v3 license. A commercial license which includes an Apache v2 license is available for project owners not willing to open their source codes.
+
