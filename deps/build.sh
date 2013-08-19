@@ -10,6 +10,39 @@ mkdir include lib bin build
 cd build
 
 #########################################################
+# build protobuf
+#########################################################
+pushd .
+tar xvfz ${EXT_LIB_HOME}/archives/protobuf-2.5.0.tar.gz
+cd protobuf-2.5.0
+make clean
+./configure --prefix=/proto-dest
+make
+make install DESTDIR=`pwd`
+cd proto-dest
+
+rm -rf ${EXT_LIB_HOME}/include/google
+cp -r include/* ${EXT_LIB_HOME}/include/
+cp -r lib/* ${EXT_LIB_HOME}/lib/
+cp -r bin/* ${EXT_LIB_HOME}/bin/
+popd
+
+
+#########################################################
+# build myagora
+#########################################################
+pushd .
+tar xvfz ${EXT_LIB_HOME}/archives/pushframework.tar.gz
+cd pushframework
+make clean
+make
+rm -rf ${EXT_LIB_HOME}/include/myagora
+cp -r include ${EXT_LIB_HOME}/include/myagora
+cp ../output/libpushframework.so ${EXT_LIB_HOME}/lib/libmyagora.so
+popd
+
+
+#########################################################
 # build gtest
 #########################################################
 pushd .
@@ -23,7 +56,9 @@ cp lib/.libs/* ${EXT_LIB_HOME}/lib
 popd
 
 
-
+#########################################################
+# build xUnit++
+#########################################################
 pushd .
 tar xvfz ${EXT_LIB_HOME}/archives/xunit-1.3.2.tar.gz
 
@@ -44,7 +79,9 @@ cp ./xUnit ${EXT_LIB_HOME}/bin
 popd
 
 
-
+#########################################################
+# build boost
+#########################################################
 pushd .
 # Boost is too big > 50MB to put into our repository. Download it from internet.
 wget http://sourceforge.net/projects/boost/files/boost/1.54.0/boost_1_54_0.tar.gz
