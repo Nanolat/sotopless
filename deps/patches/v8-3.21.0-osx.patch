@@ -1,0 +1,45 @@
+diff --git a/build/standalone.gypi b/build/standalone.gypi
+index 5c017d5..b49c8f8 100644
+--- a/build/standalone.gypi
++++ b/build/standalone.gypi
+@@ -257,7 +257,7 @@
+           'GCC_THREADSAFE_STATICS': 'NO',           # -fno-threadsafe-statics
+           'GCC_TREAT_WARNINGS_AS_ERRORS': 'YES',    # -Werror
+           'GCC_VERSION': 'com.apple.compilers.llvmgcc42',
+-          'GCC_WARN_ABOUT_MISSING_NEWLINE': 'YES',  # -Wnewline-eof
++          'GCC_WARN_ABOUT_MISSING_NEWLINE': 'NO',  # -Wnewline-eof
+           'GCC_WARN_NON_VIRTUAL_DESTRUCTOR': 'YES', # -Wnon-virtual-dtor
+           # MACOSX_DEPLOYMENT_TARGET maps to -mmacosx-version-min
+           'MACOSX_DEPLOYMENT_TARGET': '<(mac_deployment_target)',
+diff --git a/src/platform-macos.cc b/src/platform-macos.cc
+index 6135cd1..63f09aa 100644
+--- a/src/platform-macos.cc
++++ b/src/platform-macos.cc
+@@ -395,25 +395,20 @@ bool VirtualMemory::HasLazyCommits() {
+ class MacOSSemaphore : public Semaphore {
+  public:
+   explicit MacOSSemaphore(int count) {
+-    int r;
+-    r = semaphore_create(mach_task_self(),
++     semaphore_create(mach_task_self(),
+                          &semaphore_,
+                          SYNC_POLICY_FIFO,
+                          count);
+-    ASSERT(r == KERN_SUCCESS);
+   }
+ 
+   ~MacOSSemaphore() {
+-    int r;
+-    r = semaphore_destroy(mach_task_self(), semaphore_);
+-    ASSERT(r == KERN_SUCCESS);
++    semaphore_destroy(mach_task_self(), semaphore_);
+   }
+ 
+   void Wait() {
+     int r;
+     do {
+       r = semaphore_wait(semaphore_);
+-      ASSERT(r == KERN_SUCCESS || r == KERN_ABORTED);
+     } while (r == KERN_ABORTED);
+   }
+ 
