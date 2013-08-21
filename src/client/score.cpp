@@ -3,11 +3,17 @@
 
 namespace topl { namespace score {
 
-result put( const leaderboard::handle_t & leaderboard_handle,
+result post( const leaderboard::handle_t & leaderboard_handle,
             const user::handle_t & user_handle,
             const score_t & score,
             const std::string & situation,
             const util::timestamp_t & when)
+{
+    return failure;
+}
+
+result remove( const leaderboard::handle_t & leaderboard_handle,
+		       const user::handle_t & user_handle)
 {
     return failure;
 }

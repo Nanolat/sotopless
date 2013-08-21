@@ -11,7 +11,7 @@ using namespace topl;
 #define LB(n) "lboard"##n
 
 typedef enum populating_command_t {
-    PUT_SCORE, PURGE_SCORE
+    POST_SCORE, PURGE_SCORE
 } populating_command_t;
 
 // Leaderboard operation.
@@ -26,7 +26,7 @@ typedef struct populating_operation_t {
         score::score_t    user_score;
         std::string       user_situation;
         util::timestamp_t when;
-    } put_score ;
+    } POST_SCORE ;
 
     struct {
         util::timestamp_t cut_date;
@@ -59,9 +59,9 @@ score_posting_scenario_t OnlyOneUser = {
     "Only One User",
     std::vector<populating_operation_t> {
         populating_operation_t {
-            PUT_SCORE,
+            POST_SCORE,
             string_vector_t{LB(0)}, // leaderboards
-            {USER(0), 1000, "happy", 100001}, // PUT_SCORE data
+            {USER(0), 1000, "happy", 100001}, // POST_SCORE data
             {0} // PURGE_SCORE data
         }
     },
@@ -107,16 +107,16 @@ THEORY("Top Score Scenarios", (std::string scenario_name, const score_posting_sc
 
 
             switch( op.command ) {
-                case PUT_SCORE :
+                case POST_SCORE :
                 {
                     user::handle_t user_handle;
-                    ASSERT_SUCCESS( user::get(op.put_score.user_identity, &user_handle ) );
+                    ASSERT_SUCCESS( user::get(op.POST_SCORE.user_identity, &user_handle ) );
 
-                    ASSERT_SUCCESS( score::put( lb_handle,
+                    ASSERT_SUCCESS( score::post( lb_handle,
                                                 user_handle,
-                                                op.put_score.user_score,
-                                                op.put_score.user_situation,
-                                                op.put_score.when ) );
+                                                op.POST_SCORE.user_score,
+                                                op.POST_SCORE.user_situation,
+                                                op.POST_SCORE.when ) );
                 }
                 break;
                 case PURGE_SCORE :

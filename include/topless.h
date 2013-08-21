@@ -142,7 +142,7 @@ namespace topl {
         */
         typedef int64_t rank_t;
 
-        /*! Put a new user score. If a score exists for the user, it is overwritten.
+        /*! Post a new user score. If a score exists for the user, it is overwritten.
          * \param leaderboard_handle [IN] the handle of the leaderboard to query.
          * \param user_handle [IN] the handle of the user to query.
          * \param score [IN] the score of the given user.
@@ -151,12 +151,18 @@ namespace topl {
          * \param when [IN] the date when the user got the score.
          * \return topl::success on success. topl::failure otherwise.
          */
-        result put( const leaderboard::handle_t & leaderboard_handle,
-                    const user::handle_t & user_handle,
-                    const score_t & score,
-                    const std::string & situation,
-                    const util::timestamp_t & when);
+        result post( const leaderboard::handle_t & leaderboard_handle,
+                     const user::handle_t & user_handle,
+                     const score_t & score,
+                     const std::string & situation,
+                     const util::timestamp_t & when);
 
+        /*! Remove the score posted by a user.
+         * \param leaderboard_handle [IN] the handle of the leaderboard to query.
+         * \param user_handle [IN] the handle of the user to query.
+         */
+        result remove( const leaderboard::handle_t & leaderboard_handle,
+        		       const user::handle_t & user_handle);
 
         /*! The rank_desc_t struct having score and rank information of a user on a leaderboard.
          */

@@ -18,7 +18,7 @@ FACT("Put Score and Get Score")
 
     ASSERT_FAILURE( score::get(lb1, u1, &rank_desc) );
 
-    ASSERT_SUCCESS( score::put(lb1, u1, score, situation, now ) );
+    ASSERT_SUCCESS( score::post(lb1, u1, score, situation, now ) );
 
     ASSERT_SUCCESS( score::get(lb1, u1, &rank_desc) );
 
@@ -34,6 +34,58 @@ FACT("Put Score and Get Score")
     ASSERT_SUCCESS( leaderboard::drop(lb1) );
 }
 
+FACT("Put Score, Remove Score")
+{
+    user::handle_t u1 = create_or_get_user("User1");
+    user::handle_t u2 = create_or_get_user("User2");
+    user::handle_t u3 = create_or_get_user("User3");
+
+    leaderboard::handle_t lb1 = create_new_leaderboard("LeaderBoard1");
+
+    const int u1_score = 1000;
+    const int u2_score = 2000;
+    const int u3_score = 3000;
+    const std::string u1_situation = "happy";
+    const std::string u2_situation = "happy";
+    const std::string u3_situation = "happy";
+    const util::timestamp_t u1_now = util::now();
+    const util::timestamp_t u2_now = util::now();
+    const util::timestamp_t u3_now = util::now();
+
+    score::rank_desc_t rank_desc;
+
+    // Post scores of u1, u2, u3
+    ASSERT_SUCCESS( score::post(lb1, u1, u1_score, u1_situation, u1_now ) );
+
+    ASSERT_SUCCESS( score::post(lb1, u2, u2_score, u2_situation, u2_now ) );
+
+    ASSERT_SUCCESS( score::post(lb1, u3, u3_score, u3_situation, u3_now ) );
+
+    // Remove scores of u1, u3
+    ASSERT_SUCCESS( score::remove(lb1, u1 ) );
+    ASSERT_SUCCESS( score::remove(lb1, u3 ) );
+
+    // Get scores of u1, u3 : should fail
+    ASSERT_FAILURE( score::get(lb1, u1, &rank_desc) );
+    ASSERT_FAILURE( score::get(lb1, u3, &rank_desc) );
+
+    // Get score of u2 : should succeed.
+    ASSERT_SUCCESS( score::get(lb1, u2, &rank_desc) );
+
+
+    // Check rank descriptor of u2
+    Assert.Equal( rank_desc.rank, 1);
+    Assert.Equal( rank_desc.user_handle, u2);
+    Assert.Equal( rank_desc.user_identity, "User2");
+    Assert.Equal( rank_desc.score, u2_score);
+    Assert.Equal( rank_desc.situation, u2_situation);
+    Assert.Equal( rank_desc.when, u2_now);
+
+    // Drop the leaderboard.
+    ASSERT_SUCCESS( leaderboard::drop(lb1) );
+}
+
+
 FACT("Put Higher Score")
 {
     user::handle_t u1 = create_or_get_user("User1");
@@ -47,9 +99,9 @@ FACT("Put Higher Score")
 
     score::rank_desc_t rank_desc;
 
-    ASSERT_SUCCESS( score::put(lb1, u1, score, situation, now ) );
+    ASSERT_SUCCESS( score::post(lb1, u1, score, situation, now ) );
 
-    ASSERT_SUCCESS( score::put(lb1, u1, new_score, situation, now ) );
+    ASSERT_SUCCESS( score::post(lb1, u1, new_score, situation, now ) );
 
     ASSERT_SUCCESS( score::get(lb1, u1, &rank_desc) );
 
@@ -81,9 +133,9 @@ FACT("Put Lower Score")
 
     score::rank_desc_t rank_desc;
 
-    ASSERT_SUCCESS( score::put(lb1, u1, score, situation, now ) );
+    ASSERT_SUCCESS( score::post(lb1, u1, score, situation, now ) );
 
-    ASSERT_SUCCESS( score::put(lb1, u1, new_score, situation, now ) );
+    ASSERT_SUCCESS( score::post(lb1, u1, new_score, situation, now ) );
 
     ASSERT_SUCCESS( score::get(lb1, u1, &rank_desc) );
 
@@ -117,7 +169,7 @@ FACT("Put Score and List Score")
     ASSERT_SUCCESS( score::list(lb1, 1, 10, &actual_scores) );
     Assert.Equal( actual_scores.size(), 0 );
 
-    ASSERT_SUCCESS( score::put(lb1, u1, score, situation, now ) );
+    ASSERT_SUCCESS( score::post(lb1, u1, score, situation, now ) );
 
     // No need to call scores.clear(). It will be cleared by score::list.
     ASSERT_SUCCESS( score::list(lb1, 1, 10, &actual_scores) );
@@ -158,12 +210,12 @@ FACT("Put Score, Purge Score, Get Score, List Score")
         ASSERT_FAILURE( score::get(lb1, u1, &rank_desc) ); // The score data is not existing yet.
 
         // Put the score data for User1
-        ASSERT_SUCCESS( score::put(lb1, u1, u1_score, u1_situation, u1_now ) );
+        ASSERT_SUCCESS( score::post(lb1, u1, u1_score, u1_situation, u1_now ) );
 
         ASSERT_FAILURE( score::get(lb1, u2, &rank_desc) ); // The score data is not existing yet.
 
         // Put the score data for User2
-        ASSERT_SUCCESS( score::put(lb1, u2, u2_score, u2_situation, u2_now ) );
+        ASSERT_SUCCESS( score::post(lb1, u2, u2_score, u2_situation, u2_now ) );
     }
 
 
