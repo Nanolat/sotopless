@@ -330,6 +330,8 @@ After the user is created, you can get the user handle of the created user. The 
 
 <p>You can get the ranking and score on the leaderboard where you posted the user&rsquo;s score. Also you can get a range of ranking on a leaderboard. For example, you can get the list of users and scores of the top 10 scoreboard by quering the rankings from 1st to 10th.</p>
 
+<p>Also, you may want to remove a score posted by a user. Removing the score posted by a user is supported.</p>
+
 <h2>Post a User Score</h2>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -347,9 +349,9 @@ After the user is created, you can get the user handle of the created user. The 
 </span><span class='line'>const std::string situation = "Black King Sword, White Devil Shield";
 </span><span class='line'>const util::timestamp_t now = util::now();    
 </span><span class='line'>
-</span><span class='line'>score::put(monthly_handle, user_handle, score, situation, now );
-</span><span class='line'>score::put(weekly_handle,  user_handle, score, situation, now );
-</span><span class='line'>score::put(daily_handle,   user_handle, score, situation, now );</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>score::post(monthly_handle, user_handle, score, situation, now );
+</span><span class='line'>score::post(weekly_handle,  user_handle, score, situation, now );
+</span><span class='line'>score::post(daily_handle,   user_handle, score, situation, now );</span></code></pre></td></tr></table></div></figure>
 
 
 <h2>Get User Score and Ranking</h2>
@@ -382,6 +384,22 @@ After the user is created, you can get the user handle of the created user. The 
 </span><span class='line'>cout &lt;&lt; "score : "        &lt;&lt; rank_desc.score         &lt;&lt; endl;
 </span><span class='line'>cout &lt;&lt; "situation : "    &lt;&lt; rank_desc.situation     &lt;&lt; endl;
 </span><span class='line'>cout &lt;&lt; "time : "         &lt;&lt; rank_desc.when          &lt;&lt; endl;</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Remove a User Score</h2>
+
+<p>Following code snippet removes the score posted by a user on monthly, weekly, daily leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>score::remove(monthly_handle, user_handle );
+</span><span class='line'>score::remove(weekly_handle,  user_handle );
+</span><span class='line'>score::remove(daily_handle,   user_handle );</span></code></pre></td></tr></table></div></figure>
 
 
 <h2>Get Top N Users</h2>

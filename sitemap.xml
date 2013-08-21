@@ -1,35 +1,35 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://www.sotopless.com/robots.txt</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
+        <loc>http://www.sotopless.com/blog/archives/</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
     </url>
     <url>
         <loc>http://www.sotopless.com/blog/</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/blog/archives/</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
     </url>
     <url>
         <loc>http://www.sotopless.com/</loc>
-        <lastmod>2013-08-16T03:29:24-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/rest.html</loc>
-        <lastmod>2013-08-16T03:00:02-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/cpp-api.html</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/cpp.html</loc>
-        <lastmod>2013-08-16T03:10:44-07:00</lastmod>
+        <lastmod>2013-08-21T14:48:59-07:00</lastmod>
     </url>
     <url>
         <loc>http://www.sotopless.com/join-alpha-test/</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
+        <lastmod>2013-08-15T18:34:57-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/robots.txt</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/cpp-api.html</loc>
+        <lastmod>2013-08-21T14:58:52-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/cpp.html</loc>
+        <lastmod>2013-08-21T14:59:42-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/rest.html</loc>
+        <lastmod>2013-08-21T14:48:59-07:00</lastmod>
     </url>
 </urlset>

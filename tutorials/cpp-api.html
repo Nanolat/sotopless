@@ -266,6 +266,27 @@
 <span class='line-number'>170</span>
 <span class='line-number'>171</span>
 <span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
 </pre></td><td class='code'><pre><code class='c++'><span class='line'><span class="cm">/*! \brief The SoTopless namespace which has C++ API functions.</span>
 </span><span class='line'><span class="cm"> * SoTopless APIs are in the topl namespace. These include creating, purging,</span>
 </span><span class='line'><span class="cm"> * dropping a leaderboard, sending score, querying score and rank of a user,</span>
@@ -294,12 +315,16 @@
 </span><span class='line'><span class="cm">         */</span>
 </span><span class='line'>        <span class="k">typedef</span> <span class="n">int64_t</span> <span class="n">handle_t</span><span class="p">;</span>
 </span><span class='line'>
+</span><span class='line'>        <span class="cm">/* The identity of a user. It can be either an email or device ID of a mobile device.</span>
+</span><span class='line'><span class="cm">         */</span>
+</span><span class='line'>        <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">identity_t</span><span class="p">;</span>
+</span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Create a user by specifying the email or device ID of the user.</span>
 </span><span class='line'><span class="cm">         * \param user_identity [IN] user email or device ID that represents the user.</span>
 </span><span class='line'><span class="cm">         * \param handle [OUT] the handle of the created user.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">create</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">user_identity</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">create</span><span class="p">(</span> <span class="k">const</span> <span class="n">identity_t</span> <span class="o">&amp;</span> <span class="n">user_identity</span><span class="p">,</span>
 </span><span class='line'>                       <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Get the handle of a user.</span>
@@ -308,17 +333,21 @@
 </span><span class='line'><span class="cm">         * \param  handle [OUT] the handle of a given user specified by user_identity.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">user_identity</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">identity_t</span> <span class="o">&amp;</span> <span class="n">user_identity</span><span class="p">,</span>
 </span><span class='line'>                    <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="cm">/*! \brief The util namespace containing utility functions.</span>
+</span><span class='line'>    <span class="cm">/*! \brief The util namespace containing utility features.</span>
 </span><span class='line'><span class="cm">     */</span>
 </span><span class='line'>    <span class="k">namespace</span> <span class="n">util</span> <span class="p">{</span>
-</span><span class='line'>        <span class="cm">/*! The date struct used to create a object which is used by SoTopless APIs.</span>
-</span><span class='line'><span class="cm">         * This is an opaque struct. The fields are not accesable.</span>
+</span><span class='line'>        <span class="cm">/*! The timestamp type used to specify the time of posting users&#39; scores.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">int64_t</span> <span class="n">timestamp_t</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">typedef</span> <span class="n">int64_t</span> <span class="n">timestamp_t</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="cm">/*! Return the current timestamp.</span>
+</span><span class='line'><span class="cm">         * \return The current timestamp.</span>
+</span><span class='line'><span class="cm">         */</span>
+</span><span class='line'>        <span class="n">timestamp_t</span> <span class="n">now</span><span class="p">();</span>
 </span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>
 </span><span class='line'>    <span class="cm">/*! \brief The leaderboard namespace containing leaderboard management.</span>
@@ -332,12 +361,16 @@
 </span><span class='line'><span class="cm">         */</span>
 </span><span class='line'>        <span class="k">typedef</span> <span class="n">int16_t</span> <span class="n">handle_t</span><span class="p">;</span>
 </span><span class='line'>
+</span><span class='line'>        <span class="cm">/*! The name of the leaderboard.</span>
+</span><span class='line'><span class="cm">         * */</span>
+</span><span class='line'>        <span class="k">typedef</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">identity_t</span><span class="p">;</span>
+</span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Create a leaderboard.</span>
 </span><span class='line'><span class="cm">         * \param leaderboard_identity [IN] the name of the leaderboard to create.</span>
 </span><span class='line'><span class="cm">         * \param handle [OUT] the handle of the created leaderboard.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">create</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">leaderboard_identity</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">create</span><span class="p">(</span> <span class="k">const</span> <span class="n">identity_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_identity</span><span class="p">,</span>
 </span><span class='line'>                       <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Get the handle of a leaderboard.</span>
@@ -346,7 +379,7 @@
 </span><span class='line'><span class="cm">         * \param handle [OUT] the handle of a given leaderboard specified by leaderboard_identity.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">leaderboard_identity</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">identity_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_identity</span><span class="p">,</span>
 </span><span class='line'>                    <span class="n">handle_t</span> <span class="o">*</span> <span class="n">handle</span> <span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>
@@ -354,7 +387,7 @@
 </span><span class='line'><span class="cm">         */</span>
 </span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">leaderboard_desc_t</span> <span class="p">{</span>
 </span><span class='line'>            <span class="n">handle_t</span> <span class="n">handle</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">identity</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">identity_t</span> <span class="n">identity</span><span class="p">;</span>
 </span><span class='line'>        <span class="p">}</span> <span class="n">leaderboard_desc_t</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Get the list of all leaderboards.</span>
@@ -368,7 +401,7 @@
 </span><span class='line'><span class="cm">         * \param cut_date [IN] the score date stored before the cut_date is purged.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">purge</span><span class="p">(</span> <span class="k">const</span> <span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">handle</span><span class="p">,</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">purge</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
 </span><span class='line'>                      <span class="k">const</span> <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="o">&amp;</span> <span class="n">cut_date</span> <span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Drop a leaderboard.</span>
@@ -389,7 +422,7 @@
 </span><span class='line'><span class="cm">        */</span>
 </span><span class='line'>        <span class="k">typedef</span> <span class="n">int64_t</span> <span class="n">rank_t</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! Put a new user score. If a score exists for the user, it is overwritten.</span>
+</span><span class='line'>        <span class="cm">/*! Post a new user score. If a score exists for the user, it is overwritten.</span>
 </span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
 </span><span class='line'><span class="cm">         * \param user_handle [IN] the handle of the user to query.</span>
 </span><span class='line'><span class="cm">         * \param score [IN] the score of the given user.</span>
@@ -398,21 +431,29 @@
 </span><span class='line'><span class="cm">         * \param when [IN] the date when the user got the score.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="n">result</span> <span class="n">put</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">user</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">user_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">score_t</span> <span class="o">&amp;</span> <span class="n">score</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">situation</span><span class="p">,</span>
-</span><span class='line'>                    <span class="k">const</span> <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="o">&amp;</span> <span class="n">when</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">post</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
+</span><span class='line'>                     <span class="k">const</span> <span class="n">user</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">user_handle</span><span class="p">,</span>
+</span><span class='line'>                     <span class="k">const</span> <span class="n">score_t</span> <span class="o">&amp;</span> <span class="n">score</span><span class="p">,</span>
+</span><span class='line'>                     <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span> <span class="n">situation</span><span class="p">,</span>
+</span><span class='line'>                     <span class="k">const</span> <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="o">&amp;</span> <span class="n">when</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'>        <span class="cm">/*! The user_score_t struct having score and rank information of a user.</span>
+</span><span class='line'>        <span class="cm">/*! Remove the score posted by a user.</span>
+</span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
+</span><span class='line'><span class="cm">         * \param user_handle [IN] the handle of the user to query.</span>
 </span><span class='line'><span class="cm">         */</span>
-</span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">user_score_t</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">result</span> <span class="n">remove</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
+</span><span class='line'>                     <span class="k">const</span> <span class="n">user</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">user_handle</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="cm">/*! The rank_desc_t struct having score and rank information of a user on a leaderboard.</span>
+</span><span class='line'><span class="cm">         */</span>
+</span><span class='line'>        <span class="k">typedef</span> <span class="k">struct</span> <span class="n">rank_desc_t</span> <span class="p">{</span>
 </span><span class='line'>            <span class="n">int64_t</span>           <span class="n">rank</span><span class="p">;</span>
-</span><span class='line'>            <span class="n">int64_t</span>           <span class="n">userid</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">int64_t</span>           <span class="n">user_handle</span><span class="p">;</span>
+</span><span class='line'>            <span class="n">user</span><span class="o">::</span><span class="n">identity_t</span>  <span class="n">user_identity</span><span class="p">;</span>
 </span><span class='line'>            <span class="n">int64_t</span>           <span class="n">score</span><span class="p">;</span>
 </span><span class='line'>            <span class="n">std</span><span class="o">::</span><span class="n">string</span>       <span class="n">situation</span><span class="p">;</span>
 </span><span class='line'>            <span class="n">util</span><span class="o">::</span><span class="n">timestamp_t</span> <span class="n">when</span><span class="p">;</span>
-</span><span class='line'>        <span class="p">}</span> <span class="n">user_score_t</span> <span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span> <span class="n">rank_desc_t</span> <span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! Get score and rank of a specific user.</span>
 </span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
@@ -422,21 +463,22 @@
 </span><span class='line'><span class="cm">         */</span>
 </span><span class='line'>        <span class="n">result</span> <span class="n">get</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
 </span><span class='line'>                    <span class="k">const</span> <span class="n">user</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">user_handle</span><span class="p">,</span>
-</span><span class='line'>                    <span class="n">user_score_t</span> <span class="o">*</span> <span class="n">score</span><span class="p">);</span>
+</span><span class='line'>                    <span class="n">rank_desc_t</span> <span class="o">*</span> <span class="n">score</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'>        <span class="cm">/*! List the top N scores from a specific rank.</span>
 </span><span class='line'><span class="cm">         * \param leaderboard_handle [IN] the handle of the leaderboard to query.</span>
 </span><span class='line'><span class="cm">         * \param from_rank [IN] the beginning rank for the resulting scores.</span>
+</span><span class='line'><span class="cm">         *        from_rank starts from 1. 0 is an invalid argument for the from_rank parameter.</span>
 </span><span class='line'><span class="cm">         * \param count [IN] the number of scores to fetch. The value N of &#39;top N&#39;.</span>
-</span><span class='line'><span class="cm">         * \param scores [OUT] the array of scores filled in the user_score_t struct.</span>
+</span><span class='line'><span class="cm">         * \param scores [OUT] the array of scores filled in the rank_desc_t struct.</span>
 </span><span class='line'><span class="cm">         * \return topl::success on success. topl::failure otherwise.</span>
 </span><span class='line'><span class="cm">         */</span>
 </span><span class='line'>        <span class="n">result</span> <span class="n">list</span><span class="p">(</span> <span class="k">const</span> <span class="n">leaderboard</span><span class="o">::</span><span class="n">handle_t</span> <span class="o">&amp;</span> <span class="n">leaderboard_handle</span><span class="p">,</span>
 </span><span class='line'>                     <span class="k">const</span> <span class="n">rank_t</span> <span class="o">&amp;</span> <span class="n">from_rank</span><span class="p">,</span>
 </span><span class='line'>                     <span class="k">const</span> <span class="n">rank_t</span> <span class="o">&amp;</span> <span class="n">count</span><span class="p">,</span>
-</span><span class='line'>                     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">user_score_t</span><span class="o">&gt;</span> <span class="o">*</span> <span class="n">scores</span> <span class="p">);</span>
-</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>                     <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">rank_desc_t</span><span class="o">&gt;</span> <span class="o">*</span> <span class="n">scores</span> <span class="p">);</span>
 </span><span class='line'>
+</span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
