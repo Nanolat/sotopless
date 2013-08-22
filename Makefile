@@ -8,7 +8,6 @@ test/unit_client/BUILD_FOLDER \
 test/unit_server/BUILD_FOLDER \
 test/xunit_client/BUILD_FOLDER 
 
-SUBDIRS = $(SUBDIRS_TEMPLATE:BUILD_FOLDER=Release)
 all: release
 
 # By default, build in release mode. No MAKE_ARG is required for the release mode.
