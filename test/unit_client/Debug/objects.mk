@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lgtest -lclient
+LIBS := -lgtest -lclient -lpthread
 
