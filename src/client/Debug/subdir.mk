@@ -4,22 +4,22 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../leaderboard.cpp \
-../score.cpp \
-../user.cpp \
-../util.cpp 
+../DatabaseService.cpp \
+../DatabaseService_constants.cpp \
+../DatabaseService_types.cpp \
+../client.cpp 
 
 OBJS += \
-./leaderboard.o \
-./score.o \
-./user.o \
-./util.o 
+./DatabaseService.o \
+./DatabaseService_constants.o \
+./DatabaseService_types.o \
+./client.o 
 
 CPP_DEPS += \
-./leaderboard.d \
-./score.d \
-./user.d \
-./util.d 
+./DatabaseService.d \
+./DatabaseService_constants.d \
+./DatabaseService_types.d \
+./client.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

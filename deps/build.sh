@@ -13,36 +13,21 @@ mkdir include lib bin build
 cd build
 
 #########################################################
-# build protobuf
+# build thrift
 #########################################################
 pushd .
-tar xvfz ${EXT_LIB_HOME}/archives/protobuf-2.5.0.tar.gz
-cd protobuf-2.5.0
+tar xvfz ${EXT_LIB_HOME}/archives/thrift-0.9.1.tar.gz
+cd thrift-0.9.1
+./configure
 make clean
-./configure --prefix=/proto-dest
 make
-make install DESTDIR=`pwd`
-cd proto-dest
+make install DESTDIR=`pwd`/tdest
 
-rm -rf ${EXT_LIB_HOME}/include/google
-cp -r include/* ${EXT_LIB_HOME}/include/
-cp -r lib/* ${EXT_LIB_HOME}/lib/
-cp -r bin/* ${EXT_LIB_HOME}/bin/
+rm -rf ${EXT_LIB_HOME}/include/thrift
+cp -r ./tdest/usr/local/include/* ${EXT_LIB_HOME}/include/
+cp -r ./tdest/usr/local/lib/* ${EXT_LIB_HOME}/lib/
+cp -r ./tdest/usr/local/bin/* ${EXT_LIB_HOME}/bin/
 popd
-
-
-#########################################################
-# build myagora
-#########################################################
-#pushd .
-#tar xvfz ${EXT_LIB_HOME}/archives/pushframework.tar.gz
-#cd pushframework
-#make clean
-#make
-#rm -rf ${EXT_LIB_HOME}/include/myagora
-#cp -r include ${EXT_LIB_HOME}/include/myagora
-#cp ../output/libpushframework.so ${EXT_LIB_HOME}/lib/libmyagora.so
-#popd
 
 #########################################################
 # build nldb

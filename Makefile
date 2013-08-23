@@ -1,7 +1,6 @@
 MAKE=make
 MAKE_ARG=
 SUBDIRS_TEMPLATE=                \
-src/common                       \
 src/server/BUILD_FOLDER          \
 src/client/BUILD_FOLDER          \
 src/leaderboard/BUILD_FOLDER     \

@@ -21,7 +21,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="a" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.debug.1751497209" name="Debug" parent="cdt.managedbuild.config.gnu.cross.exe.debug">
+				<configuration artifactExtension="a" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.debug.1751497209" name="Debug" parent="cdt.managedbuild.config.gnu.cross.exe.debug" preannouncebuildStep="Generate thrift files, copy them into this project." prebuildStep="echo &quot;Generate thrift files, copy them into this project…&quot;; cd ../../common; make; cp gen-cpp/* ../client">
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.debug.1751497209." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.debug.134797935" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1904865467" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
@@ -38,7 +38,7 @@
 									<listOptionValue builtIn="false" value="../../../include"/>
 									<listOptionValue builtIn="false" value="../../../deps/include"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.pic.1867356875" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.other.pic.1867356875" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1640890262" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.1800394097" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
@@ -78,7 +78,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactExtension="a" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.release.82738416" name="Release" parent="cdt.managedbuild.config.gnu.cross.exe.release">
+				<configuration artifactExtension="a" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.staticLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.staticLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.exe.release.82738416" name="Release" parent="cdt.managedbuild.config.gnu.cross.exe.release" preannouncebuildStep="Generate thrift files, copy them into this project." prebuildStep="echo &quot;Generate thrift files, copy them into this project…&quot;; cd ../../common; make; cp gen-cpp/* ../client">
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.release.82738416." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.release.379899485" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.release">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.438835308" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
@@ -95,7 +95,7 @@
 									<listOptionValue builtIn="false" value="../../../include"/>
 									<listOptionValue builtIn="false" value="../../../deps/include"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.pic.791463732" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
+								<option id="gnu.cpp.compiler.option.other.pic.791463732" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.195859154" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.741797096" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker"/>
