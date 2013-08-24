@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lxUnit++.Debug -lclient
+LIBS := -lnanolat_client -lxUnit++.Debug
 

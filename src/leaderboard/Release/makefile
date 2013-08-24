@@ -37,19 +37,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: ../../../lib/libclient.a
+all: ../../../lib/libleaderboard.a
 
 # Tool invocations
-../../../lib/libclient.a: $(OBJS) $(USER_OBJS)
+../../../lib/libleaderboard.a: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross GCC Archiver'
-	ar -r  "../../../lib/libclient.a" $(OBJS) $(USER_OBJS) $(LIBS)
+	ar -r  "../../../lib/libleaderboard.a" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(C++_DEPS)$(OBJS)$(C_DEPS)$(CC_DEPS)$(ARCHIVES)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS) ../../../lib/libclient.a
+	-$(RM) $(C++_DEPS)$(OBJS)$(C_DEPS)$(CC_DEPS)$(ARCHIVES)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS) ../../../lib/libleaderboard.a
 	-@echo ' '
 
 .PHONY: all clean dependents

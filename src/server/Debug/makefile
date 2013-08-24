@@ -37,7 +37,10 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: ../../../lib/libserver.a
+all: pre-build main-build
+
+# Main-build Target
+main-build: ../../../lib/libserver.a
 
 # Tool invocations
 ../../../lib/libserver.a: $(OBJS) $(USER_OBJS)
@@ -52,7 +55,12 @@ clean:
 	-$(RM) $(C++_DEPS)$(OBJS)$(C_DEPS)$(CC_DEPS)$(ARCHIVES)$(CPP_DEPS)$(CXX_DEPS)$(C_UPPER_DEPS) ../../../lib/libserver.a
 	-@echo ' '
 
+pre-build:
+	-@echo 'Generate thrift files, copy them into this project.'
+	-echo "Generate thrift files, copy them into this project…"; cd ../../common; make; cp gen-cpp/* ../server
+	-@echo ' '
+
 .PHONY: all clean dependents
-.SECONDARY:
+.SECONDARY: main-build pre-build
 
 -include ../makefile.targets

@@ -13,12 +13,37 @@ mkdir include lib bin build
 cd build
 
 #########################################################
+# build event
+#########################################################
+pushd .
+tar xvfz ${EXT_LIB_HOME}/archives/libevent-2.0.21-stable.tar.gz
+cd libevent-2.0.21-stable
+
+./configure
+make clean
+make
+make install DESTDIR=`pwd`/tdest
+
+cp -r ./tdest/usr/local/include/* ${EXT_LIB_HOME}/include/
+cp -r ./tdest/usr/local/lib/* ${EXT_LIB_HOME}/lib/
+cp -r ./tdest/usr/local/bin/* ${EXT_LIB_HOME}/bin/
+
+popd
+
+#########################################################
 # build thrift
 #########################################################
 pushd .
 tar xvfz ${EXT_LIB_HOME}/archives/thrift-0.9.1.tar.gz
 cd thrift-0.9.1
-./configure
+
+mkdir -p ${EXT_LIB_HOME}/share
+cat << EOF > ${EXT_LIB_HOME}/share/config.site
+CPPFLAGS=-I${EXT_LIB_HOME}/include
+LDFLAGS=-L${EXT_LIB_HOME}/lib
+EOF
+
+./configure --prefix=${EXT_LIB_HOME} --without-ruby
 make clean
 make
 make install DESTDIR=`pwd`/tdest

@@ -57,8 +57,8 @@
 									<listOptionValue builtIn="false" value="../../../lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1252168501" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="server"/>
 									<listOptionValue builtIn="false" value="xUnit++.Debug"/>
-									<listOptionValue builtIn="false" value="client"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1060056386" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -130,8 +130,8 @@
 									<listOptionValue builtIn="false" value="../../../lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.1534073951" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="server"/>
 									<listOptionValue builtIn="false" value="xUnit++"/>
-									<listOptionValue builtIn="false" value="client"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.672659271" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

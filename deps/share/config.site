@@ -1,0 +1,2 @@
+CPPFLAGS=-I/Users/ilvsusie/sotopless/deps/include
+LDFLAGS=-L/Users/ilvsusie/sotopless/deps/lib

@@ -2,7 +2,7 @@
 #define TEST_COMMON_H_
 
 #include <vector>
-#include <topless.h>
+#include <nanolat/topless.h>
 
 using namespace topl;
 

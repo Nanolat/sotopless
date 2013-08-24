@@ -4,28 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../test_common.cpp \
-../test_leaderboard.cpp \
-../test_scenarios.cpp \
-../test_score.cpp \
-../test_user.cpp \
-../test_util.cpp 
+../test_common.cpp 
 
 OBJS += \
-./test_common.o \
-./test_leaderboard.o \
-./test_scenarios.o \
-./test_score.o \
-./test_user.o \
-./test_util.o 
+./test_common.o 
 
 CPP_DEPS += \
-./test_common.d \
-./test_leaderboard.d \
-./test_scenarios.d \
-./test_score.d \
-./test_user.d \
-./test_util.d 
+./test_common.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

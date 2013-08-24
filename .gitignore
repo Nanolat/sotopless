@@ -5,9 +5,11 @@
 
 .metadata
 
-bin/main
-bin/unit_client
-bin/unit_server
+bin/*
+!bin/xunit.sh
+
+lib/*
+!lib/README.md
 
 RemoteSystemsTempFiles/
 
