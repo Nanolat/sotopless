@@ -35,4 +35,5 @@ src/common/gen-cpp
 src/*/DatabaseService.*
 src/*/DatabaseService_constants.*
 src/*/DatabaseService_types.*
+!src/*/DatabaseService.thrift
 
