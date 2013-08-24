@@ -18,7 +18,7 @@ deps/include
 deps/lib
 deps/bin
 deps/archives/boost_1_54_0.tar.gz
-deps/boost_install
+deps/log
 
 
 */*/Debug/*

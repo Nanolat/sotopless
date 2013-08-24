@@ -6,27 +6,18 @@
 CPP_SRCS += \
 ../AsyncClient.cpp \
 ../Connection.cpp \
-../DatabaseService.cpp \
-../DatabaseService_constants.cpp \
-../DatabaseService_types.cpp \
 ../SyncClient.cpp \
 ../Util.cpp 
 
 OBJS += \
 ./AsyncClient.o \
 ./Connection.o \
-./DatabaseService.o \
-./DatabaseService_constants.o \
-./DatabaseService_types.o \
 ./SyncClient.o \
 ./Util.o 
 
 CPP_DEPS += \
 ./AsyncClient.d \
 ./Connection.d \
-./DatabaseService.d \
-./DatabaseService_constants.d \
-./DatabaseService_types.d \
 ./SyncClient.d \
 ./Util.d 
 
