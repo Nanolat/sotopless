@@ -3,6 +3,7 @@
 	<name>cpp_sync</name>
 	<comment></comment>
 	<projects>
+		<project>nanolat_client</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

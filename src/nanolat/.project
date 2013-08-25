@@ -3,6 +3,7 @@
 	<name>nanolat</name>
 	<comment></comment>
 	<projects>
+		<project>server</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

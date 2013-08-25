@@ -1,6 +1,8 @@
 #ifndef _ASYNC_CLIENT_IMPl_H_
 #define _ASYNC_CLIENT_IMPl_H_ (1)
 
+#include <boost/scoped_ptr.hpp>
+
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TSimpleServer.h>
 #include <thrift/transport/TServerSocket.h>
@@ -16,6 +18,7 @@ using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
 using boost::shared_ptr;
+using boost::scoped_ptr;
 
 namespace nanolat {
 	namespace client {
@@ -30,7 +33,6 @@ namespace nanolat {
 			client.reset(new nanolat::thrift::DatabaseServiceClient(protocol));
 
 			transport->open();
-			reply_status = NULL;
 		}
 	public:
 		// Factory method for the Connection class.
@@ -45,23 +47,35 @@ namespace nanolat {
 			transport->close();
 		}
 		std::string get_error_message() {
-			std::string error_message = "";
-			if ( reply_status ) {
-				error_message = format_with_args(reply_status->error_message_format, reply_status->error_message_args);
-			}
+			std::string error_message = format_with_args(reply_status.error_message_format, reply_status.error_message_args);
 			return error_message;
 		}
 		void clear_error() {
-			reply_status = NULL;
 		}
+		const thrift::Session & get_session() {
+			return *(this->session);
+		}
+		void set_session(const std::string & session_key) {
+			session.reset( new thrift::Session() );
+			session->session_key = session_key;
+		}
+
+		thrift::DatabaseServiceClient & get_client() {
+			return *client;
+		}
+
+		// The reply status for the latest request sent to the server.
+		thrift::ReplyStatus reply_status;
+
 	private:
 		shared_ptr<TSocket> socket;
 		shared_ptr<TTransport> transport;
 		shared_ptr<TProtocol> protocol;
-		shared_ptr<nanolat::thrift::DatabaseServiceClient> client;
+
+		scoped_ptr<thrift::DatabaseServiceClient> client;
 
 		// Data to keep for each connection
-		nanolat::thrift::ReplyStatus * reply_status;
+		scoped_ptr<thrift::Session> session;
 	};
 
 	} // client

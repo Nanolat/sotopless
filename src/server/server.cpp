@@ -30,96 +30,115 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
   void connect(ConnectReply& _return) {
     // Your implementation goes here
     printf("connect\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void disconnect(DefaultReply& _return, const Session& session) {
     // Your implementation goes here
     printf("disconnect\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void database_create(DefaultReply& _return, const Session& session, const std::string& db_name) {
     // Your implementation goes here
     printf("database_create\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void database_drop(DefaultReply& _return, const Session& session, const std::string& db_name) {
     // Your implementation goes here
     printf("database_drop\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void database_use(DefaultReply& _return, const Session& session, const std::string& db_name) {
     // Your implementation goes here
     printf("database_use\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_create(DefaultReply& _return, const Session& session, const std::string& table_name) {
     // Your implementation goes here
     printf("table_create\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_drop(DefaultReply& _return, const Session& session, const std::string& table_name) {
     // Your implementation goes here
     printf("table_drop\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_stat(TableStatReply& _return, const Session& session, const std::string& table_name) {
     // Your implementation goes here
     printf("table_stat\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_put(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key, const std::string& value) {
     // Your implementation goes here
     printf("table_put\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_get_by_key(TableGetReply& _return, const Session& session, const std::string& table_name, const std::string& key) {
     // Your implementation goes here
     printf("table_get_by_key\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_get_by_order(TableGetReply& _return, const Session& session, const std::string& table_name, const KeyOrder keyOrder) {
     // Your implementation goes here
     printf("table_get_by_order\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void table_del(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key) {
     // Your implementation goes here
     printf("table_del\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void transaction_begin(DefaultReply& _return, const Session& session) {
     // Your implementation goes here
     printf("transaction_begin\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void transaction_abort(DefaultReply& _return, const Session& session) {
     // Your implementation goes here
     printf("transaction_abort\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void transaction_commit(DefaultReply& _return, const Session& session) {
     // Your implementation goes here
     printf("transaction_commit\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void cursor_open_by_order(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const KeyOrder keyOrder) {
     // Your implementation goes here
     printf("cursor_open_by_order\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void cursor_open_by_key(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const std::string& key) {
     // Your implementation goes here
     printf("cursor_open_by_key\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void cursor_fetch(CursorFetchReply& _return, const Session& session, const CursorHandle cursor_handle, const CursorDirection::type dir) {
     // Your implementation goes here
     printf("cursor_fetch\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
   void cursor_close(DefaultReply& _return, const Session& session, const CursorHandle cursor_handle) {
     // Your implementation goes here
     printf("cursor_close\n");
+    _return.status.error_code = ErrorCode::NL_SUCCESS;
   }
 
 };
@@ -135,7 +154,7 @@ class DatabaseServiceHandler : virtual public DatabaseServiceIf {
 	    shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
 	    threadManager->threadFactory(threadFactory);
 	    threadManager->start();
-	    TNonblockingServer server(processor, protocolFactory, 8888, threadManager);
+	    TNonblockingServer server(processor, protocolFactory, port, threadManager);
 	    server.serve();
 
 	    return 0;

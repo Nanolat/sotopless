@@ -52,15 +52,17 @@ struct CursorFetchReply {
 }
 
 struct Session {
-    1: string sessionKey
+    1: string session_key
 }
 
 struct ConnectReply {
-	1: string sessionKey
+    1: ReplyStatus status
+	2: string session_key
 }
 service DatabaseService {
 
     ConnectReply           connect(),
+    
     DefaultReply           disconnect           (1: Session session),
 
     DefaultReply           database_create      (1: Session session, 2: string db_name),

@@ -10,15 +10,27 @@ namespace client {
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Session interfaces
 
-int nl_connect(const std::string & address, const int port, connection_t ** conn)
+int nl_connect(const std::string & address, const int port, connection_t ** o_conn)
 {
-	NL_ASSERT(conn);
+	NL_ASSERT(o_conn);
 
-	*conn = connection_t::new_connection(address, port);
+	connection_t * conn = connection_t::new_connection(address, port);
+	NL_ASSERT( conn );
 
-	NL_ASSERT( *conn );
+	thrift::ConnectReply reply;
 
-	return NL_SUCCESS;
+	conn->get_client().connect(reply);
+
+	conn->reply_status = reply.status;
+
+	if (reply.status.error_code == thrift::ErrorCode::NL_SUCCESS)
+	{
+		conn->set_session(reply.session_key);
+	}
+
+	*o_conn = conn;
+
+	return (error_code_t)conn->reply_status.error_code;
 }
 
 int nl_disconnect(connection_t * conn)
@@ -49,7 +61,13 @@ int nl_database_create
 	NL_ASSERT(conn);
 	conn->clear_error();
 
-	return NL_FAILURE;
+	thrift::DefaultReply reply;
+
+	conn->get_client().database_create(reply, conn->get_session(), db_name );
+
+	conn->reply_status = reply.status;
+
+	return (error_code_t)conn->reply_status.error_code;
 }
 
 int nl_database_drop

@@ -4,6 +4,7 @@
 #include <nanolat/client/AsyncClient.h>
 #include <nanolat/client/common.h>
 #include <stdio.h>
+#include <unistd.h>
 
 using namespace ::nanolat::client;
 
@@ -26,6 +27,9 @@ void on_disconnect(client_status_t * status)
 	{
 		show_error_and_exit(status);
 	}
+	printf("Disconnected.\n");
+
+	g_conn = NULL;
 }
 
 void on_create_database(client_status_t * status, const std::string & database_name)
@@ -46,6 +50,8 @@ void on_connect(client_status_t * status, connection_t * connection)
 	{
 		show_error_and_exit(status);
 	}
+
+	printf("Connected.\n");
 
 	g_conn = connection;
 
@@ -68,6 +74,9 @@ int main(int argc, const char **argv)
 
 	nl_async_connect(address, port, on_connect);
 
+	while(g_conn) {
+		sleep(0);
+	}
 	return 0;
 }
 

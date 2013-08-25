@@ -51,10 +51,13 @@ int main(int argc, const char **argv) {
 	const char * address = argv[1];
 	int port = atoi(argv[2]);
 
+	printf("Running : connect.\n");
 	do_connect(address, port);
 
+	printf("Running : create database.\n");
 	do_create_db("test_db");
 
+	printf("Running : disconnect.\n");
 	do_disconnect();
 
 	return 0;
