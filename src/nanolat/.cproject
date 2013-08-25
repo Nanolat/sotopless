@@ -110,6 +110,7 @@
 									<listOptionValue builtIn="false" value="server"/>
 									<listOptionValue builtIn="false" value="thrift"/>
 									<listOptionValue builtIn="false" value="thriftnb"/>
+									<listOptionValue builtIn="false" value="event"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1749286300" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

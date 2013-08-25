@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lnanolat_client
+LIBS := -lnanolat_client -lthrift
 

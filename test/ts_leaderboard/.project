@@ -3,6 +3,7 @@
 	<name>ts_leaderboard</name>
 	<comment></comment>
 	<projects>
+		<project>leaderboard</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

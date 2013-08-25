@@ -41,9 +41,11 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.2106879266" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.libs.1755632005" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="nanolat_client"/>
+									<listOptionValue builtIn="false" value="thrift"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.798817054" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="../../../lib"/>
+									<listOptionValue builtIn="false" value="../../../deps/lib"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.179094382" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -99,9 +101,11 @@
 							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.153707526" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
 								<option id="gnu.cpp.link.option.paths.1445311233" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="../../../lib"/>
+									<listOptionValue builtIn="false" value="../../../deps/lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.379713481" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="nanolat_client"/>
+									<listOptionValue builtIn="false" value="thrift"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.35599108" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>

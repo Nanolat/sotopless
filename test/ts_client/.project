@@ -3,6 +3,7 @@
 	<name>ts_client</name>
 	<comment></comment>
 	<projects>
+		<project>nanolat_client</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

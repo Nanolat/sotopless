@@ -43,7 +43,7 @@ all: ../../../bin/cpp_async
 ../../../bin/cpp_async: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
-	g++ -L../../../lib -o "../../../bin/cpp_async" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L../../../lib -L../../../deps/lib -o "../../../bin/cpp_async" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

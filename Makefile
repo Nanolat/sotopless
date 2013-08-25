@@ -5,8 +5,8 @@ src/server/BUILD_FOLDER          \
 src/nanolat_client/BUILD_FOLDER  \
 src/leaderboard/BUILD_FOLDER     \
 src/nanolat/BUILD_FOLDER         \
-samples/cpp-async/BUILD_FOLDER   \
-samples/cpp-sync/BUILD_FOLDER    \
+samples/cpp_async/BUILD_FOLDER   \
+samples/cpp_sync/BUILD_FOLDER    \
 test/ts_client/BUILD_FOLDER      \
 test/ts_server/BUILD_FOLDER      \
 test/ts_leaderboard/BUILD_FOLDER 

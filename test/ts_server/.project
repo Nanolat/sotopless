@@ -3,6 +3,7 @@
 	<name>ts_server</name>
 	<comment></comment>
 	<projects>
+		<project>server</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
