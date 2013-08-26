@@ -182,8 +182,8 @@ After the user is created, you can use the name of the user to post scores, to g
 </span><span class='line'>var one_day_ms = 24 * 60 * 60 * 1000;
 </span><span class='line'>
 </span><span class='line'>var a_day_ago   = util_now() - one_day_ms;
-</span><span class='line'>var a_week_ago  = util::now() - 7 * one_day_ms;
-</span><span class='line'>var a_month_ago = util::now() - 30 * one_day_ms;
+</span><span class='line'>var a_week_ago  = util_now() - 7 * one_day_ms;
+</span><span class='line'>var a_month_ago = util_now() - 30 * one_day_ms;
 </span><span class='line'>
 </span><span class='line'>leaderboard_purge("monthly", a_day_ago  );
 </span><span class='line'>leaderboard_purge("weekly",  a_week_ago );
@@ -221,7 +221,7 @@ After the user is created, you can use the name of the user to post scores, to g
 <span class='line-number'>7</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var score = 30290;
 </span><span class='line'>var situation = "Black King Sword, White Devil Shield";
-</span><span class='line'>var now = util::now();    
+</span><span class='line'>var now = util_now();    
 </span><span class='line'>
 </span><span class='line'>score_post("monthly", "billg@gmail.com", score, situation, now );
 </span><span class='line'>score_post("weekly",  "billg@gmail.com", score, situation, now );
