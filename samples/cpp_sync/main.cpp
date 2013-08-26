@@ -569,8 +569,8 @@ int main(int argc, const char **argv) {
 
 	do_use_db("test_db");
 
-	do_create_table("user_by_score");
-	do_create_table("score_by_user");
+	do_create_table("users_by_score");
+	do_create_table("scores_by_user");
 
 	// post scores, commit transaction
 	do_begin_transaction();
@@ -593,9 +593,9 @@ int main(int argc, const char **argv) {
 	// search, list scores and users.
 	do_begin_transaction();
 	{
-		do_count_keys("user_by_score");
+		do_count_keys("users_by_score");
 
-		do_count_keys("score_by_user");
+		do_count_keys("scores_by_user");
 
 		do_list_order_by_score(NL_CURSOR_FORWARD, true);
 		do_list_order_by_score(NL_CURSOR_FORWARD, false);
@@ -629,15 +629,15 @@ int main(int argc, const char **argv) {
 	// count scores and users.
 	do_begin_transaction();
 	{
-		do_count_keys("user_by_score");
+		do_count_keys("users_by_score");
 
-		do_count_keys("score_by_user");
+		do_count_keys("scores_by_user");
 	}
 	do_commit_transaction();
 
-	do_drop_table("user_by_score");
+	do_drop_table("users_by_score");
 
-	do_drop_table("score_by_user");
+	do_drop_table("scores_by_user");
 
 	do_drop_db("test_db");
 
