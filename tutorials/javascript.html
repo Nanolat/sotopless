@@ -69,9 +69,9 @@
   
 <ul class="main-navigation">
   <li><a href="/">Home</a></li>
+  <li><a href="/tutorials/javascript.html">JavaScript Tutorial</a></li>
   <li><a href="/tutorials/cpp.html">C++ Tutorial</a></li>
   <li><a href="/tutorials/cpp-api.html">C++ API</a></li>
-  <li><a href="/tutorials/javascript.html">JavaScript Tutorial</a></li>
   <li><a href="/tutorials/rest.html">REST Tutorial</a></li>
   <li><a href="/join-alpha-test">Join Alpha Test</a></li>
 </ul>
@@ -110,7 +110,7 @@ After the user is created, you can use the name of the user to post scores, to g
 
 <h2>Create a User</h2>
 
-<p>Creating a user is simple. Specify an identity of the user such as e-mail, device-id, or GUID. The user_create creates a user.</p>
+<p>Creating a user is simple. Specify the identiy of the user such as e-mail, device-id, or GUID. The user_create function creates a user.</p>
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -141,11 +141,7 @@ After the user is created, you can use the name of the user to post scores, to g
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
-</span><span class='line'>
-</span><span class='line'>leaderboard_create("monthly");
+</pre></td><td class='code'><pre><code class=''><span class='line'>leaderboard_create("monthly");
 </span><span class='line'>leaderboard_create("weekly");
 </span><span class='line'>leaderboard_create("daily");</span></code></pre></td></tr></table></div></figure>
 
@@ -182,11 +178,7 @@ After the user is created, you can use the name of the user to post scores, to g
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 <span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
-</span><span class='line'>
-</span><span class='line'>// 24 hours converted to milliseconds.
+</pre></td><td class='code'><pre><code class=''><span class='line'>// 24 hours converted to milliseconds.
 </span><span class='line'>var one_day_ms = 24 * 60 * 60 * 1000;
 </span><span class='line'>
 </span><span class='line'>var a_day_ago   = util_now() - one_day_ms;
@@ -212,7 +204,7 @@ After the user is created, you can use the name of the user to post scores, to g
 
 <h1>Posting and Getting Scores</h1>
 
-<p>Whenever a user achieves a new high score, you post the user&rsquo;s score with the name of the user and the name of the leaderboard. While you post the user&rsquo;s score, you can provide a string containing the situation of the user such as game items the user used to clear the stage.</p>
+<p>Whenever a user achieves a new high score, you post the user&rsquo;s score with the identity of the user and the name of the leaderboard. While you post the user&rsquo;s score, you can provide a string containing the situation of the user such as game items the user used to clear the stage.</p>
 
 <p>You can get the ranking and score on the leaderboard where you posted the user&rsquo;s score. Also you can get a range of ranking on a leaderboard. For example, you can get the list of users and scores of the top 10 scoreboard by quering the rankings from 1st to 10th.</p>
 
