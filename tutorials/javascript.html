@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JavaScript Tutorial - SoTopless</title>
+  <meta name="author" content="">
+
+  
+  <meta name="description" content="JavaScript Tutorial Aug 12th, 2013 Introduction This tutorial provides examples of using SoTopless JavaScript APIs. User Management To post scores &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.sotopless.com/tutorials/javascript.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="SoTopless" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43406968-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">SoTopless</a></h1>
+  
+    <h2>A RESTful Leaderboard Server that Supports 100M Users per Server.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.sotopless.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/tutorials/cpp.html">C++ Tutorial</a></li>
+  <li><a href="/tutorials/cpp-api.html">C++ API</a></li>
+  <li><a href="/tutorials/javascript.html">JavaScript Tutorial</a></li>
+  <li><a href="/tutorials/rest.html">REST Tutorial</a></li>
+  <li><a href="/join-alpha-test">Join Alpha Test</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">JavaScript Tutorial</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-12T18:19:00-07:00" pubdate data-updated="true">Aug 12<span>th</span>, 2013</time></p>
+  </header>
+  
+  <h1>Introduction</h1>
+
+<p>This tutorial provides examples of using SoTopless JavaScript APIs.</p>
+
+<h1>User Management</h1>
+
+<p>To post scores of a user, or get scores and ranks of a user, you need to create the user on SoTopless server. You need to create the user only once, like you sign-up on a web site only once.
+After the user is created, you can use the name of the user to post scores, to get scores and ranks of the user on a leaderboard.</p>
+
+<h2>Create a User</h2>
+
+<p>Creating a user is simple. Specify an identity of the user such as e-mail, device-id, or GUID. The user_create creates a user.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>// Create a user with an e-mail. 
+</span><span class='line'>user_create("foo.bar@gmail.com");
+</span><span class='line'>
+</span><span class='line'>// Create a user with a device-id or GUID.
+</span><span class='line'>user_create("2b6f0cc904d137be2e1730235f5664094b831186"); 
+</span><span class='line'>user_create("759bfd0a-2c91-4e45-a35c-779740ac5e77");</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Leaderboard Management</h1>
+
+<p>You can create multiple leaderboards, post scores of users based on different criteria. For example, you may want to create leaderboards based on users&#8217; countries such as USA, Canada, or Germany. Creating weekly, monthly, and daily leaderboards also requires you to create multiple leaderboards.</p>
+
+<p>Leaderboard management APIs help you to create, get, drop, and purge leaderboards. After creating a leaderboard, you can get the handle of the created leaderboard. The handle will be used to purge, drop a leaderboard. Also it will be used to get scores and ranks of a user, or to get the top N users on a leaderboard.</p>
+
+<p>In case you have monthly, weekly, or daily leaderboards, you can purge those leaderboards regularly to keep the rankings up-to-date.</p>
+
+<h2>Create a Leaderboard</h2>
+
+<p>Following code snippet creates monthly, weekly, and daily leaderboards. After you create the leaderboard, scores posted to the leaderboard is safely stored so that you do not lose any data even on catastropic situations such as power-off or OS crash.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>leaderboard_create("monthly");
+</span><span class='line'>leaderboard_create("weekly");
+</span><span class='line'>leaderboard_create("daily");</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get the List of Leaderboards</h2>
+
+<p>You can get the list of all created leaderboards by using leaderboard_list function.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var boards = leaderboard_list();
+</span><span class='line'>
+</span><span class='line'>// The boards is Array of strings containing the list of leaderboard names.
+</span><span class='line'>for ( var board in boards ) {
+</span><span class='line'>    console.log(board);
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Purge Scores on a Leaderboard</h2>
+
+<p>You can purge leaderboards such as monthly, weekly, and daily ones to keep the rankings up-to-date.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>using namespace topl;
+</span><span class='line'>
+</span><span class='line'>// 24 hours converted to milliseconds.
+</span><span class='line'>var one_day_ms = 24 * 60 * 60 * 1000;
+</span><span class='line'>
+</span><span class='line'>var a_day_ago   = util_now() - one_day_ms;
+</span><span class='line'>var a_week_ago  = util::now() - 7 * one_day_ms;
+</span><span class='line'>var a_month_ago = util::now() - 30 * one_day_ms;
+</span><span class='line'>
+</span><span class='line'>leaderboard_purge("monthly", a_day_ago  );
+</span><span class='line'>leaderboard_purge("weekly",  a_week_ago );
+</span><span class='line'>leaderboard_purge("daily",   a_month_ago);</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Drop a Leaderboard</h2>
+
+<p>Dropping a leaderboard is like dropping a table on a database. You will lose all data on the leaderboard to be dropped.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>leaderboard_drop("monthly"); 
+</span><span class='line'>leaderboard_drop("weekly" ); 
+</span><span class='line'>leaderboard_drop("daily" );</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Posting and Getting Scores</h1>
+
+<p>Whenever a user achieves a new high score, you post the user&rsquo;s score with the name of the user and the name of the leaderboard. While you post the user&rsquo;s score, you can provide a string containing the situation of the user such as game items the user used to clear the stage.</p>
+
+<p>You can get the ranking and score on the leaderboard where you posted the user&rsquo;s score. Also you can get a range of ranking on a leaderboard. For example, you can get the list of users and scores of the top 10 scoreboard by quering the rankings from 1st to 10th.</p>
+
+<p>Also, you may want to remove a score posted by a user. Removing the score posted by a user is supported.</p>
+
+<h2>Post a User Score</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var score = 30290;
+</span><span class='line'>var situation = "Black King Sword, White Devil Shield";
+</span><span class='line'>var now = util::now();    
+</span><span class='line'>
+</span><span class='line'>score_post("monthly", "billg@gmail.com", score, situation, now );
+</span><span class='line'>score_post("weekly",  "billg@gmail.com", score, situation, now );
+</span><span class='line'>score_post("daily",   "billg@gmail.com", score, situation, now );</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get User Score and Ranking</h2>
+
+<p>Following code snippet gets a score and a ranking on the weekly leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var rank_desc = score::get("weekly", "billg@gmail.com");
+</span><span class='line'>
+</span><span class='line'>console.log( "rank      : " + rank_desc.rank );
+</span><span class='line'>console.log( "user name : " + rank_desc.user_name );
+</span><span class='line'>console.log( "score     : " + rank_desc.score );
+</span><span class='line'>console.log( "situation : " + rank_desc.situation );
+</span><span class='line'>console.log( "time      : " + rank_desc.when );</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Remove a User Score</h2>
+
+<p>Following code snippet removes the score posted by a user on monthly, weekly, daily leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>score_remove("monthly", "billg@gmail.com" );
+</span><span class='line'>score_remove("weekly",  "billg@gmail.com" );
+</span><span class='line'>score_remove("daily",   "billg@gmail.com" );</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Get Top N Users</h2>
+
+<p>The following code snippet prints the top 10 scores and users on the weekly leaderboard.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>var top10_scores = 
+</span><span class='line'>score::list("weekly", 
+</span><span class='line'>            1,    // The starting ranking. Start from 1st ranking. 
+</span><span class='line'>            10 ); // The number of users from the 1st ranking.  
+</span><span class='line'>
+</span><span class='line'>for( var score in top10_scores )
+</span><span class='line'>{
+</span><span class='line'>    console.log( "Score : " + rank.score + ", Name : " + rank.user_name );
+</span><span class='line'>}</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-12T18:19:00-07:00" pubdate data-updated="true">Aug 12<span>th</span>, 2013</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.sotopless.com/tutorials/javascript.html" data-via="" data-counturl="http://www.sotopless.com/tutorials/javascript.html" >Tweet</a>
+  
+  
+  
+</div>
+
+      
+    </footer>
+  
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 -  -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'sotopless';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.sotopless.com/tutorials/javascript.html';
+        var disqus_url = 'http://www.sotopless.com/tutorials/javascript.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
