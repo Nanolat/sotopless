@@ -238,7 +238,7 @@ After the user is created, you can use the name of the user to post scores, to g
 <span class='line-number'>5</span>
 <span class='line-number'>6</span>
 <span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>var rank_desc = score::get("weekly", "billg@gmail.com");
+</pre></td><td class='code'><pre><code class=''><span class='line'>var rank_desc = score_get("weekly", "billg@gmail.com");
 </span><span class='line'>
 </span><span class='line'>console.log( "rank      : " + rank_desc.rank );
 </span><span class='line'>console.log( "user name : " + rank_desc.user_name );
@@ -273,7 +273,7 @@ After the user is created, you can use the name of the user to post scores, to g
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>var top10_scores = 
-</span><span class='line'>score::list("weekly", 
+</span><span class='line'>score_list("weekly", 
 </span><span class='line'>            1,    // The starting ranking. Start from 1st ranking. 
 </span><span class='line'>            10 ); // The number of users from the 1st ranking.  
 </span><span class='line'>
