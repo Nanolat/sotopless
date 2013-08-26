@@ -19,6 +19,7 @@ namespace nanolat {
 	    // Copied from DatabaseService_types.h
 		enum error_code_t {
 			NL_SUCCESS = 0,
+			NL_INVALID_ARGUMENT,
 			NL_FAILURE
 		};
 

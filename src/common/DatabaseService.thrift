@@ -19,8 +19,8 @@ struct ReplyStatus
 }
 
 enum CursorDirection {
-   CDForward=1,
-   CDBackward,
+   CD_FORWARD=1,
+   CD_BACKWARD,
 }
 
 struct DefaultReply {
@@ -47,7 +47,7 @@ struct CursorOpenReply {
 struct CursorFetchReply {
     1: ReplyStatus status,
 	2: string key, 
-	3: KeyOrder keyOrder, 
+	3: KeyOrder key_order, 
 	4: string value
 }
 
@@ -82,8 +82,8 @@ service DatabaseService {
     DefaultReply           transaction_abort    (1: Session session),
     DefaultReply           transaction_commit   (1: Session session),
     
-    CursorOpenReply        cursor_open_by_order (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: KeyOrder keyOrder),
     CursorOpenReply        cursor_open_by_key   (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: string key),
+    CursorOpenReply        cursor_open_by_order (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: KeyOrder keyOrder),
     CursorFetchReply       cursor_fetch         (1: Session session, 2: CursorHandle cursor_handle, 3: CursorDirection dir),
     DefaultReply           cursor_close         (1: Session session, 2: CursorHandle cursor_handle)
 }

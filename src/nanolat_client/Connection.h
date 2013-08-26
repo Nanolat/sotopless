@@ -39,9 +39,7 @@ namespace nanolat {
 		static connection_t * new_connection(const std::string & address, const int port) {
 			return new connection_t(address, port);
 		}
-		void use_database(const std::string db_name)
-		{
-		}
+
 		void disconnect()
 		{
 			transport->close();
@@ -51,6 +49,12 @@ namespace nanolat {
 			return error_message;
 		}
 		void clear_error() {
+			if ( reply_status.error_code != thrift::ErrorCode::NL_SUCCESS)
+			{
+				reply_status.error_code = thrift::ErrorCode::NL_SUCCESS;
+				reply_status.error_message_format = "";
+				reply_status.error_message_args.clear();
+			}
 		}
 		const thrift::Session & get_session() {
 			return *(this->session);

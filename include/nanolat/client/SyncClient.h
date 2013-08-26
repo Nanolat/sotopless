@@ -12,9 +12,9 @@ namespace nanolat {
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		// Session interfaces
 		int nl_connect
-			( const std::string & address, const int port, connection_t ** conn );
+			( const std::string & address, const int port, connection_t ** o_conn );
 		int nl_disconnect
-			( connection_t * conn );
+			(connection_t ** o_conn);
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		// Error interfaces
@@ -37,13 +37,13 @@ namespace nanolat {
 		int nl_table_drop
 			( connection_t * conn, const std::string & table_name );
 		int nl_table_get_key_count
-			( connection_t * conn, const std::string & table_name );
+			( connection_t * conn, const std::string & table_name, key_order_t * o_key_count );
 		int nl_table_put
 			( connection_t * conn, const std::string & table_name, const std::string& key, const std::string& value );
 		int nl_table_get_by_key
-			( connection_t * conn, const std::string & table_name, const std::string& key, key_order_t * key_order, std::string * value );
+			( connection_t * conn, const std::string & table_name, const std::string& key, key_order_t * o_key_order, std::string * o_value );
 		int nl_table_get_by_order
-			( connection_t * conn, const std::string & table_name, const key_order_t & key_order, std::string * key, std::string * value );
+			( connection_t * conn, const std::string & table_name, const key_order_t & key_order, std::string * o_key, std::string * o_value );
 		int nl_table_del
 			( connection_t * conn, const std::string & table_name, const std::string& key );
 
@@ -58,19 +58,17 @@ namespace nanolat {
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		// Cursor interfaces
-		int nl_cursor_open
-			( connection_t * conn, const std::string & table_name, const cursor_direction_t & dir, const std::string& key, cursor_t ** cursor );
+		int nl_cursor_open_by_key
+			( connection_t * conn, const std::string & table_name, const std::string& key, const cursor_direction_t & direction, cursor_t ** o_cursor );
 
-		int nl_cursor_open
-			( connection_t * conn, const std::string & table_name, const cursor_direction_t & dir, const key_order_t& key_order, cursor_t ** cursor );
+		int nl_cursor_open_by_order
+			( connection_t * conn, const std::string & table_name, const key_order_t& key_order, const cursor_direction_t & direction, cursor_t ** o_cursor );
 
-		int nl_cursor_fetch_next
-			( connection_t * conn, cursor_t * cursor, std::string * key, key_order_t * key_order, std::string * value );
-		int nl_cursor_fetch_prev
-			( connection_t * conn, cursor_t * cursor, std::string * key, key_order_t * key_order, std::string * value );
+		int nl_cursor_fetch
+			( connection_t * conn, cursor_t * cursor, const cursor_direction_t & direction, std::string * o_key, key_order_t * o_key_order, std::string * o_value );
 
 		int nl_cursor_close
-			( connection_t * conn, cursor_t * cursor );
+			( connection_t * conn, cursor_t ** o_cursor );
 
 	} // client
 } // nanolat

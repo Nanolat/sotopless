@@ -3,7 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <time.h>
+#include <assert.h>
 #include <nanolat/client/SyncClient.h>
+
+using namespace nanolat::client;
 
 void print_usage()
 {
@@ -20,6 +24,8 @@ static void show_error_and_exit(int error_code) {
 }
 
 static void do_connect(const char * address, int port) {
+	printf("Running : connect.\n");
+
 	int rc = nl_connect(address, port, &g_conn);
 
 	if (rc != NL_SUCCESS)
@@ -27,19 +33,524 @@ static void do_connect(const char * address, int port) {
 }
 
 static void do_disconnect() {
-	int rc = nl_disconnect(g_conn);
+	printf("Running : disconnect.\n");
+
+	int rc = nl_disconnect(&g_conn);
 
 	if (rc != NL_SUCCESS)
 		show_error_and_exit(rc);
 }
 
 static void do_create_db(const char * db_name) {
+	printf("Running : creating database, %s.\n", db_name);
+
 	int rc = nl_database_create(g_conn, db_name);
 
 	if (rc != NL_SUCCESS)
 		show_error_and_exit(rc);
 }
 
+static void do_drop_db(const char * db_name) {
+	printf("Running : dropping database, %s.\n", db_name);
+
+	int rc = nl_database_drop(g_conn, db_name);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+static void do_use_db(const char * db_name) {
+	printf("Running : using database, %s.\n", db_name);
+
+	int rc = nl_database_use(g_conn, db_name);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+static void do_create_table(const char * table_name) {
+	printf("Running : creating table, %s.\n", table_name);
+
+	int rc = nl_table_create(g_conn, table_name);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+static void do_drop_table(const char * table_name) {
+	printf("Running : dropping table, %s.\n", table_name);
+
+	int rc = nl_table_drop(g_conn, table_name);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+typedef struct user_score_t {
+	const char * user;
+	uint64_t score;
+} user_score_t ;
+
+user_score_t user_scores[] = {
+	{"Kangmo Johnson", 4363},
+	{"Junsang Luwis", 4262},
+	{"Kyungjeon Cherl", 5685},
+	{"Donghyun Buffet", 2355},
+	{"Hyunsaeng Gates", 4574},
+	{"Jay Mellon", 6585},
+	{"Chao Horowitz", 3817},
+	{"Julie Chung", 1631},
+	{"Bill Jobs", 3815},
+	{"Hyunjin Chen", 9371},
+	{"Xu Harvey", 8361},
+	{"Aram Herbison", 1638},
+	{"Bona Geng", 6486},
+	{"Changseok Mureen", 8462},
+	{"Chilbo Graves", 7461},
+	{"Eunmi Fraser", 9186},
+	{"Gunwoo Peterson", 4718},
+	{"Heejeong Macaria", 5826},
+	{"Heekyu Fedorov", 4716},
+	{"Hoojung Shen", 1868},
+	{"Sangbum Mullen", 4381},
+	{"Hyunsik Gwertzman", 6891},
+	{"Jaehong Pelamourgues", 3716},
+	{"Hyunsook Dunlap", 4817},
+	{"Jaehyun Fries", 6817},
+	{"Hyunjae Decrem", 6816},
+	{"Jaesuk Truong", 8171},
+	{"Jaeyong Goswami", 6817},
+	{"Jaemin Lee", 1193},
+	{"Jinseok Akbay", 3717},
+	{"Jongbok Liu", 7651},
+	{"Junhyuk Cikalo", 5633},
+	{"Jeongwoon Mehra", 6516},
+	{"Minkyoung Olaso", 6738},
+	{"Mike Gunne", 9675},
+	{"Minsu Geldreich", 2724},
+	{"Namyun Carlson", 3463},
+	{"Woojong Toh", 1366},
+	{"Yongbeom Lau", 7426},
+	{"Younsoo Anekal", 7261},
+	{"Soohyun Anderson", 3163},
+	{"Woosang Armanini", 4722},
+	{"Suwon Bhardwaj", 6569},
+	{"Kyungok Dehghan", 3623},
+	{"Misook Cohen", 5854},
+	{"Hyungjoo Sutjahjo", 7686},
+	{"Yoonju Bhatti", 3253},
+	{"Junhyung Peng", 6796},
+	{"Yongjin DeLaet", 2142},
+	{"Sunjung Villegas", 5447},
+	{"Hyundo Chou", 8696},
+	{"Hyunsook Park", 2466},
+	{"Eunsook Rajagopalan", 3234},
+	{"Jiseon Tsao", 6326},
+	{"Jiyoung Knight", 6585},
+	{"Hyewha Kamdar", 3252},
+	{"Sunbong Fraser", 1215},
+	{"Youngil Zhang", 6586},
+	{"Sunghak Hisatsune", 4363},
+	{"Kwanho Carlsson", 2352},
+	{"Ho Hisatsune", 5448},
+	{"Sukwang Kim", 9689},
+	{"Kwangyeol Westerman", 6599},
+	{"Hocheol Hartley", 2325},
+	{"Byunghyun Schmatz", 3252},
+	{"Yonghoon Huang", 4634},
+	{"Jason Szopa", 6585},
+	{"Yongseok Emond", 2352},
+	{"Yiyoung Moon", 7556},
+	{"Hyeongchae Bogdan", 4622},
+	{"Jaeeun Pierce", 1415},
+	{"Kihyuk Lucina", 6585},
+	{"Jaesoo Ilin", 7807},
+	{"Nari Nakhorn", 3525},
+	{"Seonhee Sustrik", 4574},
+	{"Seokhwan Ford", 2352},
+	{"Adel Forsberg", 1521},
+	{"David Yan", 4363},
+	{"Hunam Yoder", 5685},
+	{"Beomsoo Gouveia", 4848},
+	{"Tony Nguyen", 4366},
+	{"Bokyeon Becerra", 2352},
+	{"Youngin Alviri", 9780},
+	{"Hyunjik Hamakake", 5685},
+	{"Smith Needham", 2326},
+	{"Seongtae Wee", 3266},
+	{"Jared Namgoong", 3326},
+	{"Binna Verjovkin", 5373},
+	{"Clark Churin", 3253},
+	{"Nathan Tausney", 3525},
+	{"Junga Ryu", 1521},
+	{"Jimmy Yildiz", 1255},
+	{"Xu Parra", 1515},
+	{"Junfeng Birdsall", 3511},
+	{"Bongrae Vandenberg", 4326},
+	{"Bo Buchanan", 4363},
+	{NULL, 0},
+};
+
+#define switch_endian32(v) \
+        (unsigned int)( ((((unsigned int)v)&0x000000FFU) << 24) | \
+                        ((((unsigned int)v)&0x0000FF00U) << 8)  | \
+                        ((((unsigned int)v)&0x00FF0000U) >> 8)  | \
+                        ((((unsigned int)v)&0xFF000000U) >> 24) )
+
+#define switch_endian64(v) \
+        (unsigned long long)( ((((unsigned long long)v)&0x00000000000000FFULL) << 56) | \
+                              ((((unsigned long long)v)&0x000000000000FF00ULL) << 40) | \
+                              ((((unsigned long long)v)&0x0000000000FF0000ULL) << 24) | \
+                              ((((unsigned long long)v)&0x00000000FF000000ULL) << 8)  | \
+                              ((((unsigned long long)v)&0x000000FF00000000ULL) >> 8)  | \
+                              ((((unsigned long long)v)&0x0000FF0000000000ULL) >> 24) | \
+                              ((((unsigned long long)v)&0x00FF000000000000ULL) >> 40) | \
+                              ((((unsigned long long)v)&0xFF00000000000000ULL) >> 56) )
+
+inline bool is_little_endian() {
+	int n = 1;
+	// little endian if true
+	return ( *(char *)&n == 1) ? true : false;
+}
+
+// convert to big endian if the host is using little endian
+inline uint32_t to_big_endian(uint32_t value) {
+	if (is_little_endian())
+		return switch_endian32(value);
+	return value;
+}
+
+// convert to big endian if the host is using little endian
+inline uint64_t to_big_endian(uint64_t value) {
+	if (is_little_endian())
+		return switch_endian64(value);
+	return value;
+}
+
+// convert to little endian if the host is little endian.
+inline uint32_t to_host_endian(uint32_t big_endian_value) {
+	if (is_little_endian())
+		return switch_endian32(big_endian_value);
+	return big_endian_value;
+}
+
+// convert to little endian if the host is little endian.
+inline uint64_t to_host_endian(uint64_t big_endian_value) {
+	if (is_little_endian())
+		return switch_endian64(big_endian_value);
+	return big_endian_value;
+}
+
+inline unsigned long hash(const char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    while ( (c = (int)*str++) )
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+    return hash;
+}
+
+// pack the given score and hash of user name into a string to use as a key of users_by_score table.
+std::string pack_score(uint64_t score, const std::string & user) {
+	// The packed score will be used as a key in "users_by_score" table.
+	// The memcmp will be used for comparing the key, so we need to convert the score to big endian.
+	//
+	// 1. Step 1 : Convert the score from little endian to big endian.
+	uint64_t big_endian_score = to_big_endian(score);
+	std::string score_key((const char*)&big_endian_score, sizeof(big_endian_score));
+
+	// 2. Step 2 : Append hash of user name (big endian), to make the score key unique for a leaderboard.
+	unsigned long hash_of_user = hash(user.c_str());
+	unsigned long big_endian_hash = to_big_endian(hash_of_user);
+	return score_key.append((const char*)&big_endian_hash, sizeof(big_endian_hash));
+}
+
+// unpack the score from the packed score with pack_score function.
+int64_t unpack_score(const std::string & packed_score) {
+	const char * p = packed_score.c_str();
+	uint64_t big_endian_score = *((uint64_t*)p);
+	return to_host_endian(big_endian_score);
+}
+
+// unpack the hash value of the user name from the packed score with pack_score function.
+int64_t unpack_hash(const std::string & packed_score) {
+	const char * p = packed_score.c_str();
+	unsigned long big_endian_score = *((unsigned long*)(p+sizeof(unsigned long)));
+	return to_host_endian(big_endian_score);
+}
+
+void do_post_score(const char * user_name, uint64_t score) {
+	printf("Running : posting a user's score.\n");
+
+	std::string user(user_name);
+	// The value to put into scores_by_user table. The score is not a key, so it does not need to be in big endian.
+	std::string score_value = std::string( (const char*) & score, sizeof(score));
+	std::string score_key = pack_score(score, user_name);
+
+	int rc = nl_table_put(g_conn, "scores_by_user", user, score_value);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	rc = nl_table_put(g_conn, "users_by_score", score_key, user);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+void do_delete_score(const char * user_name, int score) {
+	printf("Running : deleting a user(%s)'s score : %d.\n", user_name, score);
+
+	std::string user(user_name);
+	std::string score_key = pack_score(score, user_name);
+
+	int rc = nl_table_del(g_conn, "scores_by_user", user);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	rc = nl_table_del(g_conn, "users_by_score", score_key);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+void do_count_keys(const char * table_name) {
+	key_order_t key_count;
+	int rc = nl_table_get_key_count(g_conn, table_name, &key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	printf("The number of keys in %s table is %d.", table_name, (int)key_count);
+}
+
+void print_packed_score_and_user(const std::string & packed_score_key, const key_order_t & key_order, const std::string & user_value)
+{
+	// The score value has native representation of uint64_t. Get score from it.
+	int score = unpack_score( packed_score_key );
+	printf("Name:%s, Key Order:%d Score :%d\n",user_value.c_str(), (int)key_order , score);
+}
+
+void print_user_and_score(const std::string & user_key, const key_order_t & key_order, const std::string & score_value)
+{
+	// The score value has native representation of uint64_t. Get score from it.
+	int score = (int)(*(uint64_t*)score_value.c_str());
+	printf("Name:%s, Key Order:%d Score :%d\n",user_key.c_str(), (int)key_order , score);
+}
+
+void do_list_order_by_score(const cursor_direction_t & direction, bool use_key_to_open_cursor ) {
+	int rc = NL_SUCCESS;
+
+	printf("listing users by score (%s). Use a key to open cursor : %s\n",
+			direction == NL_CURSOR_FORWARD ? "ascending" : "descending",
+			use_key_to_open_cursor == true ? "true" : "false" );
+
+	// Get the first key. The key order starts from 1.
+	key_order_t initial_key_order;
+	switch(direction){
+	case NL_CURSOR_FORWARD:
+		// search from the first key
+		initial_key_order = 1;
+		break;
+	case NL_CURSOR_BACKWARD:
+		// search from the last key
+		{
+			int rc = nl_table_get_key_count(g_conn, "users_by_score", &initial_key_order);
+			if (rc != NL_SUCCESS)
+				show_error_and_exit(rc);
+		}
+		break;
+	default:
+		assert(0);
+	}
+
+	cursor_t * cursor;
+	if (use_key_to_open_cursor)
+	{
+		std::string key, value;
+		rc = nl_table_get_by_order(g_conn, "users_by_score", initial_key_order, &key, &value);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+
+		rc = nl_cursor_open_by_key(g_conn, "users_by_score", key, direction, &cursor);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+	}
+	else
+	{
+		rc = nl_cursor_open_by_order(g_conn, "users_by_score", initial_key_order, direction, &cursor);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+	}
+
+	std::string packed_score_key;
+    key_order_t key_order;
+	std::string user_value;
+
+	do {
+		rc = nl_cursor_fetch(g_conn, cursor, direction, & packed_score_key, & key_order, & user_value);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+
+		print_packed_score_and_user(packed_score_key, key_order, user_value);
+	} while ( packed_score_key.length() > 0 );
+
+	rc = nl_cursor_close(g_conn, &cursor);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+void do_list_order_by_user(const cursor_direction_t & direction, bool use_key_to_open_cursor ) {
+	int rc = NL_SUCCESS;
+
+	printf("listing scores by user (%s). Use a key to open cursor : %s\n",
+			direction == NL_CURSOR_FORWARD ? "ascending" : "descending",
+			use_key_to_open_cursor == true ? "true" : "false" );
+
+	// Get the first key. The key order starts from 1.
+	key_order_t initial_key_order;
+	switch(direction){
+	case NL_CURSOR_FORWARD:
+		// search from the first key
+		initial_key_order = 1;
+		break;
+	case NL_CURSOR_BACKWARD:
+		// search from the last key
+		{
+			int rc = nl_table_get_key_count(g_conn, "scores_by_user", &initial_key_order);
+			if (rc != NL_SUCCESS)
+				show_error_and_exit(rc);
+		}
+		break;
+	default:
+		assert(0);
+	}
+
+	cursor_t * cursor;
+	if (use_key_to_open_cursor)
+	{
+		std::string key, value;
+		rc = nl_table_get_by_order(g_conn, "scores_by_user", initial_key_order, &key, &value);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+
+		rc = nl_cursor_open_by_key(g_conn, "scores_by_user", key, direction, &cursor);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+	}
+	else
+	{
+		rc = nl_cursor_open_by_order(g_conn, "scores_by_user", initial_key_order, direction, &cursor);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+	}
+
+	std::string user_key;
+    key_order_t key_order;
+	std::string score_value;
+
+	do {
+		rc = nl_cursor_fetch(g_conn, cursor, direction, & user_key, & key_order, & score_value);
+		if (rc != NL_SUCCESS)
+			show_error_and_exit(rc);
+
+		print_packed_score_and_user(user_key, key_order, score_value);
+	} while ( user_key.length() > 0 );
+
+	rc = nl_cursor_close(g_conn, &cursor);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+
+void do_get_each_user_key() {
+	key_order_t key_count;
+	int rc = nl_table_get_key_count(g_conn, "scores_by_user", &key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	for (int i=0; user_scores[i].user != NULL; i++) {
+		std::string user_key(user_scores[i].user);
+		key_order_t key_order;
+		std::string score_value;
+		rc = nl_table_get_by_key(g_conn, "scores_by_user", user_key, &key_order, &score_value);
+
+		print_user_and_score( user_key, key_order, score_value);
+	}
+}
+
+void do_get_each_score_key() {
+	key_order_t key_count;
+	int rc = nl_table_get_key_count(g_conn, "users_by_score", &key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	for (int i=0; user_scores[i].user != NULL; i++) {
+		std::string packed_score_key = pack_score(user_scores[i].score, std::string(user_scores[i].user) );
+		key_order_t key_order;
+		std::string user_value;
+		rc = nl_table_get_by_key(g_conn, "users_by_score", packed_score_key, &key_order, &user_value);
+
+		print_packed_score_and_user(packed_score_key, key_order, user_value);
+	}
+
+}
+
+// search scores_by_user table by order
+void do_get_each_user_key_by_order() {
+	key_order_t key_count;
+	int rc = nl_table_get_key_count(g_conn, "scores_by_user", &key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	for (key_order_t i = 1; i <= key_count; i++) {
+		std::string user_key, score_value;
+		rc = nl_table_get_by_order(g_conn, "scores_by_user", i, &user_key, &score_value);
+
+		print_user_and_score( user_key, i, score_value);
+	}
+}
+
+// search users_by_score table by order
+void do_get_each_score_key_by_order() {
+	key_order_t key_count;
+	int rc = nl_table_get_key_count(g_conn, "users_by_score", &key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	for (key_order_t i = 1; i <= key_count; i++) {
+		std::string packed_score_key, user_value;
+		rc = nl_table_get_by_order(g_conn, "users_by_score", i, &packed_score_key, &user_value);
+
+		print_packed_score_and_user(packed_score_key, i, user_value);
+	}
+}
+
+void do_begin_transaction() {
+	printf("Running : beginning a transaction.\n");
+
+	int rc = nl_transaction_begin(g_conn);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+void do_abort_transaction() {
+	printf("Running : aborting a transaction.\n");
+
+	int rc = nl_transaction_abort(g_conn);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
+
+
+void do_commit_transaction() {
+	printf("Running : committing a transaction.\n");
+
+	int rc = nl_transaction_commit(g_conn);
+
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+}
 
 int main(int argc, const char **argv) {
 
@@ -52,13 +563,84 @@ int main(int argc, const char **argv) {
 	const char * address = argv[1];
 	int port = atoi(argv[2]);
 
-	printf("Running : connect.\n");
 	do_connect(address, port);
 
-	printf("Running : create database.\n");
 	do_create_db("test_db");
 
-	printf("Running : disconnect.\n");
+	do_use_db("test_db");
+
+	do_create_table("user_by_score");
+	do_create_table("score_by_user");
+
+	// post scores, commit transaction
+	do_begin_transaction();
+	{
+		for (int i=0; user_scores[i].user != NULL; i++) {
+			do_post_score(user_scores[i].user, user_scores[i].score);
+		}
+	}
+	do_commit_transaction();
+
+	// delete scores, abort transaction
+	do_begin_transaction();
+	{
+		for (int i=0; user_scores[i].user != NULL; i++) {
+			do_delete_score(user_scores[i].user, user_scores[i].score);
+		}
+	}
+	do_abort_transaction();
+
+	// search, list scores and users.
+	do_begin_transaction();
+	{
+		do_count_keys("user_by_score");
+
+		do_count_keys("score_by_user");
+
+		do_list_order_by_score(NL_CURSOR_FORWARD, true);
+		do_list_order_by_score(NL_CURSOR_FORWARD, false);
+		do_list_order_by_score(NL_CURSOR_BACKWARD, true);
+		do_list_order_by_score(NL_CURSOR_BACKWARD, false);
+
+		do_list_order_by_user(NL_CURSOR_FORWARD, true);
+		do_list_order_by_user(NL_CURSOR_FORWARD, false);
+		do_list_order_by_user(NL_CURSOR_BACKWARD, true);
+		do_list_order_by_user(NL_CURSOR_BACKWARD, false);
+
+		do_get_each_user_key();
+
+		do_get_each_score_key();
+
+		do_get_each_user_key_by_order();
+
+		do_get_each_score_key_by_order();
+	}
+	do_commit_transaction();
+
+	// delete scores, commit transaction.
+	do_begin_transaction();
+	{
+		for (int i=0; user_scores[i].user != NULL; i++) {
+			do_delete_score(user_scores[i].user, user_scores[i].score);
+		}
+	}
+	do_commit_transaction();
+
+	// count scores and users.
+	do_begin_transaction();
+	{
+		do_count_keys("user_by_score");
+
+		do_count_keys("score_by_user");
+	}
+	do_commit_transaction();
+
+	do_drop_table("user_by_score");
+
+	do_drop_table("score_by_user");
+
+	do_drop_db("test_db");
+
 	do_disconnect();
 
 	return 0;
