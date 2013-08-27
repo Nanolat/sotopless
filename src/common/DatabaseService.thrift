@@ -8,6 +8,9 @@ typedef i64 CursorHandle
 
 enum ErrorCode {
 	NL_SUCCESS=0,
+	NL_INVALID_ARGUMENT,
+	NL_INVALID_SESSION_HANDLE,
+	NL_INVALID_CURSOR_HANDLE,
 	NL_FAILURE
 }
 
@@ -52,12 +55,12 @@ struct CursorFetchReply {
 }
 
 struct Session {
-    1: string session_key
+    1: i32 session_handle
 }
 
 struct ConnectReply {
     1: ReplyStatus status
-	2: string session_key
+	2: i32 session_handle
 }
 service DatabaseService {
 

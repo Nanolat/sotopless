@@ -20,6 +20,8 @@ namespace nanolat {
 		enum error_code_t {
 			NL_SUCCESS = 0,
 			NL_INVALID_ARGUMENT,
+			NL_INVALID_SESSION_HANDLE,
+			NL_INVALID_CURSOR_HANDLE,
 			NL_FAILURE
 		};
 
