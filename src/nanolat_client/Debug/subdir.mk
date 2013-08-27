@@ -4,6 +4,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../AsyncClient.cpp \
 ../Connection.cpp \
 ../DatabaseService.cpp \
 ../DatabaseService_constants.cpp \
@@ -12,6 +13,7 @@ CPP_SRCS += \
 ../Util.cpp 
 
 OBJS += \
+./AsyncClient.o \
 ./Connection.o \
 ./DatabaseService.o \
 ./DatabaseService_constants.o \
@@ -20,6 +22,7 @@ OBJS += \
 ./Util.o 
 
 CPP_DEPS += \
+./AsyncClient.d \
 ./Connection.d \
 ./DatabaseService.d \
 ./DatabaseService_constants.d \

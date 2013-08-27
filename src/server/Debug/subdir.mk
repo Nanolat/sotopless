@@ -7,19 +7,22 @@ CPP_SRCS += \
 ../DatabaseService.cpp \
 ../DatabaseService_constants.cpp \
 ../DatabaseService_types.cpp \
-../server.cpp 
+../Server.cpp \
+../ServerImpl.cpp 
 
 OBJS += \
 ./DatabaseService.o \
 ./DatabaseService_constants.o \
 ./DatabaseService_types.o \
-./server.o 
+./Server.o \
+./ServerImpl.o 
 
 CPP_DEPS += \
 ./DatabaseService.d \
 ./DatabaseService_constants.d \
 ./DatabaseService_types.d \
-./server.d 
+./Server.d \
+./ServerImpl.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
