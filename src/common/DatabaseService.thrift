@@ -95,7 +95,7 @@ service DatabaseService {
     
     CursorOpenReply        cursor_open_by_key   (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: string key),
     CursorOpenReply        cursor_open_by_order (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: KeyOrder keyOrder),
-    CursorFetchReply       cursor_fetch         (1: Session session, 2: CursorHandle cursor_handle, 3: CursorDirection dir),
+    CursorFetchReply       cursor_fetch         (1: Session session, 2: CursorHandle cursor_handle),
     DefaultReply           cursor_close         (1: Session session, 2: CursorHandle cursor_handle)
 }
 

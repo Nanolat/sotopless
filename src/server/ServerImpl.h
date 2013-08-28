@@ -5,7 +5,7 @@
 #include <nldb/nldb.h>
 #include <nanolat/client/common.h>
 #include "DatabaseService.h"
-
+#include <private/assert.h>
 
 using namespace ::nanolat::client;
 using namespace  ::nanolat::thrift;
@@ -18,12 +18,17 @@ namespace server {
 class cursor_context_t {
 public:
 	cursor_context_t(int cursor_handle) {
+		this->table = NULL;
 		this->cursor_handle = cursor_handle;
+		cursor = NULL;
 	}
 
 	int get_cursor_handle() {
 		return cursor_handle;
 	}
+	nldb_table_t table;
+	nldb_cursor_t cursor;
+	nldb_cursor_direction_t cursor_direction;
 private:
 	int cursor_handle;
 };
@@ -273,6 +278,7 @@ public :
 		this->session_handle = session_handle;
 		transaction = NULL;
 		using_database = NULL;
+		is_auto_commit = false;
 	}
 	int get_session_handle() {
 		return session_handle;
@@ -310,8 +316,99 @@ public :
 	nldb_tx_t get_transaction() {
 		return transaction;
 	}
-	void set_transaction(const nldb_tx_t & transction) {
-		this->transaction = transction;
+
+	ErrorCode::type begin_transaction() {
+		nldb_tx_t new_transaction;
+
+		if (this->transaction != NULL) {
+			return ErrorCode::NL_TRANSACTION_ALREADY_BEGAN;
+
+		}
+
+		nldb_db_t db = using_database->get_db() ;
+
+		// TODO : Optimization : keep the nldb_tx_t object into session_context_t initialized, so that it does not have to be initialized for each request.
+		nldb_rc_t rc = nldb_tx_init( db, &new_transaction);
+		NL_RELEASE_ASSERT(rc == NLDB_OK); // what happens if there is not enough memory?
+
+		rc = nldb_tx_begin( new_transaction );
+		NL_RELEASE_ASSERT(rc == NLDB_OK);
+
+		this->transaction = new_transaction;
+
+		return ErrorCode::NL_SUCCESS;
+	}
+
+	typedef enum end_transaction_type_t {
+		END_TX_COMMIT=1,
+		END_TX_ABORT
+	}end_transaction_type_t;
+
+	ErrorCode::type end_transaction(const end_transaction_type_t & end_type) {
+		if ( this->transaction == NULL)  {
+			return ErrorCode::NL_NO_TRANSACTION_BEGAN;
+		}
+
+		switch (end_type) {
+			case END_TX_COMMIT:
+			{
+				nldb_rc_t rc = nldb_tx_commit( this->transaction );
+				NL_RELEASE_ASSERT(rc == NLDB_OK); // what happens if there is not enough memory?
+				break;
+			}
+			case END_TX_ABORT:
+			{
+				nldb_rc_t rc = nldb_tx_abort( this->transaction );
+				NL_RELEASE_ASSERT(rc == NLDB_OK); // what happens if there is not enough memory?
+				break;
+			}
+			default:
+				NL_RELEASE_ASSERT(0);
+				break;
+		}
+
+		nldb_rc_t rc = nldb_tx_destroy( transaction );
+		NL_RELEASE_ASSERT(rc == NLDB_OK);
+
+		this->transaction = NULL;
+
+		return ErrorCode::NL_SUCCESS;
+	}
+
+	ErrorCode::type abort_transaction() {
+		return end_transaction( END_TX_ABORT );
+	}
+
+	ErrorCode::type commit_transaction() {
+		return end_transaction( END_TX_COMMIT );
+	}
+
+	/*! If the client did not request nl_transaction_begin, the server processes each put/get/del/cursor request with an automatically created transaction.
+	 *
+	 * begin the auto transaction only if there is no transaction.
+	 */
+	void auto_begin_transaction() {
+		if (this->transaction == NULL) {
+			is_auto_commit = true;
+			ErrorCode::type rc = begin_transaction();
+			NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS);
+		}
+	}
+
+	void auto_commit_transaction() {
+		if (is_auto_commit) {
+			ErrorCode::type rc = commit_transaction();
+			NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS);
+			is_auto_commit = false;
+		}
+	}
+
+	void auto_abort_transaction() {
+		if (is_auto_commit) {
+			ErrorCode::type rc = abort_transaction();
+			NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS);
+			is_auto_commit = false;
+		}
 	}
 
 private:
@@ -329,6 +426,10 @@ private:
 	// If nl_transaction_begin request was received, the transaction object is set to a valid one.
 	// If this object is NULL, each request runs in auto-commit mode.
 	nldb_tx_t transaction;
+
+    // Indicates if the auto commit mode is on.
+	// If the client does not request nl_transaction_begin, the server runs in auto commit mode.
+	bool is_auto_commit;
 
 	// The mapping from cursor handle to cursor_context_t object.
 	std::map<int, cursor_context_t *> cursor_map;

@@ -60,64 +60,8 @@ namespace server {
 	        }                                                       \
         }
 
-// A macro that begins a transaction for auto commit for table put/get/del operations where nl_transaction_begin is not called at all.
-// TODO : Optimization : keep the nldb_tx_t object into session_context_t so that we don't have to initialize it, destory it for each request.
-#define AUTO_BEGIN_TRANSACTION(session_ctx) \
-		nldb_tx_t auto_commit_tx; \
-		if (session_ctx->get_transaction() == NULL) { \
-			nldb_db_t db = session_ctx->get_using_database()->get_db() ; \
-	        nldb_rc_t rc = nldb_tx_init( db, &auto_commit_tx);      \
-	        if (rc != NLDB_OK) {                                    \
-             	_return.status.error_code = (ErrorCode::type) rc;   \
-	            return;                                             \
-            }                                                       \
-	        rc = nldb_tx_begin( auto_commit_tx );                   \
-	        if (rc != NLDB_OK) {                                    \
-	         	_return.status.error_code = (ErrorCode::type) rc;   \
-	            return;                                             \
-            }                                                       \
-        }
-
-#define AUTO_COMMIT_TRANSACTION(session_ctx) \
-		if (session_ctx->get_transaction() == NULL) { \
-	        nldb_rc_t rc = nldb_tx_commit( auto_commit_tx );        \
-	        if (rc != NLDB_OK) {                                    \
-             	_return.status.error_code = (ErrorCode::type) rc;   \
-	            return;                                             \
-            }                                                       \
-	        rc = nldb_tx_destroy( auto_commit_tx );                 \
-	        if (rc != NLDB_OK) {                                    \
-             	_return.status.error_code = (ErrorCode::type) rc;   \
-	            return;                                             \
-            }                                                       \
-        }
-
-// TODO : What happens if the function returns after beginning a transaction, but before committing or aborting transaction?
-// This function is called when an error happens. Abort the transaction in the session context as well.
-#define ABORT_TRANSACTION(session_ctx) \
-		if (session_ctx->get_transaction() == NULL) { \
-	        nldb_rc_t rc = nldb_tx_abort( auto_commit_tx );        \
-	        if (rc != NLDB_OK) {                                    \
-             	_return.status.error_code = (ErrorCode::type) rc;   \
-	            return;                                             \
-            }                                                       \
-	        rc = nldb_tx_destroy( auto_commit_tx );                 \
-	        if (rc != NLDB_OK) {                                    \
-             	_return.status.error_code = (ErrorCode::type) rc;   \
-	            return;                                             \
-            }                                                       \
-        } else {                                                    \
-        	nldb_tx_t session_tx = session_ctx->get_transaction();  \
-			nldb_rc_t rc = nldb_tx_abort( session_tx );             \
-			if (rc != NLDB_OK) {                                    \
-				_return.status.error_code = (ErrorCode::type) rc;   \
-				return;                                             \
-			}                                                       \
-        }
-
-
 #define GET_TRANSACTION(tx, session_ctx) \
-        nldb_tx_t tx = session_ctx->get_transaction() ? session_ctx->get_transaction() : auto_commit_tx ;
+        nldb_tx_t tx = session_ctx->get_transaction();
 
 /*! The singleton that keeps all instances.
  */
@@ -219,12 +163,11 @@ private :
 
 	void table_stat(TableStatReply& _return, const Session& session, const std::string& table_name) {
 		TRACE("table_stat\n");
-		bool transaction_began = false;
+
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_TABLE(table, table_name);
 
-		AUTO_BEGIN_TRANSACTION(sess_ctx);
-		transaction_began = true;
+		sess_ctx->auto_begin_transaction();
 
 		GET_TRANSACTION(tx, sess_ctx);
 
@@ -234,15 +177,15 @@ private :
 			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
-		AUTO_COMMIT_TRANSACTION(sess_ctx);
+
+		sess_ctx->auto_commit_transaction();
+
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 		_return.key_count = stat.key_count;
 
 		return;
 on_error:
-        if (transaction_began) {
-        	ABORT_TRANSACTION(sess_ctx);
-        }
+		sess_ctx->auto_abort_transaction();
 	}
 
 	inline nldb_key_t to_nldb_key(const std::string & key) {
@@ -262,12 +205,11 @@ on_error:
 
 	void table_put(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key, const std::string& value) {
 		TRACE("table_put\n");
-		bool transaction_began = false;
+
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_TABLE(table, table_name);
 
-		AUTO_BEGIN_TRANSACTION(sess_ctx);
-		transaction_began = true;
+		sess_ctx->auto_begin_transaction();
 
 		GET_TRANSACTION(tx, sess_ctx);
 
@@ -278,23 +220,21 @@ on_error:
 			goto on_error;
 		}
 
-		AUTO_COMMIT_TRANSACTION(sess_ctx);
+		sess_ctx->auto_commit_transaction();
+
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 		return;
 on_error:
-        if (transaction_began) {
-        	ABORT_TRANSACTION(sess_ctx);
-        }
+		sess_ctx->auto_abort_transaction();
 	}
 
 	void table_get_by_key(TableGetReply& _return, const Session& session, const std::string& table_name, const std::string& key) {
 		TRACE("table_get_by_key\n");
-		bool transaction_began = false;
+
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_TABLE(table, table_name);
 
-		AUTO_BEGIN_TRANSACTION(sess_ctx);
-		transaction_began = true;
+		sess_ctx->auto_begin_transaction();
 
 		GET_TRANSACTION(tx, sess_ctx);
 
@@ -306,7 +246,7 @@ on_error:
 			goto on_error;
 		}
 
-		AUTO_COMMIT_TRANSACTION(sess_ctx);
+		sess_ctx->auto_commit_transaction();
 
 		// TODO : Fatal : Need to free memory in key and value?
 		_return.key = key;
@@ -322,19 +262,16 @@ on_error:
 
 		return;
 on_error:
-        if (transaction_began) {
-        	ABORT_TRANSACTION(sess_ctx);
-        }
+		sess_ctx->auto_abort_transaction();
 	}
 
 	void table_get_by_order(TableGetReply& _return, const Session& session, const std::string& table_name, const KeyOrder key_order) {
 		TRACE("table_get_by_order\n");
-		bool transaction_began = false;
+
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_TABLE(table, table_name);
 
-		AUTO_BEGIN_TRANSACTION(sess_ctx);
-		transaction_began = true;
+		sess_ctx->auto_begin_transaction();
 
 		GET_TRANSACTION(tx, sess_ctx);
 
@@ -346,7 +283,7 @@ on_error:
 			goto on_error;
 		}
 
-		AUTO_COMMIT_TRANSACTION(sess_ctx);
+		sess_ctx->auto_commit_transaction();
 
 		_return.key = to_string_key(nldb_key);
 		_return.key_order = key_order;
@@ -354,32 +291,23 @@ on_error:
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
 		rc = nldb_key_free(table, nldb_key);
-		if (rc != NLDB_OK) {
-			_return.status.error_code = (ErrorCode::type) rc;
-			goto on_error;
-		}
+		NL_RELEASE_ASSERT(rc == NLDB_OK );
 
 		rc = nldb_value_free(table, nldb_value);
-		if (rc != NLDB_OK) {
-			_return.status.error_code = (ErrorCode::type) rc;
-			goto on_error;
-		}
+		NL_RELEASE_ASSERT(rc == NLDB_OK );
 
 		return;
 on_error:
-        if (transaction_began) {
-        	ABORT_TRANSACTION(sess_ctx);
-        }
+		sess_ctx->auto_abort_transaction();
 	}
 
 	void table_del(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key) {
 		TRACE("table_del\n");
-		bool transaction_began = false;
+
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_TABLE(table, table_name);
 
-		AUTO_BEGIN_TRANSACTION(sess_ctx);
-		transaction_began = true;
+		sess_ctx->auto_begin_transaction();
 
 		GET_TRANSACTION(tx, sess_ctx);
 
@@ -389,163 +317,155 @@ on_error:
 			goto on_error;
 		}
 
-		AUTO_COMMIT_TRANSACTION(sess_ctx);
+		sess_ctx->auto_commit_transaction();
+
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 		return;
 on_error:
-        if (transaction_began) {
-        	ABORT_TRANSACTION(sess_ctx);
-        }
+		sess_ctx->auto_abort_transaction();
 	}
-
-
-
-	#define AUTO_COMMIT_TRANSACTION(session_ctx) \
-			if (session_ctx->get_transaction() == NULL) { \
-		        nldb_rc_t rc = nldb_tx_commit( auto_commit_tx );        \
-		        if (rc != NLDB_OK) {                                    \
-	             	_return.status.error_code = (ErrorCode::type) rc;   \
-		            return;                                             \
-	            }                                                       \
-		        rc = nldb_tx_destroy( auto_commit_tx );                 \
-		        if (rc != NLDB_OK) {                                    \
-	             	_return.status.error_code = (ErrorCode::type) rc;   \
-		            return;                                             \
-	            }                                                       \
-	        }
-
-	// TODO : What happens if the function returns after aborting a transaction, but destroying it?
-	// This function is called when an error happens. Abort the transaction in the session context as well.
-	#define ABORT_TRANSACTION(session_ctx) \
-			if (session_ctx->get_transaction() == NULL) { \
-		        nldb_rc_t rc = nldb_tx_abort( auto_commit_tx );        \
-		        if (rc != NLDB_OK) {                                    \
-	             	_return.status.error_code = (ErrorCode::type) rc;   \
-		            return;                                             \
-	            }                                                       \
-		        rc = nldb_tx_destroy( auto_commit_tx );                 \
-		        if (rc != NLDB_OK) {                                    \
-	             	_return.status.error_code = (ErrorCode::type) rc;   \
-		            return;                                             \
-	            }                                                       \
-	        } else {                                                    \
-	        	nldb_tx_t session_tx = session_ctx->get_transaction();  \
-				nldb_rc_t rc = nldb_tx_abort( session_tx );             \
-				if (rc != NLDB_OK) {                                    \
-					_return.status.error_code = (ErrorCode::type) rc;   \
-					return;                                             \
-				}                                                       \
-	        }
-
 
 	void transaction_begin(DefaultReply& _return, const Session& session) {
 		TRACE("transaction_begin\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		nldb_tx_t new_transaction;
-		bool done_tx_init = false;
-
-		if (sess_ctx->get_transaction() == NULL) {
-			nldb_db_t db = sess_ctx->get_using_database()->get_db() ;
-
-	        nldb_rc_t rc = nldb_tx_init( db, &new_transaction);
-	        if (rc != NLDB_OK) {
-             	_return.status.error_code = (ErrorCode::type) rc;
-	            goto on_error;
-            }
-	        done_tx_init = true;
-	        rc = nldb_tx_begin( new_transaction );
-	        if (rc != NLDB_OK) {
-	         	_return.status.error_code = (ErrorCode::type) rc;
-	            goto on_error;
-            }
-
-	        sess_ctx->set_transaction( new_transaction );
-			_return.status.error_code = ErrorCode::NL_SUCCESS;
-        } else {
-        	_return.status.error_code = ErrorCode::NL_TRANSACTION_ALREADY_BEGAN;
-        }
-		return;
-on_error:
-		if (done_tx_init) {
-			nldb_rc_t rc = nldb_tx_destroy( new_transaction);
-			NL_ASSERT( rc == NLDB_OK );
-		}
-		return;
+		_return.status.error_code = sess_ctx->begin_transaction();
 	}
 
 	void transaction_abort(DefaultReply& _return, const Session& session) {
 		TRACE("transaction_abort\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		nldb_tx_t transaction = sess_ctx->get_transaction();
-
-		if ( transaction == NULL)  {
-			_return.status.error_code = ErrorCode::NL_NO_TRANSACTION_BEGAN;
-		} else {
-	        nldb_rc_t rc = nldb_tx_abort( transaction );
-	        if (rc != NLDB_OK) {
-             	_return.status.error_code = (ErrorCode::type) rc;
-             	// TODO : Can we return without destroying transaction?
-	            return;
-            }
-	        rc = nldb_tx_destroy( transaction );
-	        if (rc != NLDB_OK) {
-             	_return.status.error_code = (ErrorCode::type) rc;
-	            return;
-            }
-	        sess_ctx->set_transaction(NULL);
-			_return.status.error_code = ErrorCode::NL_SUCCESS;
-		}
-		return;
+		_return.status.error_code = sess_ctx->abort_transaction();
 	}
 
 	void transaction_commit(DefaultReply& _return, const Session& session) {
 		TRACE("transaction_commit\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		nldb_tx_t transaction = sess_ctx->get_transaction();
-
-		if ( transaction == NULL)  {
-			_return.status.error_code = ErrorCode::NL_NO_TRANSACTION_BEGAN;
-		} else {
-	        nldb_rc_t rc = nldb_tx_commit( transaction );
-	        if (rc != NLDB_OK) {
-             	_return.status.error_code = (ErrorCode::type) rc;
-             	// TODO : Can we return without destroying transaction?
-	            return;
-            }
-	        rc = nldb_tx_destroy( transaction );
-	        if (rc != NLDB_OK) {
-             	_return.status.error_code = (ErrorCode::type) rc;
-	            return;
-            }
-	        sess_ctx->set_transaction(NULL);
-			_return.status.error_code = ErrorCode::NL_SUCCESS;
-		}
-		return;
+		_return.status.error_code = sess_ctx->commit_transaction();
 	}
 
-	void cursor_open_by_order(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const KeyOrder keyOrder) {
+	nldb_cursor_direction_t to_nldb_cursor_direction(const CursorDirection::type dir) {
+		switch(dir) {
+			case CursorDirection::CD_FORWARD :
+			{
+				return NLDB_CURSOR_FORWARD;
+			}
+			case CursorDirection::CD_BACKWARD :
+			{
+				return NLDB_CURSOR_BACKWARD;
+			}
+			default :
+				NL_RELEASE_ASSERT(0);
+		}
+		// Never should come here.
+		return (nldb_cursor_direction_t)-1;
+	}
+
+	typedef enum cursor_open_arg_t {
+		COA_USE_KEY = 1 ,
+		COA_USE_ORDER
+	}cursor_open_arg_t;
+
+	void cursor_open(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const std::string& key, const KeyOrder key_order, const cursor_open_arg_t which_arg) {
 		TRACE("cursor_open_by_order\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
+		GET_TABLE(table, table_name);
 
+		nldb_cursor_direction_t nldb_cursor_dir = to_nldb_cursor_direction(dir);
+
+		cursor_context_t * cursor_ctx = NULL;
+		cursor_ctx = sess_ctx->new_cursor();
+		cursor_ctx->table = table; // required for nldb_value_free and nldb_key_free
+
+		NL_ASSERT(cursor_ctx);
+
+		sess_ctx->auto_begin_transaction();
+
+		GET_TRANSACTION(tx, sess_ctx);
+
+		nldb_rc_t rc = nldb_cursor_open(tx, table, & cursor_ctx->cursor);
+		if (rc != NLDB_OK) {
+			_return.status.error_code = (ErrorCode::type) rc;
+			goto on_error;
+		}
+
+
+		if (which_arg == COA_USE_ORDER ) {
+			nldb_rc_t rc = nldb_cursor_seek( cursor_ctx->cursor, nldb_cursor_dir, key_order);
+			if (rc != NLDB_OK) {
+				_return.status.error_code = (ErrorCode::type) rc;
+				goto on_error;
+			}
+		} else if (which_arg == COA_USE_KEY ) {
+			nldb_key_t nldb_key = to_nldb_key(key);
+			nldb_rc_t rc = nldb_cursor_seek( cursor_ctx->cursor, nldb_cursor_dir, nldb_key);
+			if (rc != NLDB_OK) {
+				_return.status.error_code = (ErrorCode::type) rc;
+				goto on_error;
+			}
+		} else {
+			// Both key_order and key are NULL. This should never happen.
+			NL_RELEASE_ASSERT(0);
+		}
+
+		// Node! do not commit the transaction, the transaction will committed at cursor_close.
+
+		cursor_ctx->cursor_direction = nldb_cursor_dir;
+		_return.cursor_handle = cursor_ctx->get_cursor_handle();
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
+		return;
+on_error:
+
+		sess_ctx->auto_abort_transaction();
+
+		if (cursor_ctx->cursor) {
+			rc = nldb_cursor_close(cursor_ctx->cursor);
+			NL_RELEASE_ASSERT(rc == NLDB_OK);
+		}
+
+		if (cursor_ctx)
+			sess_ctx->delete_cursor(cursor_ctx);
 	}
 
-	void cursor_open_by_key(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const std::string& key) {
-		TRACE("cursor_open_by_key\n");
-		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		_return.status.error_code = ErrorCode::NL_SUCCESS;
+    void cursor_open_by_order(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const KeyOrder keyOrder) {
+		cursor_open(_return, session, table_name, dir, std::string(""), keyOrder, COA_USE_ORDER);
 	}
 
-	void cursor_fetch(CursorFetchReply& _return, const Session& session, const CursorHandle cursor_handle, const CursorDirection::type dir) {
+    void cursor_open_by_key(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const std::string& key) {
+
+		cursor_open(_return, session, table_name, dir, key, NLDB_CURSOR_INVALID_DIRECTION, COA_USE_KEY);
+	}
+
+    void cursor_fetch(CursorFetchReply& _return, const Session& session, const CursorHandle cursor_handle) {
 		TRACE("cursor_fetch\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_CURSOR_CONTEXT(sess_ctx, cur_ctx, cursor_handle);
 
+		nldb_key_t   nldb_key;
+		nldb_value_t nldb_value;
+		nldb_order_t nldb_order;
+
+		nldb_rc_t rc = nldb_cursor_fetch( cur_ctx->cursor, &nldb_key, &nldb_value, &nldb_order);
+		if (rc != NLDB_OK) {
+			_return.status.error_code = (ErrorCode::type) rc;
+			return;
+		}
+
+		_return.key = to_string_key(nldb_key);
+		_return.value = to_string_value(nldb_value);
+		_return.key_order = (KeyOrder)nldb_order;
+
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
+
+		rc = nldb_key_free(cur_ctx->table, nldb_key);
+		NL_RELEASE_ASSERT(rc == NLDB_OK );
+
+		rc = nldb_value_free(cur_ctx->table, nldb_value);
+		NL_RELEASE_ASSERT(rc == NLDB_OK );
+
 	}
 
 	void cursor_close(DefaultReply& _return, const Session& session, const CursorHandle cursor_handle) {
@@ -553,7 +473,16 @@ on_error:
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_CURSOR_CONTEXT(sess_ctx, cur_ctx, cursor_handle);
 
+		nldb_rc_t rc = nldb_cursor_close(cur_ctx->cursor);
+		if (rc != NLDB_OK) {
+			_return.status.error_code = (ErrorCode::type) rc;
+			return;
+		}
+
 		sess_ctx->delete_cursor(cur_ctx);
+
+		// The transaction which was began at cursor_open_xxx should be committed.
+		sess_ctx->auto_commit_transaction();
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 	}
