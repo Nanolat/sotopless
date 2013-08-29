@@ -241,9 +241,9 @@ inline uint64_t to_host_endian(uint64_t big_endian_value) {
 	return big_endian_value;
 }
 
-inline unsigned long hash(const char *str)
+inline uint64_t hash(const char *str)
 {
-    unsigned long hash = 5381;
+	uint64_t hash = 5381;
     int c;
 
     while ( (c = (int)*str++) )
@@ -262,8 +262,8 @@ std::string pack_score(uint64_t score, const std::string & user) {
 	std::string score_key((const char*)&big_endian_score, sizeof(big_endian_score));
 
 	// 2. Step 2 : Append hash of user name (big endian), to make the score key unique for a leaderboard.
-	unsigned long hash_of_user = hash(user.c_str());
-	unsigned long big_endian_hash = to_big_endian(hash_of_user);
+	uint64_t hash_of_user = hash(user.c_str());
+	uint64_t big_endian_hash = to_big_endian(hash_of_user);
 	return score_key.append((const char*)&big_endian_hash, sizeof(big_endian_hash));
 }
 
@@ -277,7 +277,7 @@ int64_t unpack_score(const std::string & packed_score) {
 // unpack the hash value of the user name from the packed score with pack_score function.
 int64_t unpack_hash(const std::string & packed_score) {
 	const char * p = packed_score.c_str();
-	unsigned long big_endian_score = *((unsigned long*)(p+sizeof(unsigned long)));
+	uint64_t big_endian_score = *((uint64_t*)(p+sizeof(uint64_t)));
 	return to_host_endian(big_endian_score);
 }
 

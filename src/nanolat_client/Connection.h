@@ -59,9 +59,9 @@ namespace nanolat {
 		const thrift::Session & get_session() {
 			return *(this->session);
 		}
-		void set_session(const std::string & session_key) {
+		void set_session(const int32_t & session_handle) {
 			session.reset( new thrift::Session() );
-			session->session_key = session_key;
+			session->session_handle = session_handle;
 		}
 
 		thrift::DatabaseServiceClient & get_client() {

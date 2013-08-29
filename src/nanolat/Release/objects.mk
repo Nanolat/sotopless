@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lserver -lthrift -lthriftnb -levent
+LIBS := -lserver -lnldb -lthrift -lthriftnb -levent
 

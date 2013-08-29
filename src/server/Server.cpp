@@ -87,15 +87,29 @@ private :
 		TRACE("connect\n");
 
 		// Create a new session context.
-		session_context_t * sess_ctx = server_instance.session_map.new_session();
+		session_context_t * sess_ctx = NULL;
+		sess_ctx = server_instance.session_map.new_session();
 		NL_ASSERT(sess_ctx);
 
 		// Use the default database.
-		open_database_t * db = server_instance.open_databases.get_database("default");
+		open_database_t * db = server_instance.database_mgr.get_database("default");
+		if (db == NULL) {
+			ErrorCode::type rc = server_instance.database_mgr.open_database("default", &db);
+			if (rc != ErrorCode::NL_SUCCESS) {
+				_return.status.error_code = (ErrorCode::type) rc;
+				goto on_error;
+			}
+		}
 		sess_ctx->set_using_database(db);
 
 		_return.session_handle = sess_ctx->get_session_handle();
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
+		return;
+on_error:
+		if (sess_ctx)
+		{
+			server_instance.session_map.delete_session(sess_ctx);
+		}
 	}
 
 	void disconnect(DefaultReply& _return, const Session& session) {
@@ -112,7 +126,7 @@ private :
 		TRACE("database_create\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		ErrorCode::type rc = meta_database_t::create_database(db_name);
+		ErrorCode::type rc = server_instance.database_mgr.create_database(db_name);
 
 		_return.status.error_code = rc;
 	}
@@ -121,7 +135,7 @@ private :
 		TRACE("database_drop\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		ErrorCode::type rc = meta_database_t::create_database(db_name);
+		ErrorCode::type rc = server_instance.database_mgr.drop_database(db_name);
 
 		_return.status.error_code = rc;
 	}
@@ -130,11 +144,11 @@ private :
 		TRACE("database_use\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		open_database_t * db = server_instance.open_databases.get_database(db_name);
+		open_database_t * db = server_instance.database_mgr.get_database(db_name);
 		if (db) {
 			_return.status.error_code = ErrorCode::NL_SUCCESS;
 		} else { // The DB was not open yet.
-			ErrorCode::type rc = server_instance.open_databases.open_database(db_name, &db);
+			ErrorCode::type rc = server_instance.database_mgr.open_database(db_name, &db);
 			_return.status.error_code = rc;
 		}
 
@@ -147,7 +161,7 @@ private :
 		TRACE("table_create\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		ErrorCode::type rc = meta_tables_t::create_table( sess_ctx->get_using_database()->get_db(), table_name);
+		ErrorCode::type rc = sess_ctx->get_using_database()->create_table(table_name);
 
 		_return.status.error_code = rc;
 	}
@@ -156,7 +170,7 @@ private :
 		TRACE("table_drop\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		ErrorCode::type rc = meta_tables_t::drop_table( sess_ctx->get_using_database()->get_db(), table_name);
+		ErrorCode::type rc =  sess_ctx->get_using_database()->drop_table( table_name);
 
 		_return.status.error_code = rc;
 	}
@@ -201,7 +215,6 @@ on_error:
 	inline std::string to_string_value(const nldb_value_t & value) {
 		return std::string((const char*)value.data, value.length);
 	}
-
 
 	void table_put(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key, const std::string& value) {
 		TRACE("table_put\n");

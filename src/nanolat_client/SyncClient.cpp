@@ -44,7 +44,7 @@ int nl_connect(const std::string & address, const int port, connection_t ** o_co
 
 	if (reply.status.error_code == thrift::ErrorCode::NL_SUCCESS)
 	{
-		conn->set_session(reply.session_key);
+		conn->set_session(reply.session_handle);
 		*o_conn = conn;
 	}
 	else
@@ -462,8 +462,7 @@ int nl_cursor_fetch
 
 	thrift::CursorFetchReply reply;
 
-	conn->get_client().cursor_fetch(reply, conn->get_session(), cursor->get_handle(),
-			                        get_thrift_cursor_direction(direction) );
+	conn->get_client().cursor_fetch(reply, conn->get_session(), cursor->get_handle() );
 
 	copy_reply_status(conn->reply_status, reply.status);
 
