@@ -6,8 +6,10 @@
 #include <nanolat/client/common.h>
 #include "DatabaseService.h"
 #include <private/assert.h>
+#include <private/stacktrace.h>
 #include <functional>
 #include <string.h>
+
 
 using namespace ::nanolat::client;
 using namespace  ::nanolat::thrift;
@@ -40,26 +42,27 @@ public :
 	typedef std::function<server_error_t(nldb_tx_t & tx, nldb_table_t & table)> opeartion_t;
 
 private :
-	static server_error_t exec(nldb_tx_t & tx, nldb_table_t & table, opeartion_t operation) {
-		return operation(tx, table);
+	static server_error_t exec(nldb_tx_t & tx, nldb_table_t & table, opeartion_t & operation) {
+		server_error_t rc = operation(tx, table);
+		NL_RETURN(rc);
 	}
 
 	/*! Begin a transaction, run the given operation, commit the transaction.
 	 */
-	static server_error_t exec(nldb_db_t & db, nldb_table_t & table, opeartion_t operation) {
+	static server_error_t exec(nldb_db_t & db, nldb_table_t & table, opeartion_t & operation) {
 		server_error_t rc = ErrorCode::NL_SUCCESS;
 
 		nldb_tx_t tx = NULL;
 		bool tx_began = false;
 
 		nldb_rc_t nrc = nldb_tx_init(db, &tx);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t)nrc;
 			goto finally;
 		}
 
 		nrc = nldb_tx_begin(tx);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t)nrc;
 			goto finally;
 		}
@@ -83,7 +86,7 @@ private :
 			NL_RELEASE_ASSERT( nrc == NLDB_OK );
 		}
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 public :
@@ -93,7 +96,7 @@ public :
 		nldb_table_t table = NULL;
 
 		nldb_rc_t nrc = nldb_table_open(db, table_id, &table);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t) nrc;
 			goto finally;
 		}
@@ -102,11 +105,37 @@ public :
 		// rc is returned at the end of this function.
 
 	finally:
-		nrc = nldb_table_close(table);
-		NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		if (table) {
+			nrc = nldb_table_close(table);
+			NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		}
 
-		return rc;
+		NL_RETURN(rc);
 	}
+
+	static server_error_t exec_with_db(nldb_db_t & db, nldb_tx_t & tx, const nldb_table_id_t & table_id, opeartion_t operation) {
+		server_error_t rc = ErrorCode::NL_SUCCESS;
+
+		nldb_table_t table = NULL;
+
+		nldb_rc_t nrc = nldb_table_open(db, table_id, &table);
+		if (nrc) {
+			rc = (server_error_t) nrc;
+			goto finally;
+		}
+
+		rc = exec(tx, table, operation);
+		// rc is returned at the end of this function.
+
+	finally:
+		if (table) {
+			nrc = nldb_table_close(table);
+			NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		}
+
+		NL_RETURN(rc);
+	}
+
 
 	static server_error_t exec_with_db_id(const nldb_db_id_t & dbid, nldb_table_id_t table_id, opeartion_t operation) {
 		server_error_t rc = ErrorCode::NL_SUCCESS;
@@ -114,7 +143,7 @@ public :
 		nldb_db_t db = NULL;
 
 		nldb_rc_t nrc = nldb_db_open(dbid, NULL/*Master Options*/, NULL/*Slave Options*/, &db);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t) nrc;
 			goto finally;
 		}
@@ -123,28 +152,34 @@ public :
 		// rc is returned at the end of this function.
 
 	finally:
-		nrc = nldb_db_close(db);
-		NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		if (db) {
+			nrc = nldb_db_close(db);
+			NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		}
 
-		return rc;
+		NL_RETURN(rc);
 	}
 };
 
 class meta_t
 {
-public :
+private :
 	static server_error_t create_meta_tables(nldb_db_t & db,
 			                                 const nldb_table_id_t & name_map_table_id,
 			                                 const nldb_table_id_t & next_id_table_id,
 			                                 const std::string & next_id_key,
-			                                 int64_t next_id_value) {
+			                                 int next_id_value) {
 		server_error_t rc;
 		bool name_map_table_created = false;
 		bool next_id_table_created = false;
 
+		// The next_id_value will be either next ID of DB or table.
+		NL_ASSERT( sizeof(next_id_value) == sizeof(nldb_db_id_t) );
+		NL_ASSERT( sizeof(next_id_value) == sizeof(nldb_table_id_t) );
+
 		// Step 1 : Create the META_TABLE_NAME_MAP table.
 		nldb_rc_t nrc = nldb_table_create(db, name_map_table_id, NLDB_TABLE_PERSISTENT);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t) nrc;
 			goto on_error;
 		}
@@ -152,7 +187,7 @@ public :
 
 		// Step 2 : Create the META_NEXT_ID table.
 		nrc = nldb_table_create(db, next_id_table_id, NLDB_TABLE_PERSISTENT);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t) nrc;
 			goto on_error;
 		}
@@ -164,10 +199,13 @@ public :
 					nldb_key_t key = { (void*)next_id_key.data(), (key_length_t)next_id_key.length() };
 					nldb_value_t value = { (void*)&next_id_value, sizeof(next_id_value) };
 					nldb_rc_t nrc = nldb_table_put(tx, table, key, value);
-					return (server_error_t) nrc;
+					NL_RETURN( (server_error_t)nrc );
 				}
 		);
-		// rc will be returned at the end of this function.
+		if (rc) NL_RETURN(rc);
+
+		NL_RETURN( ErrorCode::NL_SUCCESS );
+
 on_error:
 		if (next_id_table_created) {
 			nrc = nldb_table_drop(db, next_id_table_id);
@@ -179,8 +217,10 @@ on_error:
 			NL_RELEASE_ASSERT( nrc == NLDB_OK );
 		}
 
-		return rc;
+		NL_RETURN(rc);
 	}
+
+public :
 	static server_error_t create_meta_tables(const nldb_db_id_t & db_id,
 											const nldb_table_id_t & name_map_table_id,
 						                    const nldb_table_id_t & next_id_table_id,
@@ -191,7 +231,7 @@ on_error:
 		nldb_db_t db = NULL;
 
 		nldb_rc_t nrc = nldb_db_open(db_id, NULL/*Master Options*/, NULL/*Slave Options*/, &db);
-		if (nrc != NLDB_OK) {
+		if (nrc) {
 			rc = (server_error_t) nrc;
 			goto finally;
 		}
@@ -200,10 +240,12 @@ on_error:
 		// rc is returned at the end of this function.
 
 	finally:
-		nrc = nldb_db_close(db);
-		NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		if (db) {
+			nrc = nldb_db_close(db);
+			NL_RELEASE_ASSERT( nrc == NLDB_OK );
+		}
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 };
@@ -243,9 +285,10 @@ public :
 	/*! Create meta tables if they do not exist.
 	 * If the meta tables exist, do nothing.
 	 */
-	static server_error_t create_meta_tables(nldb_db_t & db) {
+	static server_error_t create_meta_tables(const nldb_db_id_t db_id) {
 
-		return meta_t::create_meta_tables(db, META_TABLE_NAME_MAP, META_NEXT_TABLE_ID, NEXT_TABLE_ID_KEY, META_NEXT_TABLE_ID+1);
+		server_error_t rc = meta_t::create_meta_tables(db_id, META_TABLE_NAME_MAP, META_NEXT_TABLE_ID, NEXT_TABLE_ID_KEY, META_NEXT_TABLE_ID+1);
+		NL_RETURN(rc);
 	}
 
 	/*! Create a table.
@@ -256,12 +299,12 @@ public :
 			                            const std::string & table_name ) {
 		nldb_table_id_t new_table_id;
 		server_error_t rc = next_table_id( db, &new_table_id );
-		if (rc != ErrorCode::NL_SUCCESS ) return rc;
+		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
 
 		rc = put_table( db, table_name, new_table_id );
-		if (rc != ErrorCode::NL_SUCCESS ) return rc;
+		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	/*! Drop a table.
@@ -270,38 +313,58 @@ public :
 			                          const std::string & table_name ) {
 
 		server_error_t rc = del_table(db, table_name);
-		if (rc != ErrorCode::NL_SUCCESS ) return rc;
+		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 
 	/*! Get the table ID from the meta table searching by the given table_name.
 	 */
 	static server_error_t get_table_id( nldb_db_t & db,
+			                            nldb_tx_t & tx,
 			                            const std::string & table_name,
 						                nldb_table_id_t * o_table_id ) {
 
 
 		server_error_t rc;
-		rc = instant_db_env_t::exec_with_db(
-				db, META_TABLE_NAME_MAP,
-				[=](nldb_tx_t & tx, nldb_table_t & table) -> server_error_t {
-					nldb_key_t key = { (void*)table_name.data(), (key_length_t)table_name.length() };
-					nldb_value_t value;
-					nldb_rc_t nrc = nldb_table_get(tx, table, key, &value, NULL);
-					if (nrc == NLDB_ERROR_KEY_NOT_FOUND )
-						return ErrorCode::NL_TABLE_DOES_NOT_EXIST;
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
 
-					NL_ASSERT(sizeof(nldb_table_id_t) == value.length);
-					*o_table_id = *( (nldb_table_id_t*)value.data );
+		auto get_table_id_callback = [=](nldb_tx_t & tx, nldb_table_t & table) -> server_error_t {
+			nldb_key_t key = { (void*)table_name.data(), (key_length_t)table_name.length() };
+			nldb_value_t value;
+			nldb_rc_t nrc = nldb_table_get(tx, table, key, &value, NULL);
+			if (nrc == NLDB_ERROR_KEY_NOT_FOUND )
+				NL_RETURN( ErrorCode::NL_TABLE_DOES_NOT_EXIST );
+			if (nrc) NL_RETURN( (server_error_t)nrc );
 
-					return (server_error_t) nrc;
-				}
-		);
+			NL_ASSERT(sizeof(nldb_table_id_t) == value.length);
+			*o_table_id = *( (nldb_table_id_t*)value.data );
 
-		return rc;
+			NL_RETURN( (server_error_t)nrc );
+		};
+
+		if (tx) {
+			rc = instant_db_env_t::exec_with_db( db, tx, META_TABLE_NAME_MAP, get_table_id_callback);
+			NL_RETURN(rc);
+		} else {
+			rc = instant_db_env_t::exec_with_db( db, META_TABLE_NAME_MAP, get_table_id_callback);
+			NL_RETURN(rc);
+		}
+
+		NL_RETURN(ErrorCode::NL_SUCCESS);
+	}
+
+
+	static server_error_t get_table_id( nldb_db_t & db,
+			                            const std::string & table_name,
+						                nldb_table_id_t * o_table_id ) {
+
+		nldb_tx_t null_tx = (nldb_tx_t)NULL; /* No transaction at this point. A new transaction will be created to look up table name from the meta table. */
+
+		server_error_t rc = get_table_id( db, null_tx /*transaction*/, table_name, o_table_id);
+		if (rc) NL_RETURN(rc);
+
+		NL_RETURN(ErrorCode::NL_SUCCESS);
 	}
 
 private:
@@ -325,18 +388,18 @@ private:
 						value.length = sizeof(copied_table_id);
 
 						nrc = nldb_table_put(tx, table, key, value);
-						if (nrc != NLDB_OK) return (server_error_t) nrc;
-						return ErrorCode::NL_SUCCESS;
+						if (nrc) NL_RETURN( (server_error_t)nrc );
+						NL_RETURN( ErrorCode::NL_SUCCESS );
 					}
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					// nldb_table_get with table_name succeeded. This means the table already exists.
 					NL_ASSERT(nrc == NLDB_OK);
-					return ErrorCode::NL_TABLE_ALREADY_EXISTS;
+					NL_RETURN( ErrorCode::NL_TABLE_ALREADY_EXISTS );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Delete the mapping of the given table name and its table ID.
@@ -352,12 +415,12 @@ private:
 
 					nldb_rc_t nrc = nldb_table_del(tx, table, key);
 					if (nrc == NLDB_ERROR_KEY_NOT_FOUND)
-						return ErrorCode::NL_TABLE_DOES_NOT_EXIST;
-					return (server_error_t) nrc;
+						NL_RETURN( ErrorCode::NL_TABLE_DOES_NOT_EXIST );
+					NL_RETURN( (server_error_t)nrc );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Increase the next table ID, return the table ID before the increment.
@@ -373,9 +436,7 @@ private:
 
 					// Get the next table ID to use.
 					nldb_rc_t nrc = nldb_table_get(tx, table, key, &value, NULL);
-					if (nrc == NLDB_ERROR_KEY_NOT_FOUND )
-						return  ErrorCode::NL_DATABASE_DOES_NOT_EXIST;
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					NL_ASSERT(sizeof(nldb_table_id_t) == value.length);
 
@@ -388,15 +449,15 @@ private:
 
 					// Put the increased database ID.
 					nrc = nldb_table_put(tx, table, key, value);
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					*o_next_table_id = next_table_id;
 
-					return (server_error_t) nrc;
+					NL_RETURN( (server_error_t)nrc );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 };
@@ -446,8 +507,21 @@ public :
 	/*! Check if the meta database exists.
 	 */
 	static server_error_t does_meta_database_exist(bool * exists) {
-		*exists = false;
-		return ErrorCode::NL_FAILURE;
+		nldb_db_t db;
+		// Try to open the meta database. If succeeds, it exists.
+		nldb_rc_t nrc = nldb_db_open(META_DATABASE_ID, NULL, NULL, &db);
+		if (nrc == NLDB_OK) {
+			*exists = true;
+			nrc = nldb_db_close(db);
+			NL_RELEASE_ASSERT(nrc == NLDB_OK);
+		} else if (nrc == NLDB_ERROR_DB_NOT_FOUND){
+			// TODO : set *exists = false only if the error code indicates that the database does not exist.
+			*exists = false;
+		} else {
+			NL_RETURN( (server_error_t)nrc );
+		}
+
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	/*! Make sure that the meta database was created.
@@ -460,16 +534,16 @@ public :
 		nldb_rc_t nrc = nldb_db_create(META_DATABASE_ID);
 		db_created = true;
 
-		rc = meta_t::create_meta_tables(META_DATABASE_ID, META_TABLE_NAME_MAP, META_NEXT_TABLE_ID, NEXT_TABLE_ID_KEY, META_NEXT_TABLE_ID+1);
+		rc = meta_t::create_meta_tables(META_DATABASE_ID, META_DATABASE_NAME_MAP, META_DATABASE_NEXT_ID, NEXT_DATABASE_ID_KEY, META_DATABASE_ID+1);
 		if ( rc != ErrorCode::NL_SUCCESS) goto on_error;
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 on_error:
 		if (db_created) {
 			nrc = nldb_db_drop(META_DATABASE_ID);
 			NL_RELEASE_ASSERT(nrc);
 		}
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Create a new table in Nanolat Database engine.
@@ -480,12 +554,12 @@ on_error:
 		nldb_db_id_t new_database_id;
 
 		server_error_t rc = next_database_id(&new_database_id);
-		if (rc != ErrorCode::NL_SUCCESS ) return rc;
+		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
 
 		rc = put_database( database_name, new_database_id);
-		if (rc != ErrorCode::NL_SUCCESS ) return rc;
+		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	/*! Drop a database in Nanolat Database engine. */
@@ -494,9 +568,9 @@ on_error:
 
 		// TODO : Close an open database. The database may be in use by another thread.
 		server_error_t rc = del_database(database_name);
-		if (rc != ErrorCode::NL_SUCCESS) return rc;
+		if (rc) NL_RETURN(rc);
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	/*! Get the database ID from the meta table searching by the given database_name.
@@ -512,18 +586,18 @@ on_error:
 					nldb_value_t value;
 					nldb_rc_t nrc = nldb_table_get(tx, table, key, &value, NULL);
 					if (nrc == NLDB_ERROR_KEY_NOT_FOUND )
-						return ErrorCode::NL_DATABASE_DOES_NOT_EXIST;
+						NL_RETURN( ErrorCode::NL_DATABASE_DOES_NOT_EXIST );
 
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					NL_ASSERT(sizeof(nldb_table_id_t) == value.length);
 					*o_db_id = *( (nldb_table_id_t*)value.data );
 
-					return (server_error_t) nrc;
+					NL_RETURN( (server_error_t)nrc );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 private:
@@ -545,18 +619,18 @@ private:
 						value.length = sizeof(copied_db_id);
 
 						nrc = nldb_table_put(tx, table, key, value);
-						if (nrc != NLDB_OK) return (server_error_t) nrc;
-						return ErrorCode::NL_SUCCESS;
+						if (nrc) NL_RETURN( (server_error_t)nrc );
+						NL_RETURN( ErrorCode::NL_SUCCESS );
 					}
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					// nldb_table_get with copied_db_id succeeded. This means the table already exists.
 					NL_ASSERT(nrc == NLDB_OK);
-					return ErrorCode::NL_DATABASE_ALREADY_EXISTS;
+					NL_RETURN( ErrorCode::NL_DATABASE_ALREADY_EXISTS );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Delete the mapping of the given database name and its database ID.
@@ -571,12 +645,12 @@ private:
 
 					nldb_rc_t nrc = nldb_table_del(tx, table, key);
 					if (nrc == NLDB_ERROR_KEY_NOT_FOUND)
-						return ErrorCode::NL_DATABASE_DOES_NOT_EXIST;
-					return (server_error_t) nrc;
+						NL_RETURN( ErrorCode::NL_DATABASE_DOES_NOT_EXIST );
+					NL_RETURN( (server_error_t)nrc );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Increase the next database ID, return the database ID before the increment.
@@ -592,9 +666,7 @@ private:
 
 					// Get the next database ID to use.
 					nldb_rc_t nrc = nldb_table_get(tx, table, key, &value, NULL);
-					if (nrc == NLDB_ERROR_KEY_NOT_FOUND )
-						return  ErrorCode::NL_DATABASE_DOES_NOT_EXIST;
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					NL_ASSERT(sizeof(nldb_db_id_t) == value.length);
 
@@ -607,15 +679,15 @@ private:
 
 					// Put the increased database ID.
 					nrc = nldb_table_put(tx, table, key, value);
-					if (nrc != NLDB_OK) return (server_error_t) nrc;
+					if (nrc) NL_RETURN( (server_error_t)nrc );
 
 					*o_next_db_id = next_db_id;
 
-					return (server_error_t) nrc;
+					NL_RETURN( (server_error_t)nrc );
 				}
 		);
 
-		return rc;
+		NL_RETURN(rc);
 	}
 };
 
@@ -635,29 +707,29 @@ public :
 		bool table_name_put_into_meta = false;
 
 		rc = meta_tables_t::create_table(db, table_name);
-		if (rc != ErrorCode::NL_SUCCESS) goto on_error;
+		if (rc) goto on_error;
 		table_name_put_into_meta = true;
 
 		rc = meta_tables_t::get_table_id(db, table_name, &table_id);
-		if (rc != ErrorCode::NL_SUCCESS) goto on_error;
+		if (rc) goto on_error;
 
 		// TODO : Need to choose if the user wants to create a persistent table?
 		{
 			nldb_rc_t nrc = nldb_table_create(db, table_id, NLDB_TABLE_VOLATILE);
-			if (nrc != NLDB_OK) {
+			if (nrc) {
 				rc = (server_error_t) nrc;
 				goto on_error;
 			}
 		}
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 
 on_error:
 		if (table_name_put_into_meta) {
 			rc = meta_tables_t::drop_table(db, table_name);
 			NL_RELEASE_ASSERT (rc == ErrorCode::NL_SUCCESS);
 		}
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Drop a table in Nanolat Database engine. */
@@ -665,15 +737,15 @@ on_error:
 		nldb_table_id_t table_id;
 
 		server_error_t rc = meta_tables_t::get_table_id(db, table_name, &table_id);
-		if (rc != ErrorCode::NL_SUCCESS) return rc;
+		if (rc) NL_RETURN(rc);
 
 		nldb_rc_t nrc = nldb_table_drop(db, table_id);
-		if (nrc != NLDB_OK) return (server_error_t) nrc;
+		if (nrc) NL_RETURN( (server_error_t)nrc );
 
 		rc = meta_tables_t::drop_table(db, table_name);
 		NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS );
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	/*! get the Nanolat Database table object by table name */
@@ -682,34 +754,40 @@ on_error:
 		return table;
 	}
 
+	void set_table(const std::string & table_name, const nldb_table_t & table ) {
+		tables[ table_name ] = table;
+	}
 
 	// TODO : Think about when to close tables.
 	/*! get the Nanolat Database table object by table name
 	 */
-	server_error_t open_table(const std::string & table_name, nldb_table_t * o_table ) {
+	server_error_t open_table(nldb_tx_t & tx, const std::string & table_name, nldb_table_t * o_table ) {
 		NL_ASSERT(table_name != "");
 		NL_ASSERT(o_table);
 
 		nldb_table_id_t table_id;
 
 		if (get_table(table_name)) {
-			return ErrorCode::NL_TABLE_ALREADY_OPEN;
+			NL_RETURN( ErrorCode::NL_TABLE_ALREADY_OPEN );
 		}
 
 		// Get the table ID by the table name from the meta table.
-		server_error_t rc = meta_tables_t::get_table_id(db, table_name, &table_id);
-		if (rc != NLDB_OK) return rc;
+		server_error_t rc = meta_tables_t::get_table_id(db, tx, table_name, &table_id);
+		if (rc) NL_RETURN(rc);
 
 		nldb_table_t open_table;
 		// TODO : Need to check if table is already open?
 		nldb_rc_t nrc = nldb_table_open(db, table_id, & open_table );
-		if (nrc) return (server_error_t) nrc;
+		if (nrc) NL_RETURN( (server_error_t)nrc );
 
 		NL_RELEASE_ASSERT(open_table);
 
+		// Create a mapping table (the table name, table object) for quick lookup.
+		set_table(table_name, open_table);
+
 		*o_table = open_table;
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	nldb_db_t get_db() {
@@ -773,7 +851,7 @@ public :
 		nldb_tx_t new_transaction;
 
 		if (this->transaction != NULL) {
-			return ErrorCode::NL_TRANSACTION_ALREADY_BEGAN;
+			NL_RETURN( ErrorCode::NL_TRANSACTION_ALREADY_BEGAN );
 		}
 
 		nldb_db_t db = using_database->get_db() ;
@@ -787,7 +865,7 @@ public :
 
 		this->transaction = new_transaction;
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	typedef enum end_transaction_type_t {
@@ -797,7 +875,7 @@ public :
 
 	server_error_t end_transaction(const end_transaction_type_t & end_type) {
 		if ( this->transaction == NULL)  {
-			return ErrorCode::NL_NO_TRANSACTION_BEGAN;
+			NL_RETURN( ErrorCode::NL_NO_TRANSACTION_BEGAN );
 		}
 
 		switch (end_type) {
@@ -823,15 +901,17 @@ public :
 
 		this->transaction = NULL;
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	server_error_t abort_transaction() {
-		return end_transaction( END_TX_ABORT );
+		server_error_t rc = end_transaction( END_TX_ABORT );
+		NL_RETURN(rc);
 	}
 
 	server_error_t commit_transaction() {
-		return end_transaction( END_TX_COMMIT );
+		server_error_t rc = end_transaction( END_TX_COMMIT );
+		NL_RETURN(rc);
 	}
 
 	/*! If the client did not request nl_transaction_begin, the server processes each put/get/del/cursor request with an automatically created transaction.
@@ -933,31 +1013,41 @@ public :
 		server_error_t rc = ErrorCode::NL_SUCCESS;
 
 		bool db_name_put_into_meta = false;
+		bool nldb_db_created = false;
 
 		rc = meta_database_t::create_database(database_name);
-		if (rc != ErrorCode::NL_SUCCESS) goto on_error;
+		if (rc) goto on_error;
 		db_name_put_into_meta = true;
 
 		rc = meta_database_t::get_database_id(database_name, &db_id);
-		if (rc != ErrorCode::NL_SUCCESS) goto on_error;
+		if (rc) goto on_error;
 
-		// TODO : Need to choose if the user wants to create a persistent table?
 		{
 			nldb_rc_t nrc = nldb_db_create(db_id);
-			if (nrc != NLDB_OK) {
+			if (nrc) {
 				rc = (server_error_t) nrc;
 				goto on_error;
 			}
+			nldb_db_created = true;
 		}
 
-		return ErrorCode::NL_SUCCESS;
+		// Create meta tables in the database.
+		rc = meta_tables_t::create_meta_tables(db_id);
+		if (rc) goto on_error;
+
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 
 on_error:
+		if( nldb_db_created ) {
+			nldb_rc_t nrc = nldb_db_drop(db_id);
+			NL_RELEASE_ASSERT (nrc == NLDB_OK );
+		}
+
 		if (db_name_put_into_meta) {
 			rc = meta_database_t::drop_database(database_name);
 			NL_RELEASE_ASSERT (rc == ErrorCode::NL_SUCCESS);
 		}
-		return rc;
+		NL_RETURN(rc);
 	}
 
 	/*! Drop a database in Nanolat Database engine. */
@@ -965,15 +1055,15 @@ on_error:
 		nldb_db_id_t db_id;
 
 		server_error_t rc = meta_database_t::get_database_id(database_name, &db_id);
-		if (rc != ErrorCode::NL_SUCCESS) return rc;
+		if (rc) NL_RETURN(rc);
 
 		nldb_rc_t nrc = nldb_db_drop(db_id);
-		if (nrc != NLDB_OK) return (server_error_t) nrc;
+		if (nrc) NL_RETURN( (server_error_t)nrc );
 
 		rc = meta_database_t::drop_database(database_name);
 		NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS );
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 	/*! Open a database,
 	 *
@@ -985,27 +1075,29 @@ on_error:
 		nldb_db_id_t db_id;
 
 		if (get_database(database_name)) {
-			return ErrorCode::NL_DATABASE_ALREADY_OPEN;
+			NL_RETURN( ErrorCode::NL_DATABASE_ALREADY_OPEN );
 		}
 
 		server_error_t rc = meta_database_t::get_database_id( database_name, &db_id);
-		if (rc != ErrorCode::NL_SUCCESS) return rc;
+		if (rc) NL_RETURN(rc);
 
 		nldb_db_t db;
 		nldb_rc_t nrc = nldb_db_open(db_id,
 									 NULL, /* Master Options */
 									 NULL, /* Slave Options */
 									 &db);
-		if (nrc != NLDB_OK) {
-			return (ErrorCode::type) nrc;
-		}
+		if (nrc) NL_RETURN( (server_error_t)nrc );
+
 
 		open_database_t * opendb = new open_database_t(db);
 		NL_RELEASE_ASSERT(opendb);
 
+		// Create a mapping from database name to the open database object to for the quick look up.
+		set_database( database_name, opendb);
+
 		*o_database = opendb;
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 
 	/*! get the Nanolat Database object by database name */
@@ -1013,6 +1105,10 @@ on_error:
 		NL_ASSERT(database_name != "");
 		open_database_t * database = open_databases[ database_name ];
 		return database;
+	}
+
+	void set_database( const std::string & database_name, open_database_t * db) {
+		open_databases[ database_name ] = db;
 	}
 
 private :
@@ -1031,27 +1127,32 @@ public :
 	server_error_t initialize_instance() {
 		server_error_t rc;
 
+		// TODO : When user presses CTRL+C while the server process is running,
+		// Shutdown the server process. During the shutdown, call nldb_destroy().
+		nldb_rc_t nrc = nldb_init();
+		if (nrc) NL_RETURN( (server_error_t)nrc );
+
 		// Step 1 : Create meta database if it does not exist.
 		bool meta_database_exists;
 		rc = meta_database_t::does_meta_database_exist( & meta_database_exists );
-		if (rc != ErrorCode::NL_SUCCESS) return rc;
+		if (rc) NL_RETURN(rc);
 
-		if (meta_database_exists) { // The meta database does not exist. create a one.
+		if (!meta_database_exists) { // The meta database does not exist. create a one.
 			rc = meta_database_t::create_meta_database();
-			if (rc != ErrorCode::NL_SUCCESS) return rc;
+			if (rc) NL_RETURN(rc);
 		}
 
 		// Step 2 : Create the "default" database if it does not exist.
 		nldb_db_id_t default_db_id;
 		rc = meta_database_t::get_database_id( std::string("default"), &default_db_id);
-		if (rc != ErrorCode::NL_SUCCESS) return rc;
-
-		if ( default_db_id == 0 ) { // The "default" db does not exist. Create a new one.
-			rc = meta_database_t::create_database( std::string("default") );
-			if (rc != ErrorCode::NL_SUCCESS) return rc;
+		if ( rc == ErrorCode::NL_DATABASE_DOES_NOT_EXIST ) { // The "default" db does not exist. Create a new one.
+			rc = database_mgr.create_database( std::string("default") );
+			if (rc) NL_RETURN(rc);
+		} else {
+			if (rc) NL_RETURN(rc);
 		}
 
-		return ErrorCode::NL_SUCCESS;
+		NL_RETURN( ErrorCode::NL_SUCCESS );
 	}
 };
 

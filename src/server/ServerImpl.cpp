@@ -6,11 +6,14 @@ namespace server {
 /* The error message format to send back to client in case there is any Nanolat Database error. */
 static const char * nldb_error_message_format[] = {
 	"General Failure in Nanolat Database",
+	"Invalid Argument",
 	"Database Already Exists",
 	"Database Not Found",
 	"Table Already Exists",
+	"Table Not Found",
 	"Transaction Already Began",
 	"Transaction Not Began",
+	"Transaction Not Ended",
 	"Key Not Found",
 	"Cursor Not Open",
 	"End of Cursor Iteration",
@@ -23,8 +26,7 @@ static const char * nldb_error_message_format[] = {
 	"Unable to Initialized Replication Message",
 	"Unsupported Feature",
 	"Variable Key Size Not Supported",
-	"Variable Value Size Not Supported",
-	"Key Order Out Of Range"
+	"Variable Value Size Not Supported"
 };
 /*
 #if (sizeof(nldb_error_message_format)/sizeof(char*)) <> (NLDB_ERROR_CODE_START - NLDB_ERROR_CODE_END + 1)
@@ -41,8 +43,13 @@ static const char * server_error_message_format[] = {
 	"No Transaction Began",
 	"Database Already Exists",
 	"Database Does Not Exist",
+	"Database Already Open",
+	"Database Not Open",
 	"Table Already Exists",
-	"Table Does Not Exist"
+	"Table Does Not Exist",
+	"Table Already Open",
+	"Table Not Open",
+	"Cursor Has No More Keys"
 };
 /*
 #if (sizeof(server_error_message_format)/sizeof(char*)) <> (NL_ERROR_CODE_START - NL_ERROR_CODE_END + 1)

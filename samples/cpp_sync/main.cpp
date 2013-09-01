@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <sstream>
 #include <time.h>
 #include <assert.h>
 #include <nanolat/client/SyncClient.h>
@@ -281,27 +282,62 @@ int64_t unpack_hash(const std::string & packed_score) {
 	return to_host_endian(big_endian_score);
 }
 
-void do_post_score(const char * user_name, uint64_t score) {
-	printf("Running : posting a user's score.\n");
 
-	std::string user(user_name);
+std::string pack_user_name(const std::string & user_name) {
+#define MAX_USER_NAME_LEN (20)
+#define MAX_USER_NAME_LEN_STR "20"
+	assert(user_name.length() <= MAX_USER_NAME_LEN);
+	char buffer[MAX_USER_NAME_LEN+1];
+	sprintf(buffer, "%-"MAX_USER_NAME_LEN_STR"s", user_name.c_str() );
+
+	std::string packed_string = buffer;
+	return packed_string;
+}
+
+std::string unpack_user_name(const std::string & packed_user_name) {
+	std::stringstream trimmer;
+	trimmer << packed_user_name;
+
+	return trimmer.str();
+}
+
+void do_table_put(const char * table_name, const std::string & key, const std::string & value)
+{
+	key_order_t before_key_count, key_count;
+	int rc = nl_table_get_key_count(g_conn, table_name, &before_key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	rc = nl_table_put(g_conn, table_name, key, value);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	rc = nl_table_get_key_count(g_conn, table_name, &key_count);
+	if (rc != NL_SUCCESS)
+		show_error_and_exit(rc);
+
+	if (before_key_count + 1 != key_count) {
+		printf("Inconsistent key count. Before put :%d, After put:%d\n", (int)before_key_count, (int)key_count );
+		assert(0);
+	}
+}
+
+void do_post_score(const char * user_name, uint64_t score) {
+	printf("Running : posting a user(%s)'s score : %d.\n", user_name, (int)score);
+
+	std::string user = pack_user_name(user_name);
 	// The value to put into scores_by_user table. The score is not a key, so it does not need to be in big endian.
 	std::string score_value = std::string( (const char*) & score, sizeof(score));
 	std::string score_key = pack_score(score, user_name);
 
-	int rc = nl_table_put(g_conn, "scores_by_user", user, score_value);
-	if (rc != NL_SUCCESS)
-		show_error_and_exit(rc);
-
-	rc = nl_table_put(g_conn, "users_by_score", score_key, user);
-	if (rc != NL_SUCCESS)
-		show_error_and_exit(rc);
+	do_table_put("scores_by_user", user, score_value);
+	do_table_put("users_by_score", score_key, user);
 }
 
 void do_delete_score(const char * user_name, int score) {
-	printf("Running : deleting a user(%s)'s score : %d.\n", user_name, score);
+	printf("Running : deleting a user(%s)'s score : %d.\n", user_name, (int)score);
 
-	std::string user(user_name);
+	std::string user = pack_user_name(user_name);
 	std::string score_key = pack_score(score, user_name);
 
 	int rc = nl_table_del(g_conn, "scores_by_user", user);
@@ -319,21 +355,23 @@ void do_count_keys(const char * table_name) {
 	if (rc != NL_SUCCESS)
 		show_error_and_exit(rc);
 
-	printf("The number of keys in %s table is %d.", table_name, (int)key_count);
+	printf("The number of keys in %s table is %d.\n", table_name, (int)key_count);
 }
 
-void print_packed_score_and_user(const std::string & packed_score_key, const key_order_t & key_order, const std::string & user_value)
+void print_packed_score_and_user(const std::string & packed_score_key, const key_order_t & key_order, const std::string & packed_user_value)
 {
 	// The score value has native representation of uint64_t. Get score from it.
 	int score = unpack_score( packed_score_key );
-	printf("Name:%s, Key Order:%d Score :%d\n",user_value.c_str(), (int)key_order , score);
+	std::string user_name = unpack_user_name( packed_user_value );
+	printf("Name:%s, Key Order:%d Score :%d\n",user_name.c_str(), (int)key_order , score);
 }
 
-void print_user_and_score(const std::string & user_key, const key_order_t & key_order, const std::string & score_value)
+void print_user_and_score(const std::string & packed_user_key, const key_order_t & key_order, const std::string & score_value)
 {
 	// The score value has native representation of uint64_t. Get score from it.
 	int score = (int)(*(uint64_t*)score_value.c_str());
-	printf("Name:%s, Key Order:%d Score :%d\n",user_key.c_str(), (int)key_order , score);
+	std::string user_name = unpack_user_name(packed_user_key);
+	printf("Name:%s, Key Order:%d Score :%d\n",user_name.c_str(), (int)key_order , score);
 }
 
 void do_list_order_by_score(const cursor_direction_t & direction, bool use_key_to_open_cursor ) {
@@ -385,13 +423,15 @@ void do_list_order_by_score(const cursor_direction_t & direction, bool use_key_t
     key_order_t key_order;
 	std::string user_value;
 
-	do {
+	while(1) {
 		rc = nl_cursor_fetch(g_conn, cursor, direction, & packed_score_key, & key_order, & user_value);
+		if (rc == NL_CURSOR_HAS_NO_MORE_KEYS)
+			break;
 		if (rc != NL_SUCCESS)
 			show_error_and_exit(rc);
 
 		print_packed_score_and_user(packed_score_key, key_order, user_value);
-	} while ( packed_score_key.length() > 0 );
+	}
 
 	rc = nl_cursor_close(g_conn, &cursor);
 	if (rc != NL_SUCCESS)
@@ -581,6 +621,7 @@ int main(int argc, const char **argv) {
 	}
 	do_commit_transaction();
 
+/*
 	// delete scores, abort transaction
 	do_begin_transaction();
 	{
@@ -589,6 +630,7 @@ int main(int argc, const char **argv) {
 		}
 	}
 	do_abort_transaction();
+*/
 
 	// search, list scores and users.
 	do_begin_transaction();

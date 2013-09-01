@@ -38,9 +38,9 @@ do
         echo "building $dep"
         echo "##########################################################"
         LOG=../log/${dep}.log
-        echo "Started at `date`" | tee $LOG
+        echo "Started at `date`" 
         ../scripts/${dep}.sh | tee $LOG 
-        echo "Finished at `date`" | tee $LOG
+        echo "Finished at `date`" >> $LOG
         popd 
     fi 
 done

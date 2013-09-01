@@ -4,8 +4,8 @@ rm -rf nldb
 git clone https://github.com/Nanolat/nldb.git
 cd nldb
 # Checkout with the commit hash representing the version of nldb compatible with SoTopless.
-# Commit : tested prepare-build.sh working
-git checkout b03a44ba3d320dc3a2e17260db40ef71e88df036
+# Commit : changed readme
+#git checkout 5713d93cf13a75a17bd15c045467861269708272
 
 make prepare-build
 make clean

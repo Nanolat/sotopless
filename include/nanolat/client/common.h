@@ -28,9 +28,14 @@ namespace nanolat {
 			NL_NO_TRANSACTION_BEGAN      = -1005,
 			NL_DATABASE_ALREADY_EXISTS   = -1006,
 			NL_DATABASE_DOES_NOT_EXIST   = -1007,
-			NL_TABLE_ALREADY_EXISTS      = -1008,
-			NL_TABLE_DOES_NOT_EXIST      = -1009,
-			NL_ERROR_CODE_END            = -1009
+			NL_DATABASE_ALREADY_OPEN     = -1008,
+			NL_DATABASE_NOT_OPEN         = -1009,
+			NL_TABLE_ALREADY_EXISTS      = -1010,
+			NL_TABLE_DOES_NOT_EXIST      = -1011,
+			NL_TABLE_ALREADY_OPEN        = -1012,
+			NL_TABLE_NOT_OPEN            = -1013,
+			NL_CURSOR_HAS_NO_MORE_KEYS   = -1014,
+			NL_ERROR_CODE_END            = -1014
 		} error_code_t ;
 
 		typedef struct client_status_t {

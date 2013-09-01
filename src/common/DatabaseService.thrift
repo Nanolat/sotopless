@@ -23,7 +23,8 @@ enum ErrorCode {
 	NL_TABLE_DOES_NOT_EXIST      = -1011,
 	NL_TABLE_ALREADY_OPEN        = -1012,
 	NL_TABLE_NOT_OPEN            = -1013,
-	NL_ERROR_CODE_END            = -1013
+	NL_CURSOR_HAS_NO_MORE_KEYS   = -1014,
+	NL_ERROR_CODE_END            = -1014
 }
 
 struct ReplyStatus
