@@ -1,7 +1,6 @@
 SoTopless
 =========
 A leaderboard is a useful tool for games and gamified apps providing rankings of users based on score of each user.
-The main goal of SoTopless leaderboard server is to support 100M users per server. 
 
 For the details, see http://www.sotopless.com.
 
