@@ -11,6 +11,9 @@ make prepare-build
 make clean
 make
 
+cp -r ./external-libs/include/* ${EXT_LIB_HOME}/include
+cp -r ./external-libs/lib/* ${EXT_LIB_HOME}/lib
+
 cp -r ./src/include/nldb ${EXT_LIB_HOME}/include
 cp ./src/nldb/libnldb.so ${EXT_LIB_HOME}/lib
 
