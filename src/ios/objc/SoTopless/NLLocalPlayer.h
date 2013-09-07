@@ -6,7 +6,7 @@
 @interface NLLocalPlayer : NLPlayer {
 }
 
-+ (NLLocalPlayer *)localPlayer(NSSTring * playerID, NSSTring * playerAlias, NSSTring * password);
++ (NLLocalPlayer *)localPlayer: (NSString *) playerID playerAlias:(NSString *) playerAlias password:(NSString *) password;
 
 @property(nonatomic, readonly, getter=isAuthenticated)  BOOL authenticated; 
 

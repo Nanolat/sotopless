@@ -13,7 +13,7 @@
 
 @property(readonly, getter=isLoading)   BOOL                        loading;
 
-@property(nonatomic, readonly, retain)  GKScore                     *localPlayerScore;
+@property(nonatomic, readonly, retain)  NLScore                     *localPlayerScore;
 
 @property(nonatomic, readonly, retain)  NSArray                     *scores;
 

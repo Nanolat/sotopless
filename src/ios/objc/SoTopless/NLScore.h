@@ -3,7 +3,7 @@
 #import <SoTopless/NLLeaderboard.h>
 
 
-@interface NLScore : NSObject <NSCoding> {
+@interface NLScore : NSObject {
 }
 
 - (id)initWithCategory:(NSString *)category;

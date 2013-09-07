@@ -19,6 +19,10 @@
 		736FCD6917DBC92A005E55CB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCD6817DBC92A005E55CB /* ViewController.m */; };
 		736FCD6C17DBC92A005E55CB /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 736FCD6A17DBC92A005E55CB /* ViewController_iPhone.xib */; };
 		736FCD6F17DBC92A005E55CB /* ViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 736FCD6D17DBC92A005E55CB /* ViewController_iPad.xib */; };
+		736FCD8217DBE2FD005E55CB /* NLLeaderboard.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCD7E17DBE2FC005E55CB /* NLLeaderboard.m */; };
+		736FCD8317DBE2FD005E55CB /* NLLocalPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCD7F17DBE2FC005E55CB /* NLLocalPlayer.m */; };
+		736FCD8417DBE2FD005E55CB /* NLPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCD8017DBE2FD005E55CB /* NLPlayer.m */; };
+		736FCD8517DBE2FD005E55CB /* NLScore.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCD8117DBE2FD005E55CB /* NLScore.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +49,11 @@
 		736FCD7B17DBCC98005E55CB /* NLPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NLPlayer.h; path = SoTopless/NLPlayer.h; sourceTree = "<group>"; };
 		736FCD7C17DBCFF9005E55CB /* NLDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NLDefines.h; path = SoTopless/NLDefines.h; sourceTree = "<group>"; };
 		736FCD7D17DBD44A005E55CB /* NLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NLError.h; path = SoTopless/NLError.h; sourceTree = "<group>"; };
+		736FCD7E17DBE2FC005E55CB /* NLLeaderboard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLLeaderboard.m; sourceTree = "<group>"; };
+		736FCD7F17DBE2FC005E55CB /* NLLocalPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLLocalPlayer.m; sourceTree = "<group>"; };
+		736FCD8017DBE2FD005E55CB /* NLPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLPlayer.m; sourceTree = "<group>"; };
+		736FCD8117DBE2FD005E55CB /* NLScore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLScore.m; sourceTree = "<group>"; };
+		736FCD8617DBE5F1005E55CB /* NLSoTopless.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NLSoTopless.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +100,10 @@
 		736FCD5517DBC929005E55CB /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				736FCD7E17DBE2FC005E55CB /* NLLeaderboard.m */,
+				736FCD7F17DBE2FC005E55CB /* NLLocalPlayer.m */,
+				736FCD8017DBE2FD005E55CB /* NLPlayer.m */,
+				736FCD8117DBE2FD005E55CB /* NLScore.m */,
 				736FCD7917DBCB24005E55CB /* SoTopless */,
 				736FCD5E17DBC92A005E55CB /* AppDelegate.h */,
 				736FCD5F17DBC92A005E55CB /* AppDelegate.m */,
@@ -126,6 +139,7 @@
 				736FCD7B17DBCC98005E55CB /* NLPlayer.h */,
 				736FCD7717DBCB11005E55CB /* NLLeaderboard.h */,
 				736FCD7817DBCB11005E55CB /* NLScore.h */,
+				736FCD8617DBE5F1005E55CB /* NLSoTopless.h */,
 			);
 			name = SoTopless;
 			sourceTree = "<group>";
@@ -200,6 +214,10 @@
 				736FCD5C17DBC92A005E55CB /* main.m in Sources */,
 				736FCD6017DBC92A005E55CB /* AppDelegate.m in Sources */,
 				736FCD6917DBC92A005E55CB /* ViewController.m in Sources */,
+				736FCD8217DBE2FD005E55CB /* NLLeaderboard.m in Sources */,
+				736FCD8317DBE2FD005E55CB /* NLLocalPlayer.m in Sources */,
+				736FCD8417DBE2FD005E55CB /* NLPlayer.m in Sources */,
+				736FCD8517DBE2FD005E55CB /* NLScore.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,6 +312,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objc/objc-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Users/ilvsusie/sotopless/src/ios/objc;
 				INFOPLIST_FILE = "objc/objc-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -305,6 +324,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objc/objc-Prefix.pch";
+				HEADER_SEARCH_PATHS = /Users/ilvsusie/sotopless/src/ios/objc;
 				INFOPLIST_FILE = "objc/objc-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
