@@ -68,7 +68,7 @@ int main(int argc, const char **argv) {
 
 		do_list_order_by_score(NL_CURSOR_FORWARD, true);
 		do_list_order_by_score(NL_CURSOR_FORWARD, false);
-/*
+
 		do_list_order_by_score(NL_CURSOR_BACKWARD, true);
 		do_list_order_by_score(NL_CURSOR_BACKWARD, false);
 
@@ -84,12 +84,12 @@ int main(int argc, const char **argv) {
 		do_get_each_user_key_by_order();
 
 		do_get_each_score_key_by_order();
-*/
+
 	}
 	do_commit_transaction();
 
 //	do_perf_test();
-/*
+
 	// delete scores, commit transaction.
 	do_begin_transaction();
 	{
@@ -107,15 +107,15 @@ int main(int argc, const char **argv) {
 		do_count_keys("scores_by_user");
 	}
 	do_commit_transaction();
-*/
+
 	do_drop_table("users_by_score");
 
 	do_drop_table("scores_by_user");
 
 	// TODO : Can the user drop a db without closing it?
-/*
+
 	do_drop_db("test_db");
-*/
+
 	do_disconnect();
 
 	return 0;

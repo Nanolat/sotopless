@@ -303,6 +303,8 @@ std::string unpack_user_name(const std::string & packed_user_name) {
 	return trimmer.str();
 }
 
+#define CHECK_KEY_COUNT_CONSISTENCY (1)
+
 void do_table_put(const char * table_name, const std::string & key, const std::string & value)
 {
 	int rc ;
@@ -323,7 +325,7 @@ void do_table_put(const char * table_name, const std::string & key, const std::s
 	if (rc != NL_SUCCESS)
 		show_error_and_exit(rc);
 	if (before_key_count + 1 != key_count) {
-		printf("Inconsistent key count. Before put :%d, After put:%d\n", (int)before_key_count, (int)key_count );
+		printf("Inconsistent key count. Table name : %s, Before put :%d, After put:%d\n", table_name, (int)before_key_count, (int)key_count );
 		assert(0);
 	}
 #endif // CHECK_KEY_COUNT_CONSISTENCY

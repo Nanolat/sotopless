@@ -28,6 +28,5 @@ int main(int argc, char **argv) {
 
   nanolat::server::listen(port);
 
-
   return 0;
 }
