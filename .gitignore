@@ -38,3 +38,6 @@ src/common/gen-cpp
 #src/*/DatabaseService_types.*
 #!src/*/DatabaseService.thrift
 
+#iOS client project temporary files.
+src/ios/objc.xcodeproj/project.xcworkspace/*
+src/ios/objc.xcodeproj/xcuserdata/*
