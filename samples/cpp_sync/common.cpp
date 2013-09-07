@@ -501,7 +501,7 @@ void do_list_order_by_user(const cursor_direction_t & direction, bool use_key_to
 		if (rc != NL_SUCCESS)
 			show_error_and_exit(rc);
 
-		print_packed_score_and_user(user_key, key_order, score_value);
+		print_user_and_score(user_key, key_order, score_value);
 	} while ( user_key.length() > 0 );
 
 	rc = nl_cursor_close(g_conn, &cursor);
