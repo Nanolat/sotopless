@@ -178,66 +178,64 @@
 <span class='line-number'>56</span>
 <span class='line-number'>57</span>
 <span class='line-number'>58</span>
-<span class='line-number'>59</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>////////////////////////////////////////////////////////////////////////////////
-</span><span class='line'>    // Login
-</span><span class='line'>    
-</span><span class='line'>    NSString * uuid = [ NSString stringWithFormat:@"GET-UUID-DONT-USE-THIS"];
-</span><span class='line'>    
-</span><span class='line'>    NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"Kangdori" password:uuid ];
-</span><span class='line'>    
-</span><span class='line'>    localPlayer.authenticateHandler = ^(NSError * error) {
+</span><span class='line'>// Login ( User Authentication )
+</span><span class='line'>NSString * identifier = [ NSString stringWithFormat:@"unique identifier for a the user or phone"];
+</span><span class='line'>
+</span><span class='line'>NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"Kangdori" password:uuid ];
+</span><span class='line'>
+</span><span class='line'>localPlayer.authenticateHandler = ^(NSError * error) {
+</span><span class='line'>    if (error != NULL) {
+</span><span class='line'>        NSLog( @"Error : while authenticating : %@", error.description );
+</span><span class='line'>        return;
+</span><span class='line'>    }
+</span><span class='line'>    NSLog( @"Success : User authenticated.");
+</span><span class='line'>
+</span><span class='line'>    ////////////////////////////////////////////////////////////////////////////////
+</span><span class='line'>    // Report Score
+</span><span class='line'>    NLScore * myScore = [[NLScore alloc] initWithCategory:@"all"];
+</span><span class='line'>    myScore.value = 300; // score
+</span><span class='line'>
+</span><span class='line'>    [myScore reportScoreWithCompletionHandler:^(NSError * error) {
 </span><span class='line'>        if (error != NULL) {
-</span><span class='line'>            NSLog( @"Error : while authenticating : %@", error.description );
-</span><span class='line'>            return;
+</span><span class='line'>      NSLog( @"Error : while authenticating : %@", error.description );
+</span><span class='line'>      return;
 </span><span class='line'>        }
-</span><span class='line'>        NSLog( @"Success : User authenticated.");
-</span><span class='line'>        
+</span><span class='line'>        NSLog( @"Success : Score reported.");
+</span><span class='line'>    
 </span><span class='line'>        ////////////////////////////////////////////////////////////////////////////////
-</span><span class='line'>        // Report Score
-</span><span class='line'>        NLScore * myScore = [[NLScore alloc] initWithCategory:@"all"];
-</span><span class='line'>        myScore.value = 300; // score
-</span><span class='line'>        
-</span><span class='line'>        [myScore reportScoreWithCompletionHandler:^(NSError * error) {
-</span><span class='line'>            if (error != NULL) {
-</span><span class='line'>                NSLog( @"Error : while authenticating : %@", error.description );
-</span><span class='line'>                return;
+</span><span class='line'>        // List top 10 Scores
+</span><span class='line'>        NLLeaderboard * leaderboard = [[NLLeaderboard alloc] init];
+</span><span class='line'>        leaderboard.category = @"all";
+</span><span class='line'>        leaderboard.range = NSMakeRange(1,10); // 10 users from the 1st user.
+</span><span class='line'>    
+</span><span class='line'>        [leaderboard loadScoresWithCompletionHandler:^(NSArray* scores, NSError* error) {
+</span><span class='line'>      if (error != NULL) {
+</span><span class='line'>          NSLog( @"Error : while loading scores : %@", error.description );
+</span><span class='line'>          return;
+</span><span class='line'>      }
+</span><span class='line'>      NSLog( @"Success : Scores loaded.");
+</span><span class='line'>
+</span><span class='line'>      NSLog( @"Player's ranking : %lld score : %lld", 
+</span><span class='line'>             leaderboard.localPlayerScore.rank, 
+</span><span class='line'>             leaderboard.localPlayerScore.value );
+</span><span class='line'>
+</span><span class='line'>  
+</span><span class='line'>      NSLog( @"Listing scores." );
+</span><span class='line'>  
+</span><span class='line'>      for (NLScore * score in scores) {
+</span><span class='line'>          NSString *dateString = [NSDateFormatter localizedStringFromDate:score.date
+</span><span class='line'>                                                            dateStyle:NSDateFormatterShortStyle
+</span><span class='line'>                                                            timeStyle:NSDateFormatterFullStyle];
+</span><span class='line'>      
+</span><span class='line'>          NSLog( @"Rank: %lld, Display Alias : %@, Score : %lld, Time : %@",
+</span><span class='line'>                 score.rank, score.playerAlias, score.value, dateString );
 </span><span class='line'>            }
-</span><span class='line'>            NSLog( @"Success : Score reported.");
-</span><span class='line'>            
-</span><span class='line'>            ////////////////////////////////////////////////////////////////////////////////
-</span><span class='line'>            // List top 10 Scores
-</span><span class='line'>            NLLeaderboard * leaderboard = [[NLLeaderboard alloc] init];
-</span><span class='line'>            leaderboard.category = @"all";
-</span><span class='line'>            leaderboard.range = NSMakeRange(1,10); // 10 users from the 1st user.
-</span><span class='line'>            
-</span><span class='line'>            [leaderboard loadScoresWithCompletionHandler:^(NSArray* scores, NSError* error) {
-</span><span class='line'>                if (error != NULL) {
-</span><span class='line'>                    NSLog( @"Error : while loading scores : %@", error.description );
-</span><span class='line'>                    return;
-</span><span class='line'>                }
-</span><span class='line'>                NSLog( @"Success : Scores loaded.");
+</span><span class='line'>        }]; // [leaderboard loadScoresWithCompletionHandler:...]
+</span><span class='line'>    
+</span><span class='line'>    }]; // [myScore reportScoreWithCompletionHandler:...]
 </span><span class='line'>
-</span><span class='line'>                NSLog( @"Player's ranking : %lld score : %lld", 
-</span><span class='line'>                       leaderboard.localPlayerScore.rank, 
-</span><span class='line'>                       leaderboard.localPlayerScore.value );
-</span><span class='line'>
-</span><span class='line'>                
-</span><span class='line'>                NSLog( @"Listing scores." );
-</span><span class='line'>                
-</span><span class='line'>                for (NLScore * score in scores) {
-</span><span class='line'>                    NSString *dateString = [NSDateFormatter localizedStringFromDate:score.date
-</span><span class='line'>                                                                          dateStyle:NSDateFormatterShortStyle
-</span><span class='line'>                                                                          timeStyle:NSDateFormatterFullStyle];
-</span><span class='line'>                    
-</span><span class='line'>                    NSLog( @"Rank: %lld, Display Alias : %@, Score : %lld, Time : %@",
-</span><span class='line'>                          score.rank, score.playerAlias, score.value, dateString );
-</span><span class='line'>                }
-</span><span class='line'>            }];
-</span><span class='line'>            
-</span><span class='line'>        }];
-</span><span class='line'>
-</span><span class='line'>    };</span></code></pre></td></tr></table></div></figure>
+</span><span class='line'>}; // localPlayer.authenticateHandler</span></code></pre></td></tr></table></div></figure>
 
 
 <h1>Warning</h1>
