@@ -39,6 +39,8 @@ extern NLLocalPlayer * gLocalPlayer;
 }
 
 
+
+
 - (void)reportScoreWithCompletionHandler:(void(^)(NSError *error))completionHandler {
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -79,11 +81,16 @@ extern NLLocalPlayer * gLocalPlayer;
         NSString * scoreKeyByUserTable = [NLTable scoreKeyByUserName:category_];
         assert(scoreKeyByUserTable);
         
-        // Create tables
-        [[NLTable sharedTable] makeSureToCreateTable:scoreByScoreKeyTable error:&error];
-        if (error) goto finally;
-        [[NLTable sharedTable] makeSureToCreateTable:scoreKeyByUserTable error:&error];
-        if (error) goto finally;
+        // TODO : This is temporary code. get rid of gTableCreated flag.
+        static bool gTableCreated=false;
+        if (!gTableCreated) {
+            // Create tables
+            [[NLTable sharedTable] makeSureToCreateTable:scoreByScoreKeyTable error:&error];
+            if (error) goto finally;
+            [[NLTable sharedTable] makeSureToCreateTable:scoreKeyByUserTable error:&error];
+            if (error) goto finally;
+            gTableCreated=true;
+        }
         
         // Format data to put into Nanolat Database.
         NSData * jsonScoreData = [NLScore generateJsonFromScore:self error:&error];

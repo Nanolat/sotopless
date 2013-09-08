@@ -85,15 +85,17 @@ extern NLLocalPlayer * gLocalPlayer;
         
         NSString * scoreKeyByUserTable = [NLTable scoreKeyByUserName:category_];
         assert(scoreKeyByUserTable);
-        
-        
+    
+        // TODO : uncomment following lines for table creation.
+        // TODO : And also get rid of gTableCreated flag in NLScore.
+/*
         /////////////////////////////////////////////////////////////////////////////////
         // Create tables
         [[NLTable sharedTable] makeSureToCreateTable:scoreByScoreKeyTable error:&error];
         if (error) goto finally;
         [[NLTable sharedTable] makeSureToCreateTable:scoreKeyByUserTable error:&error];
         if (error) goto finally;
-        
+  */
         /////////////////////////////////////////////////////////////////////////////////
         // Get the local player's ranking.
         {
@@ -125,14 +127,6 @@ extern NLLocalPlayer * gLocalPlayer;
             localPlayerScore_ = [[NLScore scoreFromJson:jsonScoreData category:category_ rank:userRank error:&error] retain];
             if (error) goto finally;
         }
-        
-        /*
-         - (CursorHandle) cursorOpenByOrder: (NSString *) tableName dir: (int) dir keyOrder: (KeyOrder) keyOrder error:(NSError**)error;
-         
-         - (void) cursorFetch: (CursorHandle) cursorHandle key:(NSData **)key keyOrder:(KeyOrder*)keyOrder value:(NSData **)value endOfCursor:(BOOL*)endOfCursor error:(NSError**)error;
-         
-         - (void) cursorClose: (CursorHandle) cursorHandle error:(NSError**)error;
-         */
         
         //////////////////////////////////////////////////////////////////////////////////
         // Get ranking data from leaderboard.
