@@ -507,8 +507,8 @@ on_error:
 	    shared_ptr<TProcessor> processor(new nanolat::thrift::DatabaseServiceProcessor(handler));
 	    shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
-	    // using thread pool with maximum 15 threads to handle incoming requests
-	    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(15);
+	    // using thread pool with maximum 1 thread to handle incoming requests
+	    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(1);
 	    shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
 	    threadManager->threadFactory(threadFactory);
 	    threadManager->start();
