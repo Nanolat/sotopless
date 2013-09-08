@@ -11,6 +11,5 @@
 // The player ID provided when creating a user.
 @property(nonatomic, readonly, retain)  NSString    *playerID;
 
-
 @end
 

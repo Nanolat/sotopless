@@ -4,6 +4,12 @@
 
 
 @interface NLScore : NSObject {
+    int64_t     value_;
+    NSString    *category_;
+    NSDate      *date_;
+    NSString    *playerAlias_;
+    NSString    *playerID_;
+    NSInteger   rank_;
 }
 
 - (id)initWithCategory:(NSString *)category;
@@ -23,3 +29,5 @@
 - (void)reportScoreWithCompletionHandler:(void(^)(NSError *error))completionHandler;
 
 @end
+
+
