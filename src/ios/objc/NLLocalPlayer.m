@@ -7,6 +7,7 @@
 #import "TTransportException.h"
 
 #import "DatabaseService.h"
+#import "NLTable.h"
 
 @interface NLLocalPlayer() {
     TSocketClient *transport_;
@@ -15,7 +16,6 @@
     DatabaseServiceClient * service_;
 }
 
--(id) init;
 -(void)dealloc;
 
 @end
@@ -24,8 +24,8 @@
 
 @synthesize authenticated=authenticated_;
 
-- (id) init {
-    if ( self = [super init]) {
+- (id) initWithPlayerID:(NSString *) playerID playerAlias:(NSString *) playerAlias {
+    if ( self = [super initWithPlayerID:playerID playerAlias:playerAlias]) {
         service_ = nil;
         transport_ = nil;
         framedTransport_ = nil;
@@ -36,13 +36,15 @@
 }
 
 // TODO : the NL_SOTOPLESS_HOST_NAME is changed to "xy.com", then the client hangs.
-#define NL_SOTOPLESS_HOST_NAME @"asdasldjasldjas.com"
+#define NL_SOTOPLESS_HOST_NAME @"10.11.9.75"
 #define NL_SOTOPLESS_PORT 9090
 - (void) setAuthenticateHandler:(void(^)(NSError *error))completionHandler {
 
     // TODO : This is fake. Implement it.
     NSLog(@"setAuthenticateHandler called.");
 
+    // TODO : Should we keep the completionHandler in NLLocalPlayer object and do authentication periodically?
+    
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(queue, ^ {
         // Background work here
@@ -55,7 +57,7 @@
             assert(transport_);
             framedTransport_ = [[TFramedTransport alloc] initWithTransport:transport_];
             assert(framedTransport_);
-            protocol_ = [[TBinaryProtocol alloc] initWithTransport:transport_ strictRead:YES strictWrite:YES];
+            protocol_ = [[TBinaryProtocol alloc] initWithTransport:framedTransport_ strictRead:YES strictWrite:YES];
             assert(protocol_);
             service_ = [[DatabaseServiceClient alloc] initWithProtocol:protocol_];
             assert(service_);
@@ -65,6 +67,8 @@
             
             if (reply) {
                 if ( reply.status.error_code == ErrorCode_NL_SUCCESS ) {
+                    NLTable * table = [NLTable createSharedTable:service_ sessionHandle:reply.session_handle];
+                    assert(table);
                     // TODO : Create a user account if the account does not exits.
                     // TODO : Authenticate user id and password.
                 } else {
@@ -78,13 +82,22 @@
                                   message:[NLUtil append:@"Can't connect to SoTopless erver. Reason : ", tx_excp.reason, nil] ];
             assert(error);
         }
+        // Retain error object to use it in user thread.
+        [error retain];
         
         NSLog(@"Finished work in background");
 
         dispatch_async(dispatch_get_main_queue(), ^ {
-            authenticated_ = TRUE;
+            if (error) {
+                authenticated_ = FALSE;
+            } else {
+                authenticated_ = TRUE;
+            }
             completionHandler(error);
-            
+
+            // release the error object retained in background thread.
+            [error release];
+
             NSLog(@"Back on main thread");
         });
         
@@ -92,6 +105,8 @@
 }
 
 -(void)dealloc {
+    // TODO : Should we release authenticateHandler?
+    
     [service_ release];
     [protocol_ release];
     [framedTransport_ release];
@@ -100,12 +115,14 @@
     [super dealloc];
 }
 
+NLLocalPlayer * gLocalPlayer = nil;
+
 + (NLLocalPlayer *)localPlayer: (NSString *) playerID playerAlias:(NSString *) playerAlias password:(NSString *) password
 {
-    // TODO : This is fake. Implement it.
-    NLLocalPlayer * lplayer = [[[NLLocalPlayer alloc] init] autorelease];
+    // TODO : Who should release the global local player object?
+    gLocalPlayer = [[NLLocalPlayer alloc] initWithPlayerID:playerID playerAlias:playerAlias];
     
-    return lplayer;
+    return gLocalPlayer;
 }
 
 @end

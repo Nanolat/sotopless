@@ -28,6 +28,7 @@
 
 - (void)reportScoreWithCompletionHandler:(void(^)(NSError *error))completionHandler;
 
+
 @end
 
 

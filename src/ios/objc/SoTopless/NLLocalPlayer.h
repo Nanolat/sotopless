@@ -7,9 +7,10 @@
     BOOL authenticated_;
 }
 
-+ (NLLocalPlayer *)localPlayer: (NSString *) playerID playerAlias:(NSString *) playerAlias password:(NSString *) password;
+- (id) initWithPlayerID:(NSString *) playerID playerAlias:(NSString *) playerAlias ;
++ (NLLocalPlayer *)localPlayer: (NSString *) playerID playerAlias:(NSString *) playerAlias password:(NSString *) password ;
 
-@property(nonatomic, readonly, getter=isAuthenticated)  BOOL authenticated; 
+@property(nonatomic, readonly, getter=isAuthenticated)  BOOL authenticated;
 
 @property(nonatomic, copy) void(^authenticateHandler)(NSError *error);
 
