@@ -177,7 +177,6 @@
 <span class='line-number'>55</span>
 <span class='line-number'>56</span>
 <span class='line-number'>57</span>
-<span class='line-number'>58</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>////////////////////////////////////////////////////////////////////////////////
 </span><span class='line'>// Login ( User Authentication )
 </span><span class='line'>NSString * identifier = [ NSString stringWithFormat:@"unique identifier for a the user or phone"];
@@ -198,8 +197,8 @@
 </span><span class='line'>
 </span><span class='line'>    [myScore reportScoreWithCompletionHandler:^(NSError * error) {
 </span><span class='line'>        if (error != NULL) {
-</span><span class='line'>      NSLog( @"Error : while authenticating : %@", error.description );
-</span><span class='line'>      return;
+</span><span class='line'>            NSLog( @"Error : while authenticating : %@", error.description );
+</span><span class='line'>            return;
 </span><span class='line'>        }
 </span><span class='line'>        NSLog( @"Success : Score reported.");
 </span><span class='line'>    
@@ -210,26 +209,25 @@
 </span><span class='line'>        leaderboard.range = NSMakeRange(1,10); // 10 users from the 1st user.
 </span><span class='line'>    
 </span><span class='line'>        [leaderboard loadScoresWithCompletionHandler:^(NSArray* scores, NSError* error) {
-</span><span class='line'>      if (error != NULL) {
-</span><span class='line'>          NSLog( @"Error : while loading scores : %@", error.description );
-</span><span class='line'>          return;
-</span><span class='line'>      }
-</span><span class='line'>      NSLog( @"Success : Scores loaded.");
+</span><span class='line'>            if (error != NULL) {
+</span><span class='line'>                NSLog( @"Error : while loading scores : %@", error.description );
+</span><span class='line'>                return;
+</span><span class='line'>            }
+</span><span class='line'>            NSLog( @"Success : Scores loaded.");
 </span><span class='line'>
-</span><span class='line'>      NSLog( @"Player's ranking : %lld score : %lld", 
-</span><span class='line'>             leaderboard.localPlayerScore.rank, 
-</span><span class='line'>             leaderboard.localPlayerScore.value );
+</span><span class='line'>            NSLog( @"Player's ranking : %lld score : %lld", 
+</span><span class='line'>                   leaderboard.localPlayerScore.rank, 
+</span><span class='line'>                   leaderboard.localPlayerScore.value );
 </span><span class='line'>
-</span><span class='line'>  
 </span><span class='line'>      NSLog( @"Listing scores." );
 </span><span class='line'>  
-</span><span class='line'>      for (NLScore * score in scores) {
-</span><span class='line'>          NSString *dateString = [NSDateFormatter localizedStringFromDate:score.date
-</span><span class='line'>                                                            dateStyle:NSDateFormatterShortStyle
-</span><span class='line'>                                                            timeStyle:NSDateFormatterFullStyle];
-</span><span class='line'>      
-</span><span class='line'>          NSLog( @"Rank: %lld, Display Alias : %@, Score : %lld, Time : %@",
-</span><span class='line'>                 score.rank, score.playerAlias, score.value, dateString );
+</span><span class='line'>            for (NLScore * score in scores) {
+</span><span class='line'>                NSString *dateString = [NSDateFormatter localizedStringFromDate:score.date
+</span><span class='line'>                                             dateStyle:NSDateFormatterShortStyle
+</span><span class='line'>                                             timeStyle:NSDateFormatterFullStyle];
+</span><span class='line'>    
+</span><span class='line'>                NSLog( @"Rank: %lld, Display Alias : %@, Score : %lld, Time : %@",
+</span><span class='line'>                    score.rank, score.playerAlias, score.value, dateString );
 </span><span class='line'>            }
 </span><span class='line'>        }]; // [leaderboard loadScoresWithCompletionHandler:...]
 </span><span class='line'>    
