@@ -125,6 +125,7 @@
         return nil;
     } else if (padingSize > 0 ) {
         [paddedData increaseLengthBy:padingSize];
+        assert( paddedData.length == NAME_DATA_PACKED_LEN );
     }
     
 	return paddedData;
