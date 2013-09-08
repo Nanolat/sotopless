@@ -45,8 +45,8 @@ struct DefaultReply {
 
 struct TableGetReply {
     1: ReplyStatus status,
-	2: string key,
-	3: string value,
+	2: binary key,
+	3: binary value,
 	4: KeyOrder key_order
 }
 
@@ -62,9 +62,9 @@ struct CursorOpenReply {
 
 struct CursorFetchReply {
     1: ReplyStatus status,
-	2: string key, 
+	2: binary key, 
 	3: KeyOrder key_order, 
-	4: string value
+	4: binary value
 }
 
 struct Session {
@@ -89,16 +89,16 @@ service DatabaseService {
     DefaultReply           table_drop           (1: Session session, 2: string table_name),
     TableStatReply         table_stat           (1: Session session, 2: string table_name),
     
-    DefaultReply           table_put            (1: Session session, 2: string table_name, 3: string key, 4: string value),
-    TableGetReply          table_get_by_key     (1: Session session, 2: string table_name, 3: string key),
+    DefaultReply           table_put            (1: Session session, 2: string table_name, 3: binary key, 4: binary value),
+    TableGetReply          table_get_by_key     (1: Session session, 2: string table_name, 3: binary key),
     TableGetReply          table_get_by_order   (1: Session session, 2: string table_name, 3: KeyOrder keyOrder),
-    DefaultReply           table_del            (1: Session session, 2: string table_name, 3: string key),
+    DefaultReply           table_del            (1: Session session, 2: string table_name, 3: binary key),
 
     DefaultReply           transaction_begin    (1: Session session),
     DefaultReply           transaction_abort    (1: Session session),
     DefaultReply           transaction_commit   (1: Session session),
     
-    CursorOpenReply        cursor_open_by_key   (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: string key),
+    CursorOpenReply        cursor_open_by_key   (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: binary key),
     CursorOpenReply        cursor_open_by_order (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: KeyOrder keyOrder),
     CursorFetchReply       cursor_fetch         (1: Session session, 2: CursorHandle cursor_handle),
     DefaultReply           cursor_close         (1: Session session, 2: CursorHandle cursor_handle)

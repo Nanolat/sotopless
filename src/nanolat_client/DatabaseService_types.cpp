@@ -267,7 +267,7 @@ uint32_t TableGetReply::read(::apache::thrift::protocol::TProtocol* iprot) {
         break;
       case 2:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->key);
+          xfer += iprot->readBinary(this->key);
           this->__isset.key = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -275,7 +275,7 @@ uint32_t TableGetReply::read(::apache::thrift::protocol::TProtocol* iprot) {
         break;
       case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->value);
+          xfer += iprot->readBinary(this->value);
           this->__isset.value = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -310,11 +310,11 @@ uint32_t TableGetReply::write(::apache::thrift::protocol::TProtocol* oprot) cons
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString(this->key);
+  xfer += oprot->writeBinary(this->key);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("value", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString(this->value);
+  xfer += oprot->writeBinary(this->value);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key_order", ::apache::thrift::protocol::T_I64, 4);
@@ -518,7 +518,7 @@ uint32_t CursorFetchReply::read(::apache::thrift::protocol::TProtocol* iprot) {
         break;
       case 2:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->key);
+          xfer += iprot->readBinary(this->key);
           this->__isset.key = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -534,7 +534,7 @@ uint32_t CursorFetchReply::read(::apache::thrift::protocol::TProtocol* iprot) {
         break;
       case 4:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->value);
+          xfer += iprot->readBinary(this->value);
           this->__isset.value = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -561,7 +561,7 @@ uint32_t CursorFetchReply::write(::apache::thrift::protocol::TProtocol* oprot) c
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString(this->key);
+  xfer += oprot->writeBinary(this->key);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key_order", ::apache::thrift::protocol::T_I64, 3);
@@ -569,7 +569,7 @@ uint32_t CursorFetchReply::write(::apache::thrift::protocol::TProtocol* oprot) c
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("value", ::apache::thrift::protocol::T_STRING, 4);
-  xfer += oprot->writeString(this->value);
+  xfer += oprot->writeBinary(this->value);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();

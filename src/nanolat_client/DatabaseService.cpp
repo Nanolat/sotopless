@@ -1417,7 +1417,7 @@ uint32_t DatabaseService_table_put_args::read(::apache::thrift::protocol::TProto
         break;
       case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->key);
+          xfer += iprot->readBinary(this->key);
           this->__isset.key = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1425,7 +1425,7 @@ uint32_t DatabaseService_table_put_args::read(::apache::thrift::protocol::TProto
         break;
       case 4:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->value);
+          xfer += iprot->readBinary(this->value);
           this->__isset.value = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1456,11 +1456,11 @@ uint32_t DatabaseService_table_put_args::write(::apache::thrift::protocol::TProt
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString(this->key);
+  xfer += oprot->writeBinary(this->key);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("value", ::apache::thrift::protocol::T_STRING, 4);
-  xfer += oprot->writeString(this->value);
+  xfer += oprot->writeBinary(this->value);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -1481,11 +1481,11 @@ uint32_t DatabaseService_table_put_pargs::write(::apache::thrift::protocol::TPro
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString((*(this->key)));
+  xfer += oprot->writeBinary((*(this->key)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("value", ::apache::thrift::protocol::T_STRING, 4);
-  xfer += oprot->writeString((*(this->value)));
+  xfer += oprot->writeBinary((*(this->value)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -1627,7 +1627,7 @@ uint32_t DatabaseService_table_get_by_key_args::read(::apache::thrift::protocol:
         break;
       case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->key);
+          xfer += iprot->readBinary(this->key);
           this->__isset.key = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -1658,7 +1658,7 @@ uint32_t DatabaseService_table_get_by_key_args::write(::apache::thrift::protocol
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString(this->key);
+  xfer += oprot->writeBinary(this->key);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -1679,7 +1679,7 @@ uint32_t DatabaseService_table_get_by_key_pargs::write(::apache::thrift::protoco
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString((*(this->key)));
+  xfer += oprot->writeBinary((*(this->key)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -2015,7 +2015,7 @@ uint32_t DatabaseService_table_del_args::read(::apache::thrift::protocol::TProto
         break;
       case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->key);
+          xfer += iprot->readBinary(this->key);
           this->__isset.key = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -2046,7 +2046,7 @@ uint32_t DatabaseService_table_del_args::write(::apache::thrift::protocol::TProt
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString(this->key);
+  xfer += oprot->writeBinary(this->key);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -2067,7 +2067,7 @@ uint32_t DatabaseService_table_del_pargs::write(::apache::thrift::protocol::TPro
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString((*(this->key)));
+  xfer += oprot->writeBinary((*(this->key)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -2705,7 +2705,7 @@ uint32_t DatabaseService_cursor_open_by_key_args::read(::apache::thrift::protoco
         break;
       case 4:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->key);
+          xfer += iprot->readBinary(this->key);
           this->__isset.key = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -2740,7 +2740,7 @@ uint32_t DatabaseService_cursor_open_by_key_args::write(::apache::thrift::protoc
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 4);
-  xfer += oprot->writeString(this->key);
+  xfer += oprot->writeBinary(this->key);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -2765,7 +2765,7 @@ uint32_t DatabaseService_cursor_open_by_key_pargs::write(::apache::thrift::proto
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("key", ::apache::thrift::protocol::T_STRING, 4);
-  xfer += oprot->writeString((*(this->key)));
+  xfer += oprot->writeBinary((*(this->key)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
