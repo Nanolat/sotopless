@@ -49,6 +49,9 @@
 									<listOptionValue builtIn="false" value="nldb"/>
 									<listOptionValue builtIn="false" value="thrift"/>
 									<listOptionValue builtIn="false" value="thriftnb"/>
+									<listOptionValue builtIn="false" value="xs"/>
+									<listOptionValue builtIn="false" value="tokyocabinet"/>
+									<listOptionValue builtIn="false" value="leveldb"/>
 									<listOptionValue builtIn="false" value="event"/>
 								</option>
 								<option id="gnu.cpp.link.option.flags.519434383" name="Linker flags" superClass="gnu.cpp.link.option.flags" value="" valueType="string"/>
@@ -99,7 +102,7 @@
 									<listOptionValue builtIn="false" value="../../../include"/>
 									<listOptionValue builtIn="false" value="../../../deps/include"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.517279596" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.517279596" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="NDEBUG"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1288013694" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -115,6 +118,9 @@
 									<listOptionValue builtIn="false" value="nldb"/>
 									<listOptionValue builtIn="false" value="thrift"/>
 									<listOptionValue builtIn="false" value="thriftnb"/>
+									<listOptionValue builtIn="false" value="xs"/>
+									<listOptionValue builtIn="false" value="tokyocabinet"/>
+									<listOptionValue builtIn="false" value="leveldb"/>
 									<listOptionValue builtIn="false" value="event"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1749286300" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
