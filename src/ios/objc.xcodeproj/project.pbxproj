@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		731FDA0417DC4A8E0085EF1F /* NLScorePrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 731FDA0317DC4A8E0085EF1F /* NLScorePrivate.m */; };
-		731FDA0717DC54270085EF1F /* NLTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 731FDA0617DC54270085EF1F /* NLTable.m */; };
-		731FDA0A17DC5D8B0085EF1F /* NLDataFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 731FDA0917DC5D8B0085EF1F /* NLDataFormatter.m */; };
+		733E1E4D17DC9F360062D858 /* NLDataFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 733E1E4817DC9F360062D858 /* NLDataFormatter.m */; };
+		733E1E4E17DC9F360062D858 /* NLScorePrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 733E1E4A17DC9F360062D858 /* NLScorePrivate.m */; };
+		733E1E4F17DC9F360062D858 /* NLTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 733E1E4C17DC9F360062D858 /* NLTable.m */; };
 		736FCD5017DBC929005E55CB /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 736FCD4F17DBC929005E55CB /* UIKit.framework */; };
 		736FCD5217DBC929005E55CB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 736FCD5117DBC929005E55CB /* Foundation.framework */; };
 		736FCD5417DBC929005E55CB /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 736FCD5317DBC929005E55CB /* CoreGraphics.framework */; };
@@ -45,12 +45,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		731FDA0217DC4A8E0085EF1F /* NLScorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLScorePrivate.h; sourceTree = "<group>"; };
-		731FDA0317DC4A8E0085EF1F /* NLScorePrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLScorePrivate.m; sourceTree = "<group>"; };
-		731FDA0517DC54270085EF1F /* NLTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLTable.h; sourceTree = "<group>"; };
-		731FDA0617DC54270085EF1F /* NLTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLTable.m; sourceTree = "<group>"; };
-		731FDA0817DC5D8B0085EF1F /* NLDataFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLDataFormatter.h; sourceTree = "<group>"; };
-		731FDA0917DC5D8B0085EF1F /* NLDataFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLDataFormatter.m; sourceTree = "<group>"; };
+		733E1E4717DC9F360062D858 /* NLDataFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLDataFormatter.h; sourceTree = "<group>"; };
+		733E1E4817DC9F360062D858 /* NLDataFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLDataFormatter.m; sourceTree = "<group>"; };
+		733E1E4917DC9F360062D858 /* NLScorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLScorePrivate.h; sourceTree = "<group>"; };
+		733E1E4A17DC9F360062D858 /* NLScorePrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLScorePrivate.m; sourceTree = "<group>"; };
+		733E1E4B17DC9F360062D858 /* NLTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLTable.h; sourceTree = "<group>"; };
+		733E1E4C17DC9F360062D858 /* NLTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLTable.m; sourceTree = "<group>"; };
 		736FCD4C17DBC929005E55CB /* objc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = objc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		736FCD4F17DBC929005E55CB /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		736FCD5117DBC929005E55CB /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -137,12 +137,6 @@
 		736FCD4317DBC929005E55CB = {
 			isa = PBXGroup;
 			children = (
-				731FDA0817DC5D8B0085EF1F /* NLDataFormatter.h */,
-				731FDA0917DC5D8B0085EF1F /* NLDataFormatter.m */,
-				731FDA0517DC54270085EF1F /* NLTable.h */,
-				731FDA0617DC54270085EF1F /* NLTable.m */,
-				731FDA0217DC4A8E0085EF1F /* NLScorePrivate.h */,
-				731FDA0317DC4A8E0085EF1F /* NLScorePrivate.m */,
 				736FCD5517DBC929005E55CB /* objc */,
 				736FCD4E17DBC929005E55CB /* Frameworks */,
 				736FCD4D17DBC929005E55CB /* Products */,
@@ -170,6 +164,12 @@
 		736FCD5517DBC929005E55CB /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				733E1E4717DC9F360062D858 /* NLDataFormatter.h */,
+				733E1E4817DC9F360062D858 /* NLDataFormatter.m */,
+				733E1E4917DC9F360062D858 /* NLScorePrivate.h */,
+				733E1E4A17DC9F360062D858 /* NLScorePrivate.m */,
+				733E1E4B17DC9F360062D858 /* NLTable.h */,
+				733E1E4C17DC9F360062D858 /* NLTable.m */,
 				736FCDBF17DC2EA3005E55CB /* thrift-gen */,
 				736FCD8717DC0A5F005E55CB /* src */,
 				736FCD7E17DBE2FC005E55CB /* NLLeaderboard.m */,
@@ -383,9 +383,9 @@
 				736FCDBB17DC0A5F005E55CB /* TTransportException.m in Sources */,
 				736FCDBE17DC2E98005E55CB /* DatabaseService.m in Sources */,
 				736FCDC317DC3527005E55CB /* NLUtil.m in Sources */,
-				731FDA0417DC4A8E0085EF1F /* NLScorePrivate.m in Sources */,
-				731FDA0717DC54270085EF1F /* NLTable.m in Sources */,
-				731FDA0A17DC5D8B0085EF1F /* NLDataFormatter.m in Sources */,
+				733E1E4D17DC9F360062D858 /* NLDataFormatter.m in Sources */,
+				733E1E4E17DC9F360062D858 /* NLScorePrivate.m in Sources */,
+				733E1E4F17DC9F360062D858 /* NLTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
