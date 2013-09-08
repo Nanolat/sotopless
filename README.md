@@ -6,8 +6,8 @@ For the details, see http://www.sotopless.com.
 
 Supported Platforms
 -------------------
-*  OSX
-*  Ubuntu
+*  Mac OS X
+*  Ubuntu Linux
 
 Prerequisites
 -------------
@@ -24,7 +24,7 @@ Followings are list of leaderboard features to implement.
 *  Post a new score of a user.
 *  Get top N users with scores from a leaderboard.
 *  Get rank and score of a user from a leaderboard.
-*  Add different kinds of leaderboards such as weekly, monthly, asia, europe, etc.
+*  Add different kinds of leaderboards such as weekly, monthly, Asia, Europe, etc.
 
 License
 -------
