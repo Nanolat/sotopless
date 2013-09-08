@@ -151,7 +151,7 @@ static NLTable * gTable = nil;
         assert(error);
 
         *o_value = nil;
-        *o_keyOrder = nil;
+        *o_keyOrder = 0;
         *o_error = error;
     }
     

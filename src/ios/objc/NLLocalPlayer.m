@@ -72,14 +72,14 @@
                     // TODO : Create a user account if the account does not exits.
                     // TODO : Authenticate user id and password.
                 } else {
-                    error = [NLUtil errorWithCode:NLErrorCommunicationsFailure message:@"Can't connect to SoTopless erver."];
+                    error = [NLUtil errorWithCode:NLErrorCommunicationsFailure message:@"Can't connect to SoTopless server."];
                     assert(error);
                 }
             }
             
         } @catch ( TTransportException * tx_excp ) {
             error = [NLUtil errorWithCode:NLErrorCommunicationsFailure
-                                  message:[NLUtil append:@"Can't connect to SoTopless erver. Reason : ", tx_excp.reason, nil] ];
+                                  message:[NLUtil append:@"Can't connect to SoTopless server. Reason : ", tx_excp.reason, nil] ];
             assert(error);
         }
         // Retain error object to use it in user thread.

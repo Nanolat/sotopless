@@ -118,7 +118,14 @@
     }
     
     NSMutableData * paddedData = [NSMutableData dataWithData:data];
-    [paddedData increaseLengthBy:4];
+    
+    int padingSize = NAME_DATA_PACKED_LEN - paddedData.length;
+    
+    if (padingSize < 0) {
+        return nil;
+    } else if (padingSize > 0 ) {
+        [paddedData increaseLengthBy:padingSize];
+    }
     
 	return paddedData;
 }
