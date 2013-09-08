@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>iOS Sample - SoTopless</title>
+  <meta name="author" content="SoTopless">
+
+  
+  <meta name="description" content="iOS Sample Aug 12th, 2013 Introduction This sample shows a working code for using SoTopless iOS SDK. GameKit Compatibility SoTopless iOS SDK &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.sotopless.com/tutorials/ios.html">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="SoTopless" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-43406968-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body    class="collapse-sidebar sidebar-footer" >
+  <header role="banner"><hgroup>
+  <h1><a href="/">SoTopless</a></h1>
+  
+    <h2>A Leaderboard Server with true scores from genuine players.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.sotopless.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Home</a></li>
+  <li><a href="/tutorials/ios.html">iOS SDK</a></li>
+  <li><a href="/tutorials/javascript.html">JavaScript Tutorial</a></li>
+  <li><a href="/tutorials/cpp.html">C++ Tutorial</a></li>
+  <li><a href="/tutorials/cpp-api.html">C++ API</a></li>
+  <li><a href="/join-alpha-test">Join Alpha Test</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article role="article">
+  
+  <header>
+    <h1 class="entry-title">iOS Sample</h1>
+    <p class="meta">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-12T18:19:00-07:00" pubdate data-updated="true">Aug 12<span>th</span>, 2013</time></p>
+  </header>
+  
+  <h1>Introduction</h1>
+
+<p>This sample shows a working code for using SoTopless iOS SDK.</p>
+
+<h1>GameKit Compatibility</h1>
+
+<p>SoTopless iOS SDK provides compatible API for major features of Leaderboard API in Apple GameKit.</p>
+
+<p>The only different part is user authentication. You need to pass playerID, playerAlias, and a password.</p>
+
+<h2>Sample code </h2>
+
+<p>SoTopless iOS SDK supports asynchronous API calls similar to Apple GameKit. The sample code shows following steps.</p>
+
+<ol>
+<li>Player Authentication.</li>
+<li>Posting Player Score.</li>
+<li>Listing top N Scores and getting player&rsquo;s score and ranking.</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>////////////////////////////////////////////////////////////////////////////////
+</span><span class='line'>    // Login
+</span><span class='line'>    
+</span><span class='line'>    NSString * uuid = [ NSString stringWithFormat:@"GET-UUID-DONT-USE-THIS"];
+</span><span class='line'>    
+</span><span class='line'>    NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"Kangdori" password:uuid ];
+</span><span class='line'>    
+</span><span class='line'>    localPlayer.authenticateHandler = ^(NSError * error) {
+</span><span class='line'>        if (error != NULL) {
+</span><span class='line'>            NSLog( @"Error : while authenticating : %@", error.description );
+</span><span class='line'>            return;
+</span><span class='line'>        }
+</span><span class='line'>        NSLog( @"Success : User authenticated.");
+</span><span class='line'>        
+</span><span class='line'>        ////////////////////////////////////////////////////////////////////////////////
+</span><span class='line'>        // Report Score
+</span><span class='line'>        NLScore * myScore = [[NLScore alloc] initWithCategory:@"all"];
+</span><span class='line'>        myScore.value = 300; // score
+</span><span class='line'>        
+</span><span class='line'>        [myScore reportScoreWithCompletionHandler:^(NSError * error) {
+</span><span class='line'>            if (error != NULL) {
+</span><span class='line'>                NSLog( @"Error : while authenticating : %@", error.description );
+</span><span class='line'>                return;
+</span><span class='line'>            }
+</span><span class='line'>            NSLog( @"Success : Score reported.");
+</span><span class='line'>            
+</span><span class='line'>            ////////////////////////////////////////////////////////////////////////////////
+</span><span class='line'>            // List top 10 Scores
+</span><span class='line'>            NLLeaderboard * leaderboard = [[NLLeaderboard alloc] init];
+</span><span class='line'>            leaderboard.category = @"all";
+</span><span class='line'>            leaderboard.range = NSMakeRange(1,10); // 10 users from the 1st user.
+</span><span class='line'>            
+</span><span class='line'>            [leaderboard loadScoresWithCompletionHandler:^(NSArray* scores, NSError* error) {
+</span><span class='line'>                if (error != NULL) {
+</span><span class='line'>                    NSLog( @"Error : while loading scores : %@", error.description );
+</span><span class='line'>                    return;
+</span><span class='line'>                }
+</span><span class='line'>                NSLog( @"Success : Scores loaded.");
+</span><span class='line'>
+</span><span class='line'>                NSLog( @"Player's ranking : %lld score : %lld", 
+</span><span class='line'>                       leaderboard.localPlayerScore.rank, 
+</span><span class='line'>                       leaderboard.localPlayerScore.value );
+</span><span class='line'>
+</span><span class='line'>                
+</span><span class='line'>                NSLog( @"Listing scores." );
+</span><span class='line'>                
+</span><span class='line'>                for (NLScore * score in scores) {
+</span><span class='line'>                    NSString *dateString = [NSDateFormatter localizedStringFromDate:score.date
+</span><span class='line'>                                                                          dateStyle:NSDateFormatterShortStyle
+</span><span class='line'>                                                                          timeStyle:NSDateFormatterFullStyle];
+</span><span class='line'>                    
+</span><span class='line'>                    NSLog( @"Rank: %lld, Display Alias : %@, Score : %lld, Time : %@",
+</span><span class='line'>                          score.rank, score.playerAlias, score.value, dateString );
+</span><span class='line'>                }
+</span><span class='line'>            }];
+</span><span class='line'>            
+</span><span class='line'>        }];
+</span><span class='line'>
+</span><span class='line'>    };</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Warning</h1>
+
+<p>The iOS SDK is built during TechCrunch 2013 Hackathon from 7th to 8th Sep. It took about 20 hours for coding and testing. More work needs to be done and the iOS SDK code is <em>experimental</em>.</p>
+
+  
+    <footer>
+      <p class="meta">
+        
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-12T18:19:00-07:00" pubdate data-updated="true">Aug 12<span>th</span>, 2013</time>
+        
+      </p>
+      
+        <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.sotopless.com/tutorials/ios.html" data-via="" data-counturl="http://www.sotopless.com/tutorials/ios.html" >Tweet</a>
+  
+  
+  
+</div>
+
+      
+    </footer>
+  
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - SoTopless -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'sotopless';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.sotopless.com/tutorials/ios.html';
+        var disqus_url = 'http://www.sotopless.com/tutorials/ios.html';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
