@@ -4,6 +4,7 @@
 #import <SoTopless/NLDefines.h>
 
 @interface NLLocalPlayer : NLPlayer {
+    BOOL authenticated_;
 }
 
 + (NLLocalPlayer *)localPlayer: (NSString *) playerID playerAlias:(NSString *) playerAlias password:(NSString *) password;

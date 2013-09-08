@@ -37,6 +37,8 @@
 		736FCDB917DC0A5F005E55CB /* TNSStreamTransport.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCDA817DC0A5F005E55CB /* TNSStreamTransport.m */; };
 		736FCDBA17DC0A5F005E55CB /* TSocketClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCDAA17DC0A5F005E55CB /* TSocketClient.m */; };
 		736FCDBB17DC0A5F005E55CB /* TTransportException.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCDAD17DC0A5F005E55CB /* TTransportException.m */; };
+		736FCDBE17DC2E98005E55CB /* DatabaseService.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCDBD17DC2E98005E55CB /* DatabaseService.m */; };
+		736FCDC317DC3527005E55CB /* NLUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 736FCDC217DC3527005E55CB /* NLUtil.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +105,10 @@
 		736FCDAB17DC0A5F005E55CB /* TTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTransport.h; sourceTree = "<group>"; };
 		736FCDAC17DC0A5F005E55CB /* TTransportException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTransportException.h; sourceTree = "<group>"; };
 		736FCDAD17DC0A5F005E55CB /* TTransportException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTransportException.m; sourceTree = "<group>"; };
+		736FCDBC17DC2E98005E55CB /* DatabaseService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseService.h; path = "thrift-gen/gen-cocoa/DatabaseService.h"; sourceTree = "<group>"; };
+		736FCDBD17DC2E98005E55CB /* DatabaseService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DatabaseService.m; path = "thrift-gen/gen-cocoa/DatabaseService.m"; sourceTree = "<group>"; };
+		736FCDC117DC3526005E55CB /* NLUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLUtil.h; sourceTree = "<group>"; };
+		736FCDC217DC3527005E55CB /* NLUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLUtil.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +155,7 @@
 		736FCD5517DBC929005E55CB /* objc */ = {
 			isa = PBXGroup;
 			children = (
+				736FCDBF17DC2EA3005E55CB /* thrift-gen */,
 				736FCD8717DC0A5F005E55CB /* src */,
 				736FCD7E17DBE2FC005E55CB /* NLLeaderboard.m */,
 				736FCD7F17DBE2FC005E55CB /* NLLocalPlayer.m */,
@@ -162,6 +169,8 @@
 				736FCD6A17DBC92A005E55CB /* ViewController_iPhone.xib */,
 				736FCD6D17DBC92A005E55CB /* ViewController_iPad.xib */,
 				736FCD5617DBC92A005E55CB /* Supporting Files */,
+				736FCDC117DC3526005E55CB /* NLUtil.h */,
+				736FCDC217DC3527005E55CB /* NLUtil.m */,
 			);
 			path = objc;
 			sourceTree = "<group>";
@@ -260,6 +269,15 @@
 			path = transport;
 			sourceTree = "<group>";
 		};
+		736FCDBF17DC2EA3005E55CB /* thrift-gen */ = {
+			isa = PBXGroup;
+			children = (
+				736FCDBC17DC2E98005E55CB /* DatabaseService.h */,
+				736FCDBD17DC2E98005E55CB /* DatabaseService.m */,
+			);
+			name = "thrift-gen";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -348,6 +366,8 @@
 				736FCDB917DC0A5F005E55CB /* TNSStreamTransport.m in Sources */,
 				736FCDBA17DC0A5F005E55CB /* TSocketClient.m in Sources */,
 				736FCDBB17DC0A5F005E55CB /* TTransportException.m in Sources */,
+				736FCDBE17DC2E98005E55CB /* DatabaseService.m in Sources */,
+				736FCDC317DC3527005E55CB /* NLUtil.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
