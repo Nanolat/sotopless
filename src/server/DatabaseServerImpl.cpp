@@ -1,7 +1,7 @@
 #include "ServerImpl.h"
 
 namespace nanolat {
-namespace server {
+namespace db {
 
 /* The error message format to send back to client in case there is any Nanolat Database error. */
 static const char * nldb_error_message_format[] = {
@@ -92,5 +92,5 @@ std::string get_error_message_format(int error_code)
 	return std::string("Unknown Error");
 }
 
-} // server
+} // db
 } // nanolat

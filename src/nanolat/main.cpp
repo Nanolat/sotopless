@@ -26,7 +26,8 @@ int main(int argc, char **argv) {
 
   printf("Nanolat Server : Listening to port %d\n", port);
 
-  nanolat::leaderboard::listen(port);
+//  nanolat::leaderboard::listen(port);
+  nanolat::server::listen(port);
 
   return 0;
 }
