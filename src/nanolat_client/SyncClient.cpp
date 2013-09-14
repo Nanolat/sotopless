@@ -5,8 +5,10 @@
 #include "Cursor.h"
 #include "DatabaseService.h"
 
-#define CHECK_ARGUMENT(exp) if (!(exp)) return NL_INVALID_ARGUMENT;
+// TODO : add test for incompatible client version.
+#define NLDB_CLIENT_VERSION "v1.0"
 
+#define CHECK_ARGUMENT(exp) if (!(exp)) return NL_INVALID_ARGUMENT;
 
 namespace nanolat {
 namespace client {
@@ -38,7 +40,7 @@ int nl_connect(const std::string & address, const int port, connection_t ** o_co
 
 	thrift::ConnectReply reply;
 
-	conn->get_client().connect(reply);
+	conn->get_client().connect(reply, NLDB_CLIENT_VERSION);
 
 	copy_reply_status(conn->reply_status, reply.status);
 

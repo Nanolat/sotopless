@@ -33,11 +33,10 @@ deps/log
 
 #Thrift generated files.
 src/common/gen-cpp
-#src/*/DatabaseService.*
-#src/*/DatabaseService_constants.*
-#src/*/DatabaseService_types.*
-#!src/*/DatabaseService.thrift
 
 #iOS client project temporary files.
-src/ios/objc.xcodeproj/project.xcworkspace/*
-src/ios/objc.xcodeproj/xcuserdata/*
+src/ios-legacy/objc.xcodeproj/project.xcworkspace/*
+src/ios-legacy/objc.xcodeproj/xcuserdata/*
+src/ios-client/objc.xcodeproj/project.xcworkspace/*
+src/ios-client/objc.xcodeproj/xcuserdata/*
+

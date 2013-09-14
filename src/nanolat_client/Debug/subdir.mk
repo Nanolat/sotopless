@@ -8,6 +8,9 @@ CPP_SRCS += \
 ../DatabaseService.cpp \
 ../DatabaseService_constants.cpp \
 ../DatabaseService_types.cpp \
+../LeaderboardService.cpp \
+../LeaderboardService_constants.cpp \
+../LeaderboardService_types.cpp \
 ../SyncClient.cpp \
 ../Util.cpp 
 
@@ -16,6 +19,9 @@ OBJS += \
 ./DatabaseService.o \
 ./DatabaseService_constants.o \
 ./DatabaseService_types.o \
+./LeaderboardService.o \
+./LeaderboardService_constants.o \
+./LeaderboardService_types.o \
 ./SyncClient.o \
 ./Util.o 
 
@@ -24,6 +30,9 @@ CPP_DEPS += \
 ./DatabaseService.d \
 ./DatabaseService_constants.d \
 ./DatabaseService_types.d \
+./LeaderboardService.d \
+./LeaderboardService_constants.d \
+./LeaderboardService_types.d \
 ./SyncClient.d \
 ./Util.d 
 

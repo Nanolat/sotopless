@@ -26,7 +26,20 @@ uint32_t DatabaseService_connect_args::read(::apache::thrift::protocol::TProtoco
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->protocol_version);
+          this->__isset.protocol_version = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -39,6 +52,10 @@ uint32_t DatabaseService_connect_args::write(::apache::thrift::protocol::TProtoc
   uint32_t xfer = 0;
   xfer += oprot->writeStructBegin("DatabaseService_connect_args");
 
+  xfer += oprot->writeFieldBegin("protocol_version", ::apache::thrift::protocol::T_I32, 1);
+  xfer += oprot->writeI32(this->protocol_version);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -47,6 +64,10 @@ uint32_t DatabaseService_connect_args::write(::apache::thrift::protocol::TProtoc
 uint32_t DatabaseService_connect_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   xfer += oprot->writeStructBegin("DatabaseService_connect_pargs");
+
+  xfer += oprot->writeFieldBegin("protocol_version", ::apache::thrift::protocol::T_I32, 1);
+  xfer += oprot->writeI32((*(this->protocol_version)));
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -3437,18 +3458,19 @@ uint32_t DatabaseService_cursor_close_presult::read(::apache::thrift::protocol::
   return xfer;
 }
 
-void DatabaseServiceClient::connect(ConnectReply& _return)
+void DatabaseServiceClient::connect(ConnectReply& _return, const int32_t protocol_version)
 {
-  send_connect();
+  send_connect(protocol_version);
   recv_connect(_return);
 }
 
-void DatabaseServiceClient::send_connect()
+void DatabaseServiceClient::send_connect(const int32_t protocol_version)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("connect", ::apache::thrift::protocol::T_CALL, cseqid);
 
   DatabaseService_connect_pargs args;
+  args.protocol_version = &protocol_version;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -4603,7 +4625,7 @@ void DatabaseServiceProcessor::process_connect(int32_t seqid, ::apache::thrift::
 
   DatabaseService_connect_result result;
   try {
-    iface_->connect(result.success);
+    iface_->connect(result.success, args.protocol_version);
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {

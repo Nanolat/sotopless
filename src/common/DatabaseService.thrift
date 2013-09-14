@@ -1,5 +1,7 @@
 namespace cpp nanolat.thrift
 
+const i32 PROTOCOL_VERSION = 1;
+
 /* ID is requested by the client. */
 typedef i64 KeyOrder
 
@@ -24,7 +26,8 @@ enum ErrorCode {
 	NL_TABLE_ALREADY_OPEN        = -1012,
 	NL_TABLE_NOT_OPEN            = -1013,
 	NL_CURSOR_HAS_NO_MORE_KEYS   = -1014,
-	NL_ERROR_CODE_END            = -1014
+	NL_INCOMPATIBLE_CLINET_VERSION = -1015,
+	NL_ERROR_CODE_END            = -1015
 }
 
 struct ReplyStatus
@@ -62,9 +65,9 @@ struct CursorOpenReply {
 
 struct CursorFetchReply {
     1: ReplyStatus status,
-	2: binary key, 
-	3: KeyOrder key_order, 
-	4: binary value
+    2: binary key, 
+    3: KeyOrder key_order, 
+    4: binary value
 }
 
 struct Session {
@@ -72,13 +75,12 @@ struct Session {
 }
 
 struct ConnectReply {
-    1: ReplyStatus status
-	2: i32 session_handle
+    1: ReplyStatus status,
+	2: i32    session_handle
 }
-service DatabaseService {
 
-    ConnectReply           connect(),
-    
+service DatabaseService {
+    ConnectReply           connect              (1: i32 protocol_version),
     DefaultReply           disconnect           (1: Session session),
 
     DefaultReply           database_create      (1: Session session, 2: string db_name),
@@ -101,6 +103,6 @@ service DatabaseService {
     CursorOpenReply        cursor_open_by_key   (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: binary key),
     CursorOpenReply        cursor_open_by_order (1: Session session, 2: string table_name, 3: CursorDirection dir, 4: KeyOrder keyOrder),
     CursorFetchReply       cursor_fetch         (1: Session session, 2: CursorHandle cursor_handle),
-    DefaultReply           cursor_close         (1: Session session, 2: CursorHandle cursor_handle)
+    DefaultReply           cursor_close         (1: Session session, 2: CursorHandle cursor_handle),
 }
 

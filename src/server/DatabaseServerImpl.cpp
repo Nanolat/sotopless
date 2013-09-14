@@ -26,7 +26,8 @@ static const char * nldb_error_message_format[] = {
 	"Unable to Initialized Replication Message",
 	"Unsupported Feature",
 	"Variable Key Size Not Supported",
-	"Variable Value Size Not Supported"
+	"Variable Value Size Not Supported",
+	"Incompatible Client Version"
 };
 /*
 #if (sizeof(nldb_error_message_format)/sizeof(char*)) <> (NLDB_ERROR_CODE_START - NLDB_ERROR_CODE_END + 1)

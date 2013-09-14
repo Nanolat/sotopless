@@ -28,6 +28,7 @@ int _kErrorCodeValues[] = {
   ErrorCode::NL_TABLE_ALREADY_OPEN,
   ErrorCode::NL_TABLE_NOT_OPEN,
   ErrorCode::NL_CURSOR_HAS_NO_MORE_KEYS,
+  ErrorCode::NL_INCOMPATIBLE_CLINET_VERSION,
   ErrorCode::NL_ERROR_CODE_END
 };
 const char* _kErrorCodeNames[] = {
@@ -48,9 +49,10 @@ const char* _kErrorCodeNames[] = {
   "NL_TABLE_ALREADY_OPEN",
   "NL_TABLE_NOT_OPEN",
   "NL_CURSOR_HAS_NO_MORE_KEYS",
+  "NL_INCOMPATIBLE_CLINET_VERSION",
   "NL_ERROR_CODE_END"
 };
-const std::map<int, const char*> _ErrorCode_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(18, _kErrorCodeValues, _kErrorCodeNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
+const std::map<int, const char*> _ErrorCode_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(19, _kErrorCodeValues, _kErrorCodeNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
 
 int _kCursorDirectionValues[] = {
   CursorDirection::CD_FORWARD,

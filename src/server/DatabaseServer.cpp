@@ -83,8 +83,10 @@ private :
 	// Your initialization goes here
 	}
 
-	void connect(ConnectReply& _return) {
+	void connect(ConnectReply& _return, const int32_t protocol_version ) {
 		TRACE("connect\n");
+
+		// TODO : Check the protocol version
 
 		// Create a new session context.
 		session_context_t * sess_ctx = NULL;

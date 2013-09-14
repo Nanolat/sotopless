@@ -11,6 +11,8 @@ namespace nanolat { namespace thrift {
 const DatabaseServiceConstants g_DatabaseService_constants;
 
 DatabaseServiceConstants::DatabaseServiceConstants() {
+  PROTOCOL_VERSION = 1;
+
 }
 
 }} // namespace

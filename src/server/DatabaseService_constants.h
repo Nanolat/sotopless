@@ -15,6 +15,7 @@ class DatabaseServiceConstants {
  public:
   DatabaseServiceConstants();
 
+  int32_t PROTOCOL_VERSION;
 };
 
 extern const DatabaseServiceConstants g_DatabaseService_constants;

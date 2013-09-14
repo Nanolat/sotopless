@@ -15,7 +15,7 @@ namespace nanolat { namespace thrift {
 class DatabaseServiceIf {
  public:
   virtual ~DatabaseServiceIf() {}
-  virtual void connect(ConnectReply& _return) = 0;
+  virtual void connect(ConnectReply& _return, const int32_t protocol_version) = 0;
   virtual void disconnect(DefaultReply& _return, const Session& session) = 0;
   virtual void database_create(DefaultReply& _return, const Session& session, const std::string& db_name) = 0;
   virtual void database_drop(DefaultReply& _return, const Session& session, const std::string& db_name) = 0;
@@ -63,7 +63,7 @@ class DatabaseServiceIfSingletonFactory : virtual public DatabaseServiceIfFactor
 class DatabaseServiceNull : virtual public DatabaseServiceIf {
  public:
   virtual ~DatabaseServiceNull() {}
-  void connect(ConnectReply& /* _return */) {
+  void connect(ConnectReply& /* _return */, const int32_t /* protocol_version */) {
     return;
   }
   void disconnect(DefaultReply& /* _return */, const Session& /* session */) {
@@ -122,18 +122,31 @@ class DatabaseServiceNull : virtual public DatabaseServiceIf {
   }
 };
 
+typedef struct _DatabaseService_connect_args__isset {
+  _DatabaseService_connect_args__isset() : protocol_version(false) {}
+  bool protocol_version;
+} _DatabaseService_connect_args__isset;
 
 class DatabaseService_connect_args {
  public:
 
-  DatabaseService_connect_args() {
+  DatabaseService_connect_args() : protocol_version(0) {
   }
 
   virtual ~DatabaseService_connect_args() throw() {}
 
+  int32_t protocol_version;
 
-  bool operator == (const DatabaseService_connect_args & /* rhs */) const
+  _DatabaseService_connect_args__isset __isset;
+
+  void __set_protocol_version(const int32_t val) {
+    protocol_version = val;
+  }
+
+  bool operator == (const DatabaseService_connect_args & rhs) const
   {
+    if (!(protocol_version == rhs.protocol_version))
+      return false;
     return true;
   }
   bool operator != (const DatabaseService_connect_args &rhs) const {
@@ -154,6 +167,7 @@ class DatabaseService_connect_pargs {
 
   virtual ~DatabaseService_connect_pargs() throw() {}
 
+  const int32_t* protocol_version;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -2387,8 +2401,8 @@ class DatabaseServiceClient : virtual public DatabaseServiceIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void connect(ConnectReply& _return);
-  void send_connect();
+  void connect(ConnectReply& _return, const int32_t protocol_version);
+  void send_connect(const int32_t protocol_version);
   void recv_connect(ConnectReply& _return);
   void disconnect(DefaultReply& _return, const Session& session);
   void send_disconnect(const Session& session);
@@ -2528,13 +2542,13 @@ class DatabaseServiceMultiface : virtual public DatabaseServiceIf {
     ifaces_.push_back(iface);
   }
  public:
-  void connect(ConnectReply& _return) {
+  void connect(ConnectReply& _return, const int32_t protocol_version) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->connect(_return);
+      ifaces_[i]->connect(_return, protocol_version);
     }
-    ifaces_[i]->connect(_return);
+    ifaces_[i]->connect(_return, protocol_version);
     return;
   }
 
