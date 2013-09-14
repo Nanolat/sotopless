@@ -8,12 +8,10 @@ CPP_SRCS += \
 ../DatabaseServerImpl.cpp \
 ../DatabaseService.cpp \
 ../DatabaseService_constants.cpp \
-../DatabaseService_server.skeleton.cpp \
 ../DatabaseService_types.cpp \
 ../LeaderboardServer.cpp \
 ../LeaderboardService.cpp \
 ../LeaderboardService_constants.cpp \
-../LeaderboardService_server.skeleton.cpp \
 ../LeaderboardService_types.cpp 
 
 OBJS += \
@@ -21,12 +19,10 @@ OBJS += \
 ./DatabaseServerImpl.o \
 ./DatabaseService.o \
 ./DatabaseService_constants.o \
-./DatabaseService_server.skeleton.o \
 ./DatabaseService_types.o \
 ./LeaderboardServer.o \
 ./LeaderboardService.o \
 ./LeaderboardService_constants.o \
-./LeaderboardService_server.skeleton.o \
 ./LeaderboardService_types.o 
 
 CPP_DEPS += \
@@ -34,12 +30,10 @@ CPP_DEPS += \
 ./DatabaseServerImpl.d \
 ./DatabaseService.d \
 ./DatabaseService_constants.d \
-./DatabaseService_server.skeleton.d \
 ./DatabaseService_types.d \
 ./LeaderboardServer.d \
 ./LeaderboardService.d \
 ./LeaderboardService_constants.d \
-./LeaderboardService_server.skeleton.d \
 ./LeaderboardService_types.d 
 
 

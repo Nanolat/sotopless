@@ -335,24 +335,28 @@ class Score {
 void swap(Score &a, Score &b);
 
 typedef struct _GetScoresReply__isset {
-  _GetScoresReply__isset() : player_score(false), topscores(false) {}
+  _GetScoresReply__isset() : player_score(false), from_rank(false), count(false), top_scores(false) {}
   bool player_score;
-  bool topscores;
+  bool from_rank;
+  bool count;
+  bool top_scores;
 } _GetScoresReply__isset;
 
 class GetScoresReply {
  public:
 
-  static const char* ascii_fingerprint; // = "EED15EBB2066DC37F251B377CF2C1AEA";
-  static const uint8_t binary_fingerprint[16]; // = {0xEE,0xD1,0x5E,0xBB,0x20,0x66,0xDC,0x37,0xF2,0x51,0xB3,0x77,0xCF,0x2C,0x1A,0xEA};
+  static const char* ascii_fingerprint; // = "BDF6090738155A1FB5C43743D545B40E";
+  static const uint8_t binary_fingerprint[16]; // = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
 
-  GetScoresReply() {
+  GetScoresReply() : from_rank(0), count(0) {
   }
 
   virtual ~GetScoresReply() throw() {}
 
   Score player_score;
-  std::vector<Score>  topscores;
+  int32_t from_rank;
+  int64_t count;
+  std::vector<Score>  top_scores;
 
   _GetScoresReply__isset __isset;
 
@@ -360,15 +364,27 @@ class GetScoresReply {
     player_score = val;
   }
 
-  void __set_topscores(const std::vector<Score> & val) {
-    topscores = val;
+  void __set_from_rank(const int32_t val) {
+    from_rank = val;
+  }
+
+  void __set_count(const int64_t val) {
+    count = val;
+  }
+
+  void __set_top_scores(const std::vector<Score> & val) {
+    top_scores = val;
   }
 
   bool operator == (const GetScoresReply & rhs) const
   {
     if (!(player_score == rhs.player_score))
       return false;
-    if (!(topscores == rhs.topscores))
+    if (!(from_rank == rhs.from_rank))
+      return false;
+    if (!(count == rhs.count))
+      return false;
+    if (!(top_scores == rhs.top_scores))
       return false;
     return true;
   }
@@ -394,8 +410,8 @@ typedef struct _PostScoreReply__isset {
 class PostScoreReply {
  public:
 
-  static const char* ascii_fingerprint; // = "CF065BF70AAD5BE92B1CF1F08F6B568B";
-  static const uint8_t binary_fingerprint[16]; // = {0xCF,0x06,0x5B,0xF7,0x0A,0xAD,0x5B,0xE9,0x2B,0x1C,0xF1,0xF0,0x8F,0x6B,0x56,0x8B};
+  static const char* ascii_fingerprint; // = "ED20B4254D63522D4314AC4E224FABE5";
+  static const uint8_t binary_fingerprint[16]; // = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
 
   PostScoreReply() {
   }
@@ -437,8 +453,9 @@ class PostScoreReply {
 void swap(PostScoreReply &a, PostScoreReply &b);
 
 typedef struct _ConnectReply__isset {
-  _ConnectReply__isset() : status(false), session_handle(false), user_data(false) {}
+  _ConnectReply__isset() : status(false), server_name(false), session_handle(false), user_data(false) {}
   bool status;
+  bool server_name;
   bool session_handle;
   bool user_data;
 } _ConnectReply__isset;
@@ -446,15 +463,16 @@ typedef struct _ConnectReply__isset {
 class ConnectReply {
  public:
 
-  static const char* ascii_fingerprint; // = "0FD6FDFD2C321318E1F5A2261708F3A5";
-  static const uint8_t binary_fingerprint[16]; // = {0x0F,0xD6,0xFD,0xFD,0x2C,0x32,0x13,0x18,0xE1,0xF5,0xA2,0x26,0x17,0x08,0xF3,0xA5};
+  static const char* ascii_fingerprint; // = "00B492A3875749A3E33B6E05569ACED5";
+  static const uint8_t binary_fingerprint[16]; // = {0x00,0xB4,0x92,0xA3,0x87,0x57,0x49,0xA3,0xE3,0x3B,0x6E,0x05,0x56,0x9A,0xCE,0xD5};
 
-  ConnectReply() : session_handle(0), user_data() {
+  ConnectReply() : server_name(), session_handle(0), user_data() {
   }
 
   virtual ~ConnectReply() throw() {}
 
   ReplyStatus status;
+  std::string server_name;
   int32_t session_handle;
   std::string user_data;
 
@@ -462,6 +480,10 @@ class ConnectReply {
 
   void __set_status(const ReplyStatus& val) {
     status = val;
+  }
+
+  void __set_server_name(const std::string& val) {
+    server_name = val;
   }
 
   void __set_session_handle(const int32_t val) {
@@ -475,6 +497,8 @@ class ConnectReply {
   bool operator == (const ConnectReply & rhs) const
   {
     if (!(status == rhs.status))
+      return false;
+    if (!(server_name == rhs.server_name))
       return false;
     if (!(session_handle == rhs.session_handle))
       return false;

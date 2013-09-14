@@ -4,6 +4,7 @@
 #include "Connection.h"
 #include "Cursor.h"
 #include "DatabaseService.h"
+#include "DatabaseService_constants.h"
 
 // TODO : add test for incompatible client version.
 #define NLDB_CLIENT_VERSION "v1.0"
@@ -40,7 +41,7 @@ int nl_connect(const std::string & address, const int port, connection_t ** o_co
 
 	thrift::ConnectReply reply;
 
-	conn->get_client().connect(reply, NLDB_CLIENT_VERSION);
+	conn->get_client().connect(reply, thrift::g_DatabaseService_constants.PROTOCOL_VERSION);
 
 	copy_reply_status(conn->reply_status, reply.status);
 

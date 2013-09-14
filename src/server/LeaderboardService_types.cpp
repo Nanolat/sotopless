@@ -505,8 +505,8 @@ void swap(Score &a, Score &b) {
   swap(a.__isset, b.__isset);
 }
 
-const char* GetScoresReply::ascii_fingerprint = "EED15EBB2066DC37F251B377CF2C1AEA";
-const uint8_t GetScoresReply::binary_fingerprint[16] = {0xEE,0xD1,0x5E,0xBB,0x20,0x66,0xDC,0x37,0xF2,0x51,0xB3,0x77,0xCF,0x2C,0x1A,0xEA};
+const char* GetScoresReply::ascii_fingerprint = "BDF6090738155A1FB5C43743D545B40E";
+const uint8_t GetScoresReply::binary_fingerprint[16] = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
 
 uint32_t GetScoresReply::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -537,21 +537,37 @@ uint32_t GetScoresReply::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 2:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->from_rank);
+          this->__isset.from_rank = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->count);
+          this->__isset.count = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 4:
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
-            this->topscores.clear();
+            this->top_scores.clear();
             uint32_t _size7;
             ::apache::thrift::protocol::TType _etype10;
             xfer += iprot->readListBegin(_etype10, _size7);
-            this->topscores.resize(_size7);
+            this->top_scores.resize(_size7);
             uint32_t _i11;
             for (_i11 = 0; _i11 < _size7; ++_i11)
             {
-              xfer += this->topscores[_i11].read(iprot);
+              xfer += this->top_scores[_i11].read(iprot);
             }
             xfer += iprot->readListEnd();
           }
-          this->__isset.topscores = true;
+          this->__isset.top_scores = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -576,11 +592,19 @@ uint32_t GetScoresReply::write(::apache::thrift::protocol::TProtocol* oprot) con
   xfer += this->player_score.write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("topscores", ::apache::thrift::protocol::T_LIST, 2);
+  xfer += oprot->writeFieldBegin("from_rank", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeI32(this->from_rank);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("count", ::apache::thrift::protocol::T_I64, 3);
+  xfer += oprot->writeI64(this->count);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("top_scores", ::apache::thrift::protocol::T_LIST, 4);
   {
-    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->topscores.size()));
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, static_cast<uint32_t>(this->top_scores.size()));
     std::vector<Score> ::const_iterator _iter12;
-    for (_iter12 = this->topscores.begin(); _iter12 != this->topscores.end(); ++_iter12)
+    for (_iter12 = this->top_scores.begin(); _iter12 != this->top_scores.end(); ++_iter12)
     {
       xfer += (*_iter12).write(oprot);
     }
@@ -596,12 +620,14 @@ uint32_t GetScoresReply::write(::apache::thrift::protocol::TProtocol* oprot) con
 void swap(GetScoresReply &a, GetScoresReply &b) {
   using ::std::swap;
   swap(a.player_score, b.player_score);
-  swap(a.topscores, b.topscores);
+  swap(a.from_rank, b.from_rank);
+  swap(a.count, b.count);
+  swap(a.top_scores, b.top_scores);
   swap(a.__isset, b.__isset);
 }
 
-const char* PostScoreReply::ascii_fingerprint = "CF065BF70AAD5BE92B1CF1F08F6B568B";
-const uint8_t PostScoreReply::binary_fingerprint[16] = {0xCF,0x06,0x5B,0xF7,0x0A,0xAD,0x5B,0xE9,0x2B,0x1C,0xF1,0xF0,0x8F,0x6B,0x56,0x8B};
+const char* PostScoreReply::ascii_fingerprint = "ED20B4254D63522D4314AC4E224FABE5";
+const uint8_t PostScoreReply::binary_fingerprint[16] = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
 
 uint32_t PostScoreReply::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -675,8 +701,8 @@ void swap(PostScoreReply &a, PostScoreReply &b) {
   swap(a.__isset, b.__isset);
 }
 
-const char* ConnectReply::ascii_fingerprint = "0FD6FDFD2C321318E1F5A2261708F3A5";
-const uint8_t ConnectReply::binary_fingerprint[16] = {0x0F,0xD6,0xFD,0xFD,0x2C,0x32,0x13,0x18,0xE1,0xF5,0xA2,0x26,0x17,0x08,0xF3,0xA5};
+const char* ConnectReply::ascii_fingerprint = "00B492A3875749A3E33B6E05569ACED5";
+const uint8_t ConnectReply::binary_fingerprint[16] = {0x00,0xB4,0x92,0xA3,0x87,0x57,0x49,0xA3,0xE3,0x3B,0x6E,0x05,0x56,0x9A,0xCE,0xD5};
 
 uint32_t ConnectReply::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -707,6 +733,14 @@ uint32_t ConnectReply::read(::apache::thrift::protocol::TProtocol* iprot) {
         }
         break;
       case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->server_name);
+          this->__isset.server_name = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
         if (ftype == ::apache::thrift::protocol::T_I32) {
           xfer += iprot->readI32(this->session_handle);
           this->__isset.session_handle = true;
@@ -714,7 +748,7 @@ uint32_t ConnectReply::read(::apache::thrift::protocol::TProtocol* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
-      case 3:
+      case 4:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
           xfer += iprot->readBinary(this->user_data);
           this->__isset.user_data = true;
@@ -742,11 +776,15 @@ uint32_t ConnectReply::write(::apache::thrift::protocol::TProtocol* oprot) const
   xfer += this->status.write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("session_handle", ::apache::thrift::protocol::T_I32, 2);
+  xfer += oprot->writeFieldBegin("server_name", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->server_name);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("session_handle", ::apache::thrift::protocol::T_I32, 3);
   xfer += oprot->writeI32(this->session_handle);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("user_data", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeFieldBegin("user_data", ::apache::thrift::protocol::T_STRING, 4);
   xfer += oprot->writeBinary(this->user_data);
   xfer += oprot->writeFieldEnd();
 
@@ -758,6 +796,7 @@ uint32_t ConnectReply::write(::apache::thrift::protocol::TProtocol* oprot) const
 void swap(ConnectReply &a, ConnectReply &b) {
   using ::std::swap;
   swap(a.status, b.status);
+  swap(a.server_name, b.server_name);
   swap(a.session_handle, b.session_handle);
   swap(a.user_data, b.user_data);
   swap(a.__isset, b.__isset);
