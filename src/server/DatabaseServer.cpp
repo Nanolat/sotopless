@@ -18,50 +18,12 @@ using boost::shared_ptr;
 #include <nldb/nldb.h>
 #include "ServerImpl.h"
 
-using namespace ::nanolat::client;
 using namespace  ::nanolat::thrift;
-
-#if !defined(NDEBUG)
-#  define TRACE printf
-#else
-#  define TRACE(...)
-#endif
+using namespace  ::nanolat::db;
 
 
 namespace nanolat {
 namespace server {
-
-#define GET_SESSION_CONTEXT(ctx, session) \
-	session_context_t * ctx = server_instance.session_map.get_session(session.session_handle); \
-    if (!ctx) {                                                                                \
-		_return.status.error_code = ErrorCode::NL_INVALID_SESSION_HANDLE;                      \
-        _return.status.error_message_format = "Invalid Session Handle";                        \
-        return;                                                                                \
-	}
-
-#define GET_CURSOR_CONTEXT(session_ctx, cursor_ctx, cursor_handle) \
-	cursor_context_t * cursor_ctx = session_ctx->get_cursor(cursor_handle); \
-    if (!cursor_ctx) {                                                      \
-		_return.status.error_code = ErrorCode::NL_INVALID_CURSOR_HANDLE;    \
-        _return.status.error_message_format = "Invalid Cursor Handle";      \
-        return;                                                             \
-	}
-
-
-#define GET_TABLE(tab, tx, table_name)                                  \
-		open_database_t * db = sess_ctx->get_using_database();      \
-		NL_ASSERT(db);                                              \
-		nldb_table_t tab = db->get_table(table_name);               \
-		if (!tab) {                                                 \
-	        server_error_t rc = db->open_table(tx, table_name, &tab);  \
-	        if (rc) {                      \
-	        	_return.status.error_code = rc;                     \
-	        	return;                                             \
-	        }                                                       \
-        }
-
-#define GET_TRANSACTION(tx, session_ctx) \
-        nldb_tx_t tx = session_ctx->get_transaction();
 
 /*! The singleton that keeps all instances.
  */
@@ -98,7 +60,7 @@ private :
 		if (db == NULL) {
 			server_error_t rc = server_instance.database_mgr.open_database("default", &db);
 			if (rc) {
-				_return.status.error_code = (server_error_t) rc;
+				_return.status.error_code = (ErrorCode::type) rc;
 				goto on_error;
 			}
 		}
@@ -130,7 +92,7 @@ on_error:
 
 		server_error_t rc = server_instance.database_mgr.create_database(db_name);
 
-		_return.status.error_code = rc;
+		_return.status.error_code = (ErrorCode::type)rc;
 	}
 
 	void database_drop(DefaultReply& _return, const Session& session, const std::string& db_name) {
@@ -139,7 +101,7 @@ on_error:
 
 		server_error_t rc = server_instance.database_mgr.drop_database(db_name);
 
-		_return.status.error_code = rc;
+		_return.status.error_code = (ErrorCode::type)rc;
 	}
 
 	void database_use(DefaultReply& _return, const Session& session, const std::string& db_name) {
@@ -151,7 +113,7 @@ on_error:
 			_return.status.error_code = ErrorCode::NL_SUCCESS;
 		} else { // The DB was not open yet.
 			server_error_t rc = server_instance.database_mgr.open_database(db_name, &db);
-			_return.status.error_code = rc;
+			_return.status.error_code = (ErrorCode::type)rc;
 		}
 
 		NL_ASSERT(db);
@@ -165,7 +127,7 @@ on_error:
 
 		server_error_t rc = sess_ctx->get_using_database()->create_table(table_name);
 
-		_return.status.error_code = rc;
+		_return.status.error_code = (ErrorCode::type)rc;
 	}
 
 	void table_drop(DefaultReply& _return, const Session& session, const std::string& table_name) {
@@ -174,7 +136,7 @@ on_error:
 
 		server_error_t rc =  sess_ctx->get_using_database()->drop_table( table_name);
 
-		_return.status.error_code = rc;
+		_return.status.error_code = (ErrorCode::type)rc;
 	}
 
 	void table_stat(TableStatReply& _return, const Session& session, const std::string& table_name) {
@@ -190,7 +152,7 @@ on_error:
 		nldb_table_stat_t stat;
 		nldb_rc_t rc = nldb_table_stat(tx, table, &stat);
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -230,7 +192,7 @@ on_error:
 
 		nldb_rc_t rc = nldb_table_put(tx, table, to_nldb_key(key), to_nldb_value(value) );
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -255,7 +217,7 @@ on_error:
 		nldb_value_t nldb_value;
 		nldb_rc_t rc = nldb_table_get(tx, table, to_nldb_key(key), &nldb_value, &key_order );
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -269,7 +231,7 @@ on_error:
 
 		rc = nldb_value_free(table, nldb_value);
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -291,7 +253,7 @@ on_error:
 		nldb_value_t nldb_value;
 		nldb_rc_t rc = nldb_table_get(tx, table, key_order, &nldb_key, &nldb_value );
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -324,7 +286,7 @@ on_error:
 
 		nldb_rc_t rc = nldb_table_del(tx, table, to_nldb_key(key));
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -340,21 +302,21 @@ on_error:
 		TRACE("transaction_begin\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		_return.status.error_code = sess_ctx->begin_transaction();
+		_return.status.error_code = (ErrorCode::type) sess_ctx->begin_transaction();
 	}
 
 	void transaction_abort(DefaultReply& _return, const Session& session) {
 		TRACE("transaction_abort\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		_return.status.error_code = sess_ctx->abort_transaction();
+		_return.status.error_code = (ErrorCode::type) sess_ctx->abort_transaction();
 	}
 
 	void transaction_commit(DefaultReply& _return, const Session& session) {
 		TRACE("transaction_commit\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		_return.status.error_code = sess_ctx->commit_transaction();
+		_return.status.error_code = (ErrorCode::type) sess_ctx->commit_transaction();
 	}
 
 	nldb_cursor_direction_t to_nldb_cursor_direction(const CursorDirection::type dir) {
@@ -398,7 +360,7 @@ on_error:
 
 		nldb_rc_t rc = nldb_cursor_open(tx, table, & cursor_ctx->cursor);
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			goto on_error;
 		}
 
@@ -406,14 +368,14 @@ on_error:
 		if (which_arg == COA_USE_ORDER ) {
 			nldb_rc_t rc = nldb_cursor_seek( cursor_ctx->cursor, nldb_cursor_dir, key_order);
 			if (rc) {
-				_return.status.error_code = (server_error_t) rc;
+				_return.status.error_code = (ErrorCode::type) rc;
 				goto on_error;
 			}
 		} else if (which_arg == COA_USE_KEY ) {
 			nldb_key_t nldb_key = to_nldb_key(key);
 			nldb_rc_t rc = nldb_cursor_seek( cursor_ctx->cursor, nldb_cursor_dir, nldb_key);
 			if (rc) {
-				_return.status.error_code = (server_error_t) rc;
+				_return.status.error_code = (ErrorCode::type) rc;
 				goto on_error;
 			}
 		} else {
@@ -465,7 +427,7 @@ on_error:
 			return;
 		}
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			return;
 		}
 
@@ -490,7 +452,7 @@ on_error:
 
 		nldb_rc_t rc = nldb_cursor_close(cur_ctx->cursor);
 		if (rc) {
-			_return.status.error_code = (server_error_t) rc;
+			_return.status.error_code = (ErrorCode::type) rc;
 			return;
 		}
 

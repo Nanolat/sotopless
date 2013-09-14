@@ -22,10 +22,12 @@ struct ErrorCode {
     NL_SUCCESS = 0,
     NL_ERROR_CODE_START = -1000,
     NL_FAILURE = -1000,
-    NL_INCOMPATIBLE_CLINET_VERSION = -1001,
-    NL_INVALID_ARGUMENT = -1002,
-    NL_INVALID_CREDENTIAL = -1003,
-    NL_ERROR_CODE_END = -1003
+    NL_NOT_SUPPORTED = -1001,
+    NL_INCOMPATIBLE_CLINET_VERSION = -1002,
+    NL_INVALID_SESSION_HANDLE = -1003,
+    NL_INVALID_ARGUMENT = -1004,
+    NL_INVALID_CREDENTIAL = -1005,
+    NL_ERROR_CODE_END = -1005
   };
 };
 
@@ -334,31 +336,31 @@ class Score {
 
 void swap(Score &a, Score &b);
 
-typedef struct _GetScoresReply__isset {
-  _GetScoresReply__isset() : player_score(false), from_rank(false), count(false), top_scores(false) {}
+typedef struct _PlayerScoreAndTopScores__isset {
+  _PlayerScoreAndTopScores__isset() : player_score(false), from_rank(false), count(false), top_scores(false) {}
   bool player_score;
   bool from_rank;
   bool count;
   bool top_scores;
-} _GetScoresReply__isset;
+} _PlayerScoreAndTopScores__isset;
 
-class GetScoresReply {
+class PlayerScoreAndTopScores {
  public:
 
   static const char* ascii_fingerprint; // = "BDF6090738155A1FB5C43743D545B40E";
   static const uint8_t binary_fingerprint[16]; // = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
 
-  GetScoresReply() : from_rank(0), count(0) {
+  PlayerScoreAndTopScores() : from_rank(0), count(0) {
   }
 
-  virtual ~GetScoresReply() throw() {}
+  virtual ~PlayerScoreAndTopScores() throw() {}
 
   Score player_score;
   int32_t from_rank;
   int64_t count;
   std::vector<Score>  top_scores;
 
-  _GetScoresReply__isset __isset;
+  _PlayerScoreAndTopScores__isset __isset;
 
   void __set_player_score(const Score& val) {
     player_score = val;
@@ -376,7 +378,7 @@ class GetScoresReply {
     top_scores = val;
   }
 
-  bool operator == (const GetScoresReply & rhs) const
+  bool operator == (const PlayerScoreAndTopScores & rhs) const
   {
     if (!(player_score == rhs.player_score))
       return false;
@@ -388,18 +390,18 @@ class GetScoresReply {
       return false;
     return true;
   }
-  bool operator != (const GetScoresReply &rhs) const {
+  bool operator != (const PlayerScoreAndTopScores &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const GetScoresReply & ) const;
+  bool operator < (const PlayerScoreAndTopScores & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
-void swap(GetScoresReply &a, GetScoresReply &b);
+void swap(PlayerScoreAndTopScores &a, PlayerScoreAndTopScores &b);
 
 typedef struct _PostScoreReply__isset {
   _PostScoreReply__isset() : status(false), scores(false) {}
@@ -419,7 +421,7 @@ class PostScoreReply {
   virtual ~PostScoreReply() throw() {}
 
   ReplyStatus status;
-  GetScoresReply scores;
+  PlayerScoreAndTopScores scores;
 
   _PostScoreReply__isset __isset;
 
@@ -427,7 +429,7 @@ class PostScoreReply {
     status = val;
   }
 
-  void __set_scores(const GetScoresReply& val) {
+  void __set_scores(const PlayerScoreAndTopScores& val) {
     scores = val;
   }
 
@@ -451,6 +453,57 @@ class PostScoreReply {
 };
 
 void swap(PostScoreReply &a, PostScoreReply &b);
+
+typedef struct _GetScoresReply__isset {
+  _GetScoresReply__isset() : status(false), scores(false) {}
+  bool status;
+  bool scores;
+} _GetScoresReply__isset;
+
+class GetScoresReply {
+ public:
+
+  static const char* ascii_fingerprint; // = "ED20B4254D63522D4314AC4E224FABE5";
+  static const uint8_t binary_fingerprint[16]; // = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
+
+  GetScoresReply() {
+  }
+
+  virtual ~GetScoresReply() throw() {}
+
+  ReplyStatus status;
+  PlayerScoreAndTopScores scores;
+
+  _GetScoresReply__isset __isset;
+
+  void __set_status(const ReplyStatus& val) {
+    status = val;
+  }
+
+  void __set_scores(const PlayerScoreAndTopScores& val) {
+    scores = val;
+  }
+
+  bool operator == (const GetScoresReply & rhs) const
+  {
+    if (!(status == rhs.status))
+      return false;
+    if (!(scores == rhs.scores))
+      return false;
+    return true;
+  }
+  bool operator != (const GetScoresReply &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const GetScoresReply & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+void swap(GetScoresReply &a, GetScoresReply &b);
 
 typedef struct _ConnectReply__isset {
   _ConnectReply__isset() : status(false), server_name(false), session_handle(false), user_data(false) {}

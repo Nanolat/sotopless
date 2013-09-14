@@ -6,10 +6,12 @@ enum ErrorCode {
 	NL_SUCCESS = 0,
 	NL_ERROR_CODE_START            = -1000,
 	NL_FAILURE                     = -1000,
-	NL_INCOMPATIBLE_CLINET_VERSION = -1001,
-	NL_INVALID_ARGUMENT            = -1002,
-	NL_INVALID_CREDENTIAL          = -1003,
-	NL_ERROR_CODE_END              = -1003
+	NL_NOT_SUPPORTED               = -1001,
+	NL_INCOMPATIBLE_CLINET_VERSION = -1002,
+	NL_INVALID_SESSION_HANDLE      = -1003,
+	NL_INVALID_ARGUMENT            = -1004,
+	NL_INVALID_CREDENTIAL          = -1005,
+	NL_ERROR_CODE_END              = -1005
 }
 
 struct ReplyStatus
@@ -44,7 +46,7 @@ struct Score {
     8: i32    vote_down_count
 }
 
-struct GetScoresReply {
+struct PlayerScoreAndTopScores {
     1: Score       player_score,
     2: i32         from_rank,
     3: i64         count,
@@ -53,7 +55,12 @@ struct GetScoresReply {
 
 struct PostScoreReply {
     1: ReplyStatus    status,
-    2: GetScoresReply scores
+    2: PlayerScoreAndTopScores scores
+}
+
+struct GetScoresReply {
+    1: ReplyStatus    status,
+    2: PlayerScoreAndTopScores scores
 }
 
 struct ConnectReply {

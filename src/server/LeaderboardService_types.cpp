@@ -14,7 +14,9 @@ int _kErrorCodeValues[] = {
   ErrorCode::NL_SUCCESS,
   ErrorCode::NL_ERROR_CODE_START,
   ErrorCode::NL_FAILURE,
+  ErrorCode::NL_NOT_SUPPORTED,
   ErrorCode::NL_INCOMPATIBLE_CLINET_VERSION,
+  ErrorCode::NL_INVALID_SESSION_HANDLE,
   ErrorCode::NL_INVALID_ARGUMENT,
   ErrorCode::NL_INVALID_CREDENTIAL,
   ErrorCode::NL_ERROR_CODE_END
@@ -23,12 +25,14 @@ const char* _kErrorCodeNames[] = {
   "NL_SUCCESS",
   "NL_ERROR_CODE_START",
   "NL_FAILURE",
+  "NL_NOT_SUPPORTED",
   "NL_INCOMPATIBLE_CLINET_VERSION",
+  "NL_INVALID_SESSION_HANDLE",
   "NL_INVALID_ARGUMENT",
   "NL_INVALID_CREDENTIAL",
   "NL_ERROR_CODE_END"
 };
-const std::map<int, const char*> _ErrorCode_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(7, _kErrorCodeValues, _kErrorCodeNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
+const std::map<int, const char*> _ErrorCode_VALUES_TO_NAMES(::apache::thrift::TEnumIterator(9, _kErrorCodeValues, _kErrorCodeNames), ::apache::thrift::TEnumIterator(-1, NULL, NULL));
 
 const char* ReplyStatus::ascii_fingerprint = "D121591FCC85D0E17C727CA264A5F46D";
 const uint8_t ReplyStatus::binary_fingerprint[16] = {0xD1,0x21,0x59,0x1F,0xCC,0x85,0xD0,0xE1,0x7C,0x72,0x7C,0xA2,0x64,0xA5,0xF4,0x6D};
@@ -505,10 +509,10 @@ void swap(Score &a, Score &b) {
   swap(a.__isset, b.__isset);
 }
 
-const char* GetScoresReply::ascii_fingerprint = "BDF6090738155A1FB5C43743D545B40E";
-const uint8_t GetScoresReply::binary_fingerprint[16] = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
+const char* PlayerScoreAndTopScores::ascii_fingerprint = "BDF6090738155A1FB5C43743D545B40E";
+const uint8_t PlayerScoreAndTopScores::binary_fingerprint[16] = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
 
-uint32_t GetScoresReply::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t PlayerScoreAndTopScores::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -584,9 +588,9 @@ uint32_t GetScoresReply::read(::apache::thrift::protocol::TProtocol* iprot) {
   return xfer;
 }
 
-uint32_t GetScoresReply::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t PlayerScoreAndTopScores::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("GetScoresReply");
+  xfer += oprot->writeStructBegin("PlayerScoreAndTopScores");
 
   xfer += oprot->writeFieldBegin("player_score", ::apache::thrift::protocol::T_STRUCT, 1);
   xfer += this->player_score.write(oprot);
@@ -617,7 +621,7 @@ uint32_t GetScoresReply::write(::apache::thrift::protocol::TProtocol* oprot) con
   return xfer;
 }
 
-void swap(GetScoresReply &a, GetScoresReply &b) {
+void swap(PlayerScoreAndTopScores &a, PlayerScoreAndTopScores &b) {
   using ::std::swap;
   swap(a.player_score, b.player_score);
   swap(a.from_rank, b.from_rank);
@@ -695,6 +699,81 @@ uint32_t PostScoreReply::write(::apache::thrift::protocol::TProtocol* oprot) con
 }
 
 void swap(PostScoreReply &a, PostScoreReply &b) {
+  using ::std::swap;
+  swap(a.status, b.status);
+  swap(a.scores, b.scores);
+  swap(a.__isset, b.__isset);
+}
+
+const char* GetScoresReply::ascii_fingerprint = "ED20B4254D63522D4314AC4E224FABE5";
+const uint8_t GetScoresReply::binary_fingerprint[16] = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
+
+uint32_t GetScoresReply::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->status.read(iprot);
+          this->__isset.status = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->scores.read(iprot);
+          this->__isset.scores = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t GetScoresReply::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("GetScoresReply");
+
+  xfer += oprot->writeFieldBegin("status", ::apache::thrift::protocol::T_STRUCT, 1);
+  xfer += this->status.write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("scores", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += this->scores.write(oprot);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+void swap(GetScoresReply &a, GetScoresReply &b) {
   using ::std::swap;
   swap(a.status, b.status);
   swap(a.scores, b.scores);

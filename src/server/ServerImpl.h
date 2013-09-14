@@ -10,14 +10,53 @@
 #include <functional>
 #include <string.h>
 
+#if !defined(NDEBUG)
+#  define TRACE printf
+#else
+#  define TRACE(...)
+#endif
+
+#define GET_SESSION_CONTEXT(ctx, session) \
+	session_context_t * ctx = server_instance.session_map.get_session(session.session_handle); \
+    if (!ctx) {                                                                                \
+		_return.status.error_code = ErrorCode::NL_INVALID_SESSION_HANDLE;                      \
+        _return.status.error_message_format = "Invalid Session Handle";                        \
+        return;                                                                                \
+	}
+
+#define GET_CURSOR_CONTEXT(session_ctx, cursor_ctx, cursor_handle) \
+	cursor_context_t * cursor_ctx = session_ctx->get_cursor(cursor_handle); \
+    if (!cursor_ctx) {                                                      \
+		_return.status.error_code = ErrorCode::NL_INVALID_CURSOR_HANDLE;    \
+        _return.status.error_message_format = "Invalid Cursor Handle";      \
+        return;                                                             \
+	}
+
+
+#define GET_TABLE(tab, tx, table_name)                                  \
+		open_database_t * db = sess_ctx->get_using_database();      \
+		NL_ASSERT(db);                                              \
+		nldb_table_t tab = db->get_table(table_name);               \
+		if (!tab) {                                                 \
+	        server_error_t rc = db->open_table(tx, table_name, &tab);  \
+	        if (rc) {                      \
+	        	_return.status.error_code = (ErrorCode::type)rc;    \
+	        	return;                                             \
+	        }                                                       \
+        }
+
+#define GET_TRANSACTION(tx, session_ctx) \
+        nldb_tx_t tx = session_ctx->get_transaction();
+
 
 using namespace ::nanolat::client;
 using namespace  ::nanolat::thrift;
 
 namespace nanolat {
-namespace server {
 
-typedef ErrorCode::type server_error_t;
+typedef nldb_rc_t server_error_t;
+
+namespace db {
 
 class cursor_context_t {
 public:
@@ -50,7 +89,7 @@ private :
 	/*! Begin a transaction, run the given operation, commit the transaction.
 	 */
 	static server_error_t exec(nldb_db_t & db, nldb_table_t & table, opeartion_t & operation) {
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		nldb_tx_t tx = NULL;
 		bool tx_began = false;
@@ -74,7 +113,7 @@ private :
 	finally:
 		if (tx_began) {
 			NL_RELEASE_ASSERT( tx );
-			if (rc == ErrorCode::NL_SUCCESS)
+			if (rc == NLDB_OK)
 				nrc = nldb_tx_commit(tx);
 			else
 				nrc = nldb_tx_abort(tx);
@@ -91,7 +130,7 @@ private :
 
 public :
 	static server_error_t exec_with_db(nldb_db_t & db, const nldb_table_id_t & table_id, opeartion_t operation) {
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		nldb_table_t table = NULL;
 
@@ -114,7 +153,7 @@ public :
 	}
 
 	static server_error_t exec_with_db(nldb_db_t & db, nldb_tx_t & tx, const nldb_table_id_t & table_id, opeartion_t operation) {
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		nldb_table_t table = NULL;
 
@@ -138,7 +177,7 @@ public :
 
 
 	static server_error_t exec_with_db_id(const nldb_db_id_t & dbid, nldb_table_id_t table_id, opeartion_t operation) {
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		nldb_db_t db = NULL;
 
@@ -204,7 +243,7 @@ private :
 		);
 		if (rc) NL_RETURN(rc);
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 
 on_error:
 		if (next_id_table_created) {
@@ -226,7 +265,7 @@ public :
 						                    const nldb_table_id_t & next_id_table_id,
 						                    const std::string & next_id_key,
 						                    int64_t next_id_value) {
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		nldb_db_t db = NULL;
 
@@ -299,12 +338,12 @@ public :
 			                            const std::string & table_name ) {
 		nldb_table_id_t new_table_id;
 		server_error_t rc = next_table_id( db, &new_table_id );
-		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
+		if (rc != NLDB_OK ) NL_RETURN(rc);
 
 		rc = put_table( db, table_name, new_table_id );
-		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
+		if (rc != NLDB_OK ) NL_RETURN(rc);
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	/*! Drop a table.
@@ -313,9 +352,9 @@ public :
 			                          const std::string & table_name ) {
 
 		server_error_t rc = del_table(db, table_name);
-		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
+		if (rc != NLDB_OK ) NL_RETURN(rc);
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 
@@ -351,7 +390,7 @@ public :
 			NL_RETURN(rc);
 		}
 
-		NL_RETURN(ErrorCode::NL_SUCCESS);
+		NL_RETURN(NLDB_OK);
 	}
 
 
@@ -364,7 +403,7 @@ public :
 		server_error_t rc = get_table_id( db, null_tx /*transaction*/, table_name, o_table_id);
 		if (rc) NL_RETURN(rc);
 
-		NL_RETURN(ErrorCode::NL_SUCCESS);
+		NL_RETURN(NLDB_OK);
 	}
 
 private:
@@ -389,7 +428,7 @@ private:
 
 						nrc = nldb_table_put(tx, table, key, value);
 						if (nrc) NL_RETURN( (server_error_t)nrc );
-						NL_RETURN( ErrorCode::NL_SUCCESS );
+						NL_RETURN( NLDB_OK );
 					}
 					if (nrc) NL_RETURN( (server_error_t)nrc );
 
@@ -521,7 +560,7 @@ public :
 			NL_RETURN( (server_error_t)nrc );
 		}
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	/*! Make sure that the meta database was created.
@@ -529,15 +568,15 @@ public :
 	 */
 	static server_error_t create_meta_database() {
 		bool db_created = false;
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		nldb_rc_t nrc = nldb_db_create(META_DATABASE_ID);
 		db_created = true;
 
 		rc = meta_t::create_meta_tables(META_DATABASE_ID, META_DATABASE_NAME_MAP, META_DATABASE_NEXT_ID, NEXT_DATABASE_ID_KEY, META_DATABASE_ID+1);
-		if ( rc != ErrorCode::NL_SUCCESS) goto on_error;
+		if ( rc != NLDB_OK) goto on_error;
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 on_error:
 		if (db_created) {
 			nrc = nldb_db_drop(META_DATABASE_ID);
@@ -554,12 +593,12 @@ on_error:
 		nldb_db_id_t new_database_id;
 
 		server_error_t rc = next_database_id(&new_database_id);
-		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
+		if (rc != NLDB_OK ) NL_RETURN(rc);
 
 		rc = put_database( database_name, new_database_id);
-		if (rc != ErrorCode::NL_SUCCESS ) NL_RETURN(rc);
+		if (rc != NLDB_OK ) NL_RETURN(rc);
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	/*! Drop a database in Nanolat Database engine. */
@@ -570,7 +609,7 @@ on_error:
 		server_error_t rc = del_database(database_name);
 		if (rc) NL_RETURN(rc);
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	/*! Get the database ID from the meta table searching by the given database_name.
@@ -620,7 +659,7 @@ private:
 
 						nrc = nldb_table_put(tx, table, key, value);
 						if (nrc) NL_RETURN( (server_error_t)nrc );
-						NL_RETURN( ErrorCode::NL_SUCCESS );
+						NL_RETURN( NLDB_OK );
 					}
 					if (nrc) NL_RETURN( (server_error_t)nrc );
 
@@ -703,7 +742,7 @@ public :
 	/*! Create a new table in Nanolat Database engine. */
 	server_error_t create_table(const std::string & table_name) {
 		nldb_table_id_t table_id;
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 		bool table_name_put_into_meta = false;
 
 		rc = meta_tables_t::create_table(db, table_name);
@@ -722,12 +761,12 @@ public :
 			}
 		}
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 
 on_error:
 		if (table_name_put_into_meta) {
 			rc = meta_tables_t::drop_table(db, table_name);
-			NL_RELEASE_ASSERT (rc == ErrorCode::NL_SUCCESS);
+			NL_RELEASE_ASSERT (rc == NLDB_OK);
 		}
 		NL_RETURN(rc);
 	}
@@ -743,9 +782,9 @@ on_error:
 		if (nrc) NL_RETURN( (server_error_t)nrc );
 
 		rc = meta_tables_t::drop_table(db, table_name);
-		NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS );
+		NL_RELEASE_ASSERT( rc == NLDB_OK );
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	/*! get the Nanolat Database table object by table name */
@@ -787,7 +826,7 @@ on_error:
 
 		*o_table = open_table;
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	nldb_db_t get_db() {
@@ -865,7 +904,7 @@ public :
 
 		this->transaction = new_transaction;
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	typedef enum end_transaction_type_t {
@@ -901,7 +940,7 @@ public :
 
 		this->transaction = NULL;
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	server_error_t abort_transaction() {
@@ -922,14 +961,14 @@ public :
 		if (this->transaction == NULL) {
 			is_auto_commit = true;
 			server_error_t rc = begin_transaction();
-			NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS);
+			NL_RELEASE_ASSERT( rc == NLDB_OK);
 		}
 	}
 
 	void auto_commit_transaction() {
 		if (is_auto_commit) {
 			server_error_t rc = commit_transaction();
-			NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS);
+			NL_RELEASE_ASSERT( rc == NLDB_OK);
 			is_auto_commit = false;
 		}
 	}
@@ -937,7 +976,7 @@ public :
 	void auto_abort_transaction() {
 		if (is_auto_commit) {
 			server_error_t rc = abort_transaction();
-			NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS);
+			NL_RELEASE_ASSERT( rc == NLDB_OK);
 			is_auto_commit = false;
 		}
 	}
@@ -1010,7 +1049,7 @@ public :
 
 	static server_error_t create_database(const std::string & database_name) {
 		nldb_db_id_t db_id;
-		server_error_t rc = ErrorCode::NL_SUCCESS;
+		server_error_t rc = NLDB_OK;
 
 		bool db_name_put_into_meta = false;
 		bool nldb_db_created = false;
@@ -1035,7 +1074,7 @@ public :
 		rc = meta_tables_t::create_meta_tables(db_id);
 		if (rc) goto on_error;
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 
 on_error:
 		if( nldb_db_created ) {
@@ -1045,7 +1084,7 @@ on_error:
 
 		if (db_name_put_into_meta) {
 			rc = meta_database_t::drop_database(database_name);
-			NL_RELEASE_ASSERT (rc == ErrorCode::NL_SUCCESS);
+			NL_RELEASE_ASSERT (rc == NLDB_OK);
 		}
 		NL_RETURN(rc);
 	}
@@ -1061,9 +1100,9 @@ on_error:
 		if (nrc) NL_RETURN( (server_error_t)nrc );
 
 		rc = meta_database_t::drop_database(database_name);
-		NL_RELEASE_ASSERT( rc == ErrorCode::NL_SUCCESS );
+		NL_RELEASE_ASSERT( rc == NLDB_OK );
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 	/*! Open a database,
 	 *
@@ -1097,7 +1136,7 @@ on_error:
 
 		*o_database = opendb;
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 
 	/*! get the Nanolat Database object by database name */
@@ -1152,7 +1191,7 @@ public :
 			if (rc) NL_RETURN(rc);
 		}
 
-		NL_RETURN( ErrorCode::NL_SUCCESS );
+		NL_RETURN( NLDB_OK );
 	}
 };
 
