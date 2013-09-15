@@ -90,7 +90,7 @@ extern NLLocalPlayer * gLocalPlayer;
         PostScoreReply * postScoreReply = NLLocalPlayer.localPlayer.postScoreReply;
         if ( postScoreReply ) {
             
-            localPlayerScore_ = [[NLScore getClientScoreFrom:category_ score:postScoreReply.scores.player_score error:&error ] retain];
+            localPlayerScore_ = [[NLScore getClientScoreFrom:category_ score:postScoreReply.scores.user_score error:&error ] retain];
             assert(localPlayerScore_);
             if (!error) {
                 if (range_.location == postScoreReply.scores.from_rank &&

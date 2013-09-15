@@ -16,7 +16,7 @@ using boost::shared_ptr;
 #include <stdlib.h> // for exit
 #include <nanolat/client/common.h>
 #include <nldb/nldb.h>
-#include "ServerImpl.h"
+#include "DatabaseManager.h"
 
 using namespace  ::nanolat::thrift;
 using namespace  ::nanolat::db;
@@ -45,14 +45,14 @@ private :
 	// Your initialization goes here
 	}
 
-	void connect(ConnectReply& _return, const int32_t protocol_version ) {
+	void connect(ConnectReply& _return, const int32_t protocol_version, const std::string & tenant_id ) {
 		TRACE("connect\n");
 
 		// TODO : Check the protocol version
 
 		// Create a new session context.
 		session_context_t * sess_ctx = NULL;
-		sess_ctx = server_instance.session_map.new_session();
+		sess_ctx = server_instance.session_map.new_session( tenant_id );
 		NL_ASSERT(sess_ctx);
 
 		// Use the default database.
@@ -125,7 +125,12 @@ on_error:
 		TRACE("table_create\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		server_error_t rc = sess_ctx->get_using_database()->create_table(table_name);
+		sess_ctx->auto_begin_transaction();
+		GET_TRANSACTION(tx, sess_ctx);
+
+		server_error_t rc = sess_ctx->get_using_database()->create_table(tx, sess_ctx->get_tenant_id(), table_name);
+
+		sess_ctx->auto_commit_transaction();
 
 		_return.status.error_code = (ErrorCode::type)rc;
 	}
@@ -134,7 +139,12 @@ on_error:
 		TRACE("table_drop\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		server_error_t rc =  sess_ctx->get_using_database()->drop_table( table_name);
+		sess_ctx->auto_begin_transaction();
+		GET_TRANSACTION(tx, sess_ctx);
+
+		server_error_t rc =  sess_ctx->get_using_database()->drop_table(tx, sess_ctx->get_tenant_id(), table_name);
+
+		sess_ctx->auto_commit_transaction();
 
 		_return.status.error_code = (ErrorCode::type)rc;
 	}
@@ -467,19 +477,24 @@ on_error:
 
 
 	int listen(int port) {
-		shared_ptr<DatabaseServiceHandler> handler(new DatabaseServiceHandler());
-	    shared_ptr<TProcessor> processor(new nanolat::thrift::DatabaseServiceProcessor(handler));
-	    shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+		try {
+			shared_ptr<DatabaseServiceHandler> handler(new DatabaseServiceHandler());
+			shared_ptr<TProcessor> processor(new nanolat::thrift::DatabaseServiceProcessor(handler));
+			shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
-	    // using thread pool with maximum 1 thread to handle incoming requests
-	    shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(1);
-	    shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
-	    threadManager->threadFactory(threadFactory);
-	    threadManager->start();
-	    TNonblockingServer server(processor, protocolFactory, port, threadManager);
-	    server.serve();
+			// using thread pool with maximum 1 thread to handle incoming requests
+			shared_ptr<ThreadManager> threadManager = ThreadManager::newSimpleThreadManager(1);
+			shared_ptr<PosixThreadFactory> threadFactory = shared_ptr<PosixThreadFactory>(new PosixThreadFactory());
+			threadManager->threadFactory(threadFactory);
+			threadManager->start();
+			TNonblockingServer server(processor, protocolFactory, port, threadManager);
+			server.serve();
+		} catch (TException * e) {
+			printf("Error : %s\n", e->what() );
+			return -1;
+		}
 
-	    return 0;
+		return 0;
 	}
 
 } // server

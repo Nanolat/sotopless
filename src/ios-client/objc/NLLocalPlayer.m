@@ -34,16 +34,20 @@
         protocol_ = nil;
         authenticated_ = FALSE;
         
-        playerPassword_ = [playerPassword_ retain];
+        playerPassword_ = [playerPassword retain];
     }
     return self;
 }
 
 // Try three servers for connecting to the server. If any of them is successfully connected, simply use the connection.
 NSString * SOTOPLESS_HOST_NAMES[] = {
+    @"localhost",
+    /*
+    @"192.168.103.107"
     @"54.200.19.178",
     @"nanolat.kr",
     @"vigsql.com",
+     */
     nil
 };
 
@@ -51,6 +55,11 @@ NSString * SOTOPLESS_HOST_NAMES[] = {
 - (void) setAuthenticateHandler:(void(^)(NSString * connectedServerName, NSError *error))completionHandler {
 
     if (completionHandler == nil) {
+        NSLog(@"disconnecting.");
+        if (self.session != nil) {
+            [service_ disconnect:self.session];
+            self.session = nil;
+        }
         return;
     }
     
@@ -70,7 +79,7 @@ NSString * SOTOPLESS_HOST_NAMES[] = {
             transport_exception = nil;
             
             @try {
-                
+                NSLog(@"Trying to connect to %@.", SOTOPLESS_HOST_NAMES[i]);
                 self.transport = [[TSocketClient alloc] initWithHostname:SOTOPLESS_HOST_NAMES[i] port:NL_SOTOPLESS_PORT];
                 assert(transport_);
                 self.framedTransport = [[TFramedTransport alloc] initWithTransport:transport_];
@@ -81,9 +90,10 @@ NSString * SOTOPLESS_HOST_NAMES[] = {
                 assert(service_);
                 
                 ConnectReply * reply = [service_ connect:LeaderboardServiceConstants.PROTOCOL_VERSION
-                                               player_id:playerID_
-                                         player_password:playerPassword_
-                                               user_data:nil ];
+                                                 tenant_id:@"xc4edf"
+                                                 user_id:playerID_
+                                                 user_password:playerPassword_
+                                                 user_data:nil];
                 assert(reply);
                 
                 if (reply) {
@@ -91,7 +101,8 @@ NSString * SOTOPLESS_HOST_NAMES[] = {
                         serverName = reply.server_name;
                         self.session = [[Session alloc] initWithSession_handle:reply.session_handle];
                     } else {
-                        error = [NLUtil errorWithCode:reply.status.error_code message:@"Error while connecting to SoTopless leaderboard server."];
+                        NSString * message = [NLUtil append:@"Error while connecting to SoTopless leaderboard server. Detail:", reply.status.error_message_format, nil];
+                        error = [NLUtil errorWithCode:reply.status.error_code message:message];
                         assert(error);
                     }
                     break;

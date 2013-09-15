@@ -135,65 +135,6 @@ class DefaultReply {
 
 void swap(DefaultReply &a, DefaultReply &b);
 
-typedef struct _LeaderboardConnectReply__isset {
-  _LeaderboardConnectReply__isset() : status(false), session_handle(false), user_data(false) {}
-  bool status;
-  bool session_handle;
-  bool user_data;
-} _LeaderboardConnectReply__isset;
-
-class LeaderboardConnectReply {
- public:
-
-  static const char* ascii_fingerprint; // = "0FD6FDFD2C321318E1F5A2261708F3A5";
-  static const uint8_t binary_fingerprint[16]; // = {0x0F,0xD6,0xFD,0xFD,0x2C,0x32,0x13,0x18,0xE1,0xF5,0xA2,0x26,0x17,0x08,0xF3,0xA5};
-
-  LeaderboardConnectReply() : session_handle(0), user_data() {
-  }
-
-  virtual ~LeaderboardConnectReply() throw() {}
-
-  ReplyStatus status;
-  int32_t session_handle;
-  std::string user_data;
-
-  _LeaderboardConnectReply__isset __isset;
-
-  void __set_status(const ReplyStatus& val) {
-    status = val;
-  }
-
-  void __set_session_handle(const int32_t val) {
-    session_handle = val;
-  }
-
-  void __set_user_data(const std::string& val) {
-    user_data = val;
-  }
-
-  bool operator == (const LeaderboardConnectReply & rhs) const
-  {
-    if (!(status == rhs.status))
-      return false;
-    if (!(session_handle == rhs.session_handle))
-      return false;
-    if (!(user_data == rhs.user_data))
-      return false;
-    return true;
-  }
-  bool operator != (const LeaderboardConnectReply &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const LeaderboardConnectReply & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-void swap(LeaderboardConnectReply &a, LeaderboardConnectReply &b);
-
 typedef struct _Session__isset {
   _Session__isset() : session_handle(false) {}
   bool session_handle;
@@ -238,11 +179,11 @@ class Session {
 void swap(Session &a, Session &b);
 
 typedef struct _Score__isset {
-  _Score__isset() : value(false), date_epoch(false), player_alias(false), player_id(false), rank(false), situation(false), vote_up_count(false), vote_down_count(false) {}
+  _Score__isset() : value(false), date_epoch(false), user_alias(false), user_id(false), rank(false), situation(false), vote_up_count(false), vote_down_count(false) {}
   bool value;
   bool date_epoch;
-  bool player_alias;
-  bool player_id;
+  bool user_alias;
+  bool user_id;
   bool rank;
   bool situation;
   bool vote_up_count;
@@ -255,15 +196,15 @@ class Score {
   static const char* ascii_fingerprint; // = "E447ECEACF2D326FE000A75298B11CD9";
   static const uint8_t binary_fingerprint[16]; // = {0xE4,0x47,0xEC,0xEA,0xCF,0x2D,0x32,0x6F,0xE0,0x00,0xA7,0x52,0x98,0xB1,0x1C,0xD9};
 
-  Score() : value(0), date_epoch(0), player_alias(), player_id(), rank(0), situation(), vote_up_count(0), vote_down_count(0) {
+  Score() : value(0), date_epoch(0), user_alias(), user_id(), rank(0), situation(), vote_up_count(0), vote_down_count(0) {
   }
 
   virtual ~Score() throw() {}
 
   int64_t value;
   int64_t date_epoch;
-  std::string player_alias;
-  std::string player_id;
+  std::string user_alias;
+  std::string user_id;
   int32_t rank;
   std::string situation;
   int32_t vote_up_count;
@@ -279,12 +220,12 @@ class Score {
     date_epoch = val;
   }
 
-  void __set_player_alias(const std::string& val) {
-    player_alias = val;
+  void __set_user_alias(const std::string& val) {
+    user_alias = val;
   }
 
-  void __set_player_id(const std::string& val) {
-    player_id = val;
+  void __set_user_id(const std::string& val) {
+    user_id = val;
   }
 
   void __set_rank(const int32_t val) {
@@ -309,9 +250,9 @@ class Score {
       return false;
     if (!(date_epoch == rhs.date_epoch))
       return false;
-    if (!(player_alias == rhs.player_alias))
+    if (!(user_alias == rhs.user_alias))
       return false;
-    if (!(player_id == rhs.player_id))
+    if (!(user_id == rhs.user_id))
       return false;
     if (!(rank == rhs.rank))
       return false;
@@ -336,34 +277,34 @@ class Score {
 
 void swap(Score &a, Score &b);
 
-typedef struct _PlayerScoreAndTopScores__isset {
-  _PlayerScoreAndTopScores__isset() : player_score(false), from_rank(false), count(false), top_scores(false) {}
-  bool player_score;
+typedef struct _UserScoreAndTopScores__isset {
+  _UserScoreAndTopScores__isset() : user_score(false), from_rank(false), count(false), top_scores(false) {}
+  bool user_score;
   bool from_rank;
   bool count;
   bool top_scores;
-} _PlayerScoreAndTopScores__isset;
+} _UserScoreAndTopScores__isset;
 
-class PlayerScoreAndTopScores {
+class UserScoreAndTopScores {
  public:
 
   static const char* ascii_fingerprint; // = "BDF6090738155A1FB5C43743D545B40E";
   static const uint8_t binary_fingerprint[16]; // = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
 
-  PlayerScoreAndTopScores() : from_rank(0), count(0) {
+  UserScoreAndTopScores() : from_rank(0), count(0) {
   }
 
-  virtual ~PlayerScoreAndTopScores() throw() {}
+  virtual ~UserScoreAndTopScores() throw() {}
 
-  Score player_score;
+  Score user_score;
   int32_t from_rank;
   int64_t count;
   std::vector<Score>  top_scores;
 
-  _PlayerScoreAndTopScores__isset __isset;
+  _UserScoreAndTopScores__isset __isset;
 
-  void __set_player_score(const Score& val) {
-    player_score = val;
+  void __set_user_score(const Score& val) {
+    user_score = val;
   }
 
   void __set_from_rank(const int32_t val) {
@@ -378,9 +319,9 @@ class PlayerScoreAndTopScores {
     top_scores = val;
   }
 
-  bool operator == (const PlayerScoreAndTopScores & rhs) const
+  bool operator == (const UserScoreAndTopScores & rhs) const
   {
-    if (!(player_score == rhs.player_score))
+    if (!(user_score == rhs.user_score))
       return false;
     if (!(from_rank == rhs.from_rank))
       return false;
@@ -390,18 +331,18 @@ class PlayerScoreAndTopScores {
       return false;
     return true;
   }
-  bool operator != (const PlayerScoreAndTopScores &rhs) const {
+  bool operator != (const UserScoreAndTopScores &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const PlayerScoreAndTopScores & ) const;
+  bool operator < (const UserScoreAndTopScores & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
-void swap(PlayerScoreAndTopScores &a, PlayerScoreAndTopScores &b);
+void swap(UserScoreAndTopScores &a, UserScoreAndTopScores &b);
 
 typedef struct _PostScoreReply__isset {
   _PostScoreReply__isset() : status(false), scores(false) {}
@@ -421,7 +362,7 @@ class PostScoreReply {
   virtual ~PostScoreReply() throw() {}
 
   ReplyStatus status;
-  PlayerScoreAndTopScores scores;
+  UserScoreAndTopScores scores;
 
   _PostScoreReply__isset __isset;
 
@@ -429,7 +370,7 @@ class PostScoreReply {
     status = val;
   }
 
-  void __set_scores(const PlayerScoreAndTopScores& val) {
+  void __set_scores(const UserScoreAndTopScores& val) {
     scores = val;
   }
 
@@ -472,7 +413,7 @@ class GetScoresReply {
   virtual ~GetScoresReply() throw() {}
 
   ReplyStatus status;
-  PlayerScoreAndTopScores scores;
+  UserScoreAndTopScores scores;
 
   _GetScoresReply__isset __isset;
 
@@ -480,7 +421,7 @@ class GetScoresReply {
     status = val;
   }
 
-  void __set_scores(const PlayerScoreAndTopScores& val) {
+  void __set_scores(const UserScoreAndTopScores& val) {
     scores = val;
   }
 

@@ -15,11 +15,11 @@ namespace nanolat { namespace leaderboard {
 class LeaderboardServiceIf {
  public:
   virtual ~LeaderboardServiceIf() {}
-  virtual void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& player_id, const std::string& player_password, const std::string& user_data) = 0;
+  virtual void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data) = 0;
   virtual void disconnect(DefaultReply& _return, const Session& session) = 0;
   virtual void post_score(PostScoreReply& _return, const Session& session, const std::string& category, const Score& score) = 0;
-  virtual void get_scores(GetScoresReply& _return, const Session& session, const std::string& categoy, const std::string& player_id, const int32_t from_rank, const int64_t count) = 0;
-  virtual void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_player_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) = 0;
+  virtual void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count) = 0;
+  virtual void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) = 0;
 };
 
 class LeaderboardServiceIfFactory {
@@ -49,7 +49,7 @@ class LeaderboardServiceIfSingletonFactory : virtual public LeaderboardServiceIf
 class LeaderboardServiceNull : virtual public LeaderboardServiceIf {
  public:
   virtual ~LeaderboardServiceNull() {}
-  void connect(ConnectReply& /* _return */, const int32_t /* protocol_version */, const std::string& /* player_id */, const std::string& /* player_password */, const std::string& /* user_data */) {
+  void connect(ConnectReply& /* _return */, const int32_t /* protocol_version */, const std::string& /* tenant_id */, const std::string& /* user_id */, const std::string& /* user_password */, const std::string& /* user_data */) {
     return;
   }
   void disconnect(DefaultReply& /* _return */, const Session& /* session */) {
@@ -58,33 +58,35 @@ class LeaderboardServiceNull : virtual public LeaderboardServiceIf {
   void post_score(PostScoreReply& /* _return */, const Session& /* session */, const std::string& /* category */, const Score& /* score */) {
     return;
   }
-  void get_scores(GetScoresReply& /* _return */, const Session& /* session */, const std::string& /* categoy */, const std::string& /* player_id */, const int32_t /* from_rank */, const int64_t /* count */) {
+  void get_scores(GetScoresReply& /* _return */, const Session& /* session */, const std::string& /* category */, const std::string& /* user_id */, const int32_t /* from_rank */, const int64_t /* count */) {
     return;
   }
-  void vote_score(DefaultReply& /* _return */, const Session& /* session */, const std::string& /* voting_player_id */, const int64_t /* score_value */, const int64_t /* score_date_epoch */, const int32_t /* vote_up_down */, const std::string& /* comment */) {
+  void vote_score(DefaultReply& /* _return */, const Session& /* session */, const std::string& /* voting_user_id */, const int64_t /* score_value */, const int64_t /* score_date_epoch */, const int32_t /* vote_up_down */, const std::string& /* comment */) {
     return;
   }
 };
 
 typedef struct _LeaderboardService_connect_args__isset {
-  _LeaderboardService_connect_args__isset() : protocol_version(false), player_id(false), player_password(false), user_data(false) {}
+  _LeaderboardService_connect_args__isset() : protocol_version(false), tenant_id(false), user_id(false), user_password(false), user_data(false) {}
   bool protocol_version;
-  bool player_id;
-  bool player_password;
+  bool tenant_id;
+  bool user_id;
+  bool user_password;
   bool user_data;
 } _LeaderboardService_connect_args__isset;
 
 class LeaderboardService_connect_args {
  public:
 
-  LeaderboardService_connect_args() : protocol_version(0), player_id(), player_password(), user_data() {
+  LeaderboardService_connect_args() : protocol_version(0), tenant_id(), user_id(), user_password(), user_data() {
   }
 
   virtual ~LeaderboardService_connect_args() throw() {}
 
   int32_t protocol_version;
-  std::string player_id;
-  std::string player_password;
+  std::string tenant_id;
+  std::string user_id;
+  std::string user_password;
   std::string user_data;
 
   _LeaderboardService_connect_args__isset __isset;
@@ -93,12 +95,16 @@ class LeaderboardService_connect_args {
     protocol_version = val;
   }
 
-  void __set_player_id(const std::string& val) {
-    player_id = val;
+  void __set_tenant_id(const std::string& val) {
+    tenant_id = val;
   }
 
-  void __set_player_password(const std::string& val) {
-    player_password = val;
+  void __set_user_id(const std::string& val) {
+    user_id = val;
+  }
+
+  void __set_user_password(const std::string& val) {
+    user_password = val;
   }
 
   void __set_user_data(const std::string& val) {
@@ -109,9 +115,11 @@ class LeaderboardService_connect_args {
   {
     if (!(protocol_version == rhs.protocol_version))
       return false;
-    if (!(player_id == rhs.player_id))
+    if (!(tenant_id == rhs.tenant_id))
       return false;
-    if (!(player_password == rhs.player_password))
+    if (!(user_id == rhs.user_id))
+      return false;
+    if (!(user_password == rhs.user_password))
       return false;
     if (!(user_data == rhs.user_data))
       return false;
@@ -136,8 +144,9 @@ class LeaderboardService_connect_pargs {
   virtual ~LeaderboardService_connect_pargs() throw() {}
 
   const int32_t* protocol_version;
-  const std::string* player_id;
-  const std::string* player_password;
+  const std::string* tenant_id;
+  const std::string* user_id;
+  const std::string* user_password;
   const std::string* user_data;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -436,10 +445,10 @@ class LeaderboardService_post_score_presult {
 };
 
 typedef struct _LeaderboardService_get_scores_args__isset {
-  _LeaderboardService_get_scores_args__isset() : session(false), categoy(false), player_id(false), from_rank(false), count(false) {}
+  _LeaderboardService_get_scores_args__isset() : session(false), category(false), user_id(false), from_rank(false), count(false) {}
   bool session;
-  bool categoy;
-  bool player_id;
+  bool category;
+  bool user_id;
   bool from_rank;
   bool count;
 } _LeaderboardService_get_scores_args__isset;
@@ -447,14 +456,14 @@ typedef struct _LeaderboardService_get_scores_args__isset {
 class LeaderboardService_get_scores_args {
  public:
 
-  LeaderboardService_get_scores_args() : categoy(), player_id(), from_rank(0), count(0) {
+  LeaderboardService_get_scores_args() : category(), user_id(), from_rank(0), count(0) {
   }
 
   virtual ~LeaderboardService_get_scores_args() throw() {}
 
   Session session;
-  std::string categoy;
-  std::string player_id;
+  std::string category;
+  std::string user_id;
   int32_t from_rank;
   int64_t count;
 
@@ -464,12 +473,12 @@ class LeaderboardService_get_scores_args {
     session = val;
   }
 
-  void __set_categoy(const std::string& val) {
-    categoy = val;
+  void __set_category(const std::string& val) {
+    category = val;
   }
 
-  void __set_player_id(const std::string& val) {
-    player_id = val;
+  void __set_user_id(const std::string& val) {
+    user_id = val;
   }
 
   void __set_from_rank(const int32_t val) {
@@ -484,9 +493,9 @@ class LeaderboardService_get_scores_args {
   {
     if (!(session == rhs.session))
       return false;
-    if (!(categoy == rhs.categoy))
+    if (!(category == rhs.category))
       return false;
-    if (!(player_id == rhs.player_id))
+    if (!(user_id == rhs.user_id))
       return false;
     if (!(from_rank == rhs.from_rank))
       return false;
@@ -513,8 +522,8 @@ class LeaderboardService_get_scores_pargs {
   virtual ~LeaderboardService_get_scores_pargs() throw() {}
 
   const Session* session;
-  const std::string* categoy;
-  const std::string* player_id;
+  const std::string* category;
+  const std::string* user_id;
   const int32_t* from_rank;
   const int64_t* count;
 
@@ -580,9 +589,9 @@ class LeaderboardService_get_scores_presult {
 };
 
 typedef struct _LeaderboardService_vote_score_args__isset {
-  _LeaderboardService_vote_score_args__isset() : session(false), voting_player_id(false), score_value(false), score_date_epoch(false), vote_up_down(false), comment(false) {}
+  _LeaderboardService_vote_score_args__isset() : session(false), voting_user_id(false), score_value(false), score_date_epoch(false), vote_up_down(false), comment(false) {}
   bool session;
-  bool voting_player_id;
+  bool voting_user_id;
   bool score_value;
   bool score_date_epoch;
   bool vote_up_down;
@@ -592,13 +601,13 @@ typedef struct _LeaderboardService_vote_score_args__isset {
 class LeaderboardService_vote_score_args {
  public:
 
-  LeaderboardService_vote_score_args() : voting_player_id(), score_value(0), score_date_epoch(0), vote_up_down(0), comment() {
+  LeaderboardService_vote_score_args() : voting_user_id(), score_value(0), score_date_epoch(0), vote_up_down(0), comment() {
   }
 
   virtual ~LeaderboardService_vote_score_args() throw() {}
 
   Session session;
-  std::string voting_player_id;
+  std::string voting_user_id;
   int64_t score_value;
   int64_t score_date_epoch;
   int32_t vote_up_down;
@@ -610,8 +619,8 @@ class LeaderboardService_vote_score_args {
     session = val;
   }
 
-  void __set_voting_player_id(const std::string& val) {
-    voting_player_id = val;
+  void __set_voting_user_id(const std::string& val) {
+    voting_user_id = val;
   }
 
   void __set_score_value(const int64_t val) {
@@ -634,7 +643,7 @@ class LeaderboardService_vote_score_args {
   {
     if (!(session == rhs.session))
       return false;
-    if (!(voting_player_id == rhs.voting_player_id))
+    if (!(voting_user_id == rhs.voting_user_id))
       return false;
     if (!(score_value == rhs.score_value))
       return false;
@@ -665,7 +674,7 @@ class LeaderboardService_vote_score_pargs {
   virtual ~LeaderboardService_vote_score_pargs() throw() {}
 
   const Session* session;
-  const std::string* voting_player_id;
+  const std::string* voting_user_id;
   const int64_t* score_value;
   const int64_t* score_date_epoch;
   const int32_t* vote_up_down;
@@ -752,8 +761,8 @@ class LeaderboardServiceClient : virtual public LeaderboardServiceIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& player_id, const std::string& player_password, const std::string& user_data);
-  void send_connect(const int32_t protocol_version, const std::string& player_id, const std::string& player_password, const std::string& user_data);
+  void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data);
+  void send_connect(const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data);
   void recv_connect(ConnectReply& _return);
   void disconnect(DefaultReply& _return, const Session& session);
   void send_disconnect(const Session& session);
@@ -761,11 +770,11 @@ class LeaderboardServiceClient : virtual public LeaderboardServiceIf {
   void post_score(PostScoreReply& _return, const Session& session, const std::string& category, const Score& score);
   void send_post_score(const Session& session, const std::string& category, const Score& score);
   void recv_post_score(PostScoreReply& _return);
-  void get_scores(GetScoresReply& _return, const Session& session, const std::string& categoy, const std::string& player_id, const int32_t from_rank, const int64_t count);
-  void send_get_scores(const Session& session, const std::string& categoy, const std::string& player_id, const int32_t from_rank, const int64_t count);
+  void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count);
+  void send_get_scores(const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count);
   void recv_get_scores(GetScoresReply& _return);
-  void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_player_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment);
-  void send_vote_score(const Session& session, const std::string& voting_player_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment);
+  void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment);
+  void send_vote_score(const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment);
   void recv_vote_score(DefaultReply& _return);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
@@ -823,13 +832,13 @@ class LeaderboardServiceMultiface : virtual public LeaderboardServiceIf {
     ifaces_.push_back(iface);
   }
  public:
-  void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& player_id, const std::string& player_password, const std::string& user_data) {
+  void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->connect(_return, protocol_version, player_id, player_password, user_data);
+      ifaces_[i]->connect(_return, protocol_version, tenant_id, user_id, user_password, user_data);
     }
-    ifaces_[i]->connect(_return, protocol_version, player_id, player_password, user_data);
+    ifaces_[i]->connect(_return, protocol_version, tenant_id, user_id, user_password, user_data);
     return;
   }
 
@@ -853,23 +862,23 @@ class LeaderboardServiceMultiface : virtual public LeaderboardServiceIf {
     return;
   }
 
-  void get_scores(GetScoresReply& _return, const Session& session, const std::string& categoy, const std::string& player_id, const int32_t from_rank, const int64_t count) {
+  void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->get_scores(_return, session, categoy, player_id, from_rank, count);
+      ifaces_[i]->get_scores(_return, session, category, user_id, from_rank, count);
     }
-    ifaces_[i]->get_scores(_return, session, categoy, player_id, from_rank, count);
+    ifaces_[i]->get_scores(_return, session, category, user_id, from_rank, count);
     return;
   }
 
-  void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_player_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) {
+  void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->vote_score(_return, session, voting_player_id, score_value, score_date_epoch, vote_up_down, comment);
+      ifaces_[i]->vote_score(_return, session, voting_user_id, score_value, score_date_epoch, vote_up_down, comment);
     }
-    ifaces_[i]->vote_score(_return, session, voting_player_id, score_value, score_date_epoch, vote_up_down, comment);
+    ifaces_[i]->vote_score(_return, session, voting_user_id, score_value, score_date_epoch, vote_up_down, comment);
     return;
   }
 

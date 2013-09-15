@@ -24,7 +24,7 @@
     ////////////////////////////////////////////////////////////////////////////////
 	// Login
     
-    NSString * uuid = [ NSString stringWithFormat:@"GET-UUID-DONT-USE-THIS"];
+    NSString * uuid = [ NSString stringWithFormat:@"abcde"];
     
     NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"Kangdori" password:uuid ];
     
@@ -45,7 +45,7 @@
         
         [myScore reportScoreWithCompletionHandler:^(NSError * error) {
             if (error != NULL) {
-                NSLog( @"Error : while authenticating : %@", error.description );
+                NSLog( @"Error : while reporting score : %@", error.description );
                 return;
             }
             NSLog( @"Success : Score reported.");

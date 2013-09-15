@@ -38,21 +38,29 @@ uint32_t LeaderboardService_connect_args::read(::apache::thrift::protocol::TProt
         break;
       case 2:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->player_id);
-          this->__isset.player_id = true;
+          xfer += iprot->readString(this->tenant_id);
+          this->__isset.tenant_id = true;
         } else {
           xfer += iprot->skip(ftype);
         }
         break;
       case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->player_password);
-          this->__isset.player_password = true;
+          xfer += iprot->readString(this->user_id);
+          this->__isset.user_id = true;
         } else {
           xfer += iprot->skip(ftype);
         }
         break;
       case 4:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->user_password);
+          this->__isset.user_password = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 5:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
           xfer += iprot->readBinary(this->user_data);
           this->__isset.user_data = true;
@@ -80,15 +88,19 @@ uint32_t LeaderboardService_connect_args::write(::apache::thrift::protocol::TPro
   xfer += oprot->writeI32(this->protocol_version);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("player_id", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString(this->player_id);
+  xfer += oprot->writeFieldBegin("tenant_id", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->tenant_id);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("player_password", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString(this->player_password);
+  xfer += oprot->writeFieldBegin("user_id", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->user_id);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("user_data", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeFieldBegin("user_password", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeString(this->user_password);
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("user_data", ::apache::thrift::protocol::T_STRING, 5);
   xfer += oprot->writeBinary(this->user_data);
   xfer += oprot->writeFieldEnd();
 
@@ -105,15 +117,19 @@ uint32_t LeaderboardService_connect_pargs::write(::apache::thrift::protocol::TPr
   xfer += oprot->writeI32((*(this->protocol_version)));
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("player_id", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString((*(this->player_id)));
+  xfer += oprot->writeFieldBegin("tenant_id", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->tenant_id)));
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("player_password", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString((*(this->player_password)));
+  xfer += oprot->writeFieldBegin("user_id", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString((*(this->user_id)));
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("user_data", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeFieldBegin("user_password", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeString((*(this->user_password)));
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("user_data", ::apache::thrift::protocol::T_STRING, 5);
   xfer += oprot->writeBinary((*(this->user_data)));
   xfer += oprot->writeFieldEnd();
 
@@ -604,16 +620,16 @@ uint32_t LeaderboardService_get_scores_args::read(::apache::thrift::protocol::TP
         break;
       case 2:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->categoy);
-          this->__isset.categoy = true;
+          xfer += iprot->readString(this->category);
+          this->__isset.category = true;
         } else {
           xfer += iprot->skip(ftype);
         }
         break;
       case 3:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->player_id);
-          this->__isset.player_id = true;
+          xfer += iprot->readString(this->user_id);
+          this->__isset.user_id = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -654,12 +670,12 @@ uint32_t LeaderboardService_get_scores_args::write(::apache::thrift::protocol::T
   xfer += this->session.write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("categoy", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString(this->categoy);
+  xfer += oprot->writeFieldBegin("category", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->category);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("player_id", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString(this->player_id);
+  xfer += oprot->writeFieldBegin("user_id", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->user_id);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("from_rank", ::apache::thrift::protocol::T_I32, 4);
@@ -683,12 +699,12 @@ uint32_t LeaderboardService_get_scores_pargs::write(::apache::thrift::protocol::
   xfer += (*(this->session)).write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("categoy", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString((*(this->categoy)));
+  xfer += oprot->writeFieldBegin("category", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->category)));
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("player_id", ::apache::thrift::protocol::T_STRING, 3);
-  xfer += oprot->writeString((*(this->player_id)));
+  xfer += oprot->writeFieldBegin("user_id", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString((*(this->user_id)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("from_rank", ::apache::thrift::protocol::T_I32, 4);
@@ -830,8 +846,8 @@ uint32_t LeaderboardService_vote_score_args::read(::apache::thrift::protocol::TP
         break;
       case 2:
         if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->voting_player_id);
-          this->__isset.voting_player_id = true;
+          xfer += iprot->readString(this->voting_user_id);
+          this->__isset.voting_user_id = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -888,8 +904,8 @@ uint32_t LeaderboardService_vote_score_args::write(::apache::thrift::protocol::T
   xfer += this->session.write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("voting_player_id", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString(this->voting_player_id);
+  xfer += oprot->writeFieldBegin("voting_user_id", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->voting_user_id);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("score_value", ::apache::thrift::protocol::T_I64, 3);
@@ -921,8 +937,8 @@ uint32_t LeaderboardService_vote_score_pargs::write(::apache::thrift::protocol::
   xfer += (*(this->session)).write(oprot);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("voting_player_id", ::apache::thrift::protocol::T_STRING, 2);
-  xfer += oprot->writeString((*(this->voting_player_id)));
+  xfer += oprot->writeFieldBegin("voting_user_id", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->voting_user_id)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("score_value", ::apache::thrift::protocol::T_I64, 3);
@@ -1042,21 +1058,22 @@ uint32_t LeaderboardService_vote_score_presult::read(::apache::thrift::protocol:
   return xfer;
 }
 
-void LeaderboardServiceClient::connect(ConnectReply& _return, const int32_t protocol_version, const std::string& player_id, const std::string& player_password, const std::string& user_data)
+void LeaderboardServiceClient::connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data)
 {
-  send_connect(protocol_version, player_id, player_password, user_data);
+  send_connect(protocol_version, tenant_id, user_id, user_password, user_data);
   recv_connect(_return);
 }
 
-void LeaderboardServiceClient::send_connect(const int32_t protocol_version, const std::string& player_id, const std::string& player_password, const std::string& user_data)
+void LeaderboardServiceClient::send_connect(const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("connect", ::apache::thrift::protocol::T_CALL, cseqid);
 
   LeaderboardService_connect_pargs args;
   args.protocol_version = &protocol_version;
-  args.player_id = &player_id;
-  args.player_password = &player_password;
+  args.tenant_id = &tenant_id;
+  args.user_id = &user_id;
+  args.user_password = &user_password;
   args.user_data = &user_data;
   args.write(oprot_);
 
@@ -1221,21 +1238,21 @@ void LeaderboardServiceClient::recv_post_score(PostScoreReply& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "post_score failed: unknown result");
 }
 
-void LeaderboardServiceClient::get_scores(GetScoresReply& _return, const Session& session, const std::string& categoy, const std::string& player_id, const int32_t from_rank, const int64_t count)
+void LeaderboardServiceClient::get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count)
 {
-  send_get_scores(session, categoy, player_id, from_rank, count);
+  send_get_scores(session, category, user_id, from_rank, count);
   recv_get_scores(_return);
 }
 
-void LeaderboardServiceClient::send_get_scores(const Session& session, const std::string& categoy, const std::string& player_id, const int32_t from_rank, const int64_t count)
+void LeaderboardServiceClient::send_get_scores(const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("get_scores", ::apache::thrift::protocol::T_CALL, cseqid);
 
   LeaderboardService_get_scores_pargs args;
   args.session = &session;
-  args.categoy = &categoy;
-  args.player_id = &player_id;
+  args.category = &category;
+  args.user_id = &user_id;
   args.from_rank = &from_rank;
   args.count = &count;
   args.write(oprot_);
@@ -1283,20 +1300,20 @@ void LeaderboardServiceClient::recv_get_scores(GetScoresReply& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "get_scores failed: unknown result");
 }
 
-void LeaderboardServiceClient::vote_score(DefaultReply& _return, const Session& session, const std::string& voting_player_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment)
+void LeaderboardServiceClient::vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment)
 {
-  send_vote_score(session, voting_player_id, score_value, score_date_epoch, vote_up_down, comment);
+  send_vote_score(session, voting_user_id, score_value, score_date_epoch, vote_up_down, comment);
   recv_vote_score(_return);
 }
 
-void LeaderboardServiceClient::send_vote_score(const Session& session, const std::string& voting_player_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment)
+void LeaderboardServiceClient::send_vote_score(const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("vote_score", ::apache::thrift::protocol::T_CALL, cseqid);
 
   LeaderboardService_vote_score_pargs args;
   args.session = &session;
-  args.voting_player_id = &voting_player_id;
+  args.voting_user_id = &voting_user_id;
   args.score_value = &score_value;
   args.score_date_epoch = &score_date_epoch;
   args.vote_up_down = &vote_up_down;
@@ -1388,7 +1405,7 @@ void LeaderboardServiceProcessor::process_connect(int32_t seqid, ::apache::thrif
 
   LeaderboardService_connect_result result;
   try {
-    iface_->connect(result.success, args.protocol_version, args.player_id, args.player_password, args.user_data);
+    iface_->connect(result.success, args.protocol_version, args.tenant_id, args.user_id, args.user_password, args.user_data);
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
@@ -1550,7 +1567,7 @@ void LeaderboardServiceProcessor::process_get_scores(int32_t seqid, ::apache::th
 
   LeaderboardService_get_scores_result result;
   try {
-    iface_->get_scores(result.success, args.session, args.categoy, args.player_id, args.from_rank, args.count);
+    iface_->get_scores(result.success, args.session, args.category, args.user_id, args.from_rank, args.count);
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
@@ -1604,7 +1621,7 @@ void LeaderboardServiceProcessor::process_vote_score(int32_t seqid, ::apache::th
 
   LeaderboardService_vote_score_result result;
   try {
-    iface_->vote_score(result.success, args.session, args.voting_player_id, args.score_value, args.score_date_epoch, args.vote_up_down, args.comment);
+    iface_->vote_score(result.success, args.session, args.voting_user_id, args.score_value, args.score_date_epoch, args.vote_up_down, args.comment);
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {

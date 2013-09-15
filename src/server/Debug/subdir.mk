@@ -5,36 +5,42 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../DatabaseServer.cpp \
-../DatabaseServerImpl.cpp \
+../DatabaseServerError.cpp \
 ../DatabaseService.cpp \
 ../DatabaseService_constants.cpp \
 ../DatabaseService_types.cpp \
+../LeaderboardImpl.cpp \
 ../LeaderboardServer.cpp \
 ../LeaderboardService.cpp \
 ../LeaderboardService_constants.cpp \
-../LeaderboardService_types.cpp 
+../LeaderboardService_types.cpp \
+../NanolatDatabaseError.cpp 
 
 OBJS += \
 ./DatabaseServer.o \
-./DatabaseServerImpl.o \
+./DatabaseServerError.o \
 ./DatabaseService.o \
 ./DatabaseService_constants.o \
 ./DatabaseService_types.o \
+./LeaderboardImpl.o \
 ./LeaderboardServer.o \
 ./LeaderboardService.o \
 ./LeaderboardService_constants.o \
-./LeaderboardService_types.o 
+./LeaderboardService_types.o \
+./NanolatDatabaseError.o 
 
 CPP_DEPS += \
 ./DatabaseServer.d \
-./DatabaseServerImpl.d \
+./DatabaseServerError.d \
 ./DatabaseService.d \
 ./DatabaseService_constants.d \
 ./DatabaseService_types.d \
+./LeaderboardImpl.d \
 ./LeaderboardServer.d \
 ./LeaderboardService.d \
 ./LeaderboardService_constants.d \
-./LeaderboardService_types.d 
+./LeaderboardService_types.d \
+./NanolatDatabaseError.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

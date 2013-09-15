@@ -48,8 +48,8 @@
     
     score.value        = client_score.value;
     score.date_epoch   = [[NLScore epochFromDate:client_score.date] longLongValue];
-    score.player_alias = client_score.playerAlias;
-    score.player_id    = client_score.playerID;
+    score.user_alias = client_score.playerAlias;
+    score.user_id    = client_score.playerID;
     score.rank         = client_score.rank;
 
     // TODO : v2.0 - add vote up/down count to NLScore
@@ -73,7 +73,7 @@
     NSDate * scoreDate = [NLScore dateFromEpoch:[NSNumber numberWithLongLong:score.date_epoch] ];
 
     // TODO : v2.0 - add vote up/down count to NLScore
-    [client_score setScore:score.value category:category date:scoreDate playerAlias:score.player_alias playerID:score.player_id rank:score.rank];
+    [client_score setScore:score.value category:category date:scoreDate playerAlias:score.user_alias playerID:score.user_id rank:score.rank];
 
     // In this function, error can not happen, but have the output error parameter for the consistency of interfaces.
     *o_error = nil;
@@ -116,7 +116,7 @@
     NSError * error = nil;
     
     NSData * jsonData = [NSJSONSerialization dataWithJSONObject:scoreHistory_
-                                             options:NSJSONWritingPrettyPrinted error:&error];
+                                             options:0/*serialize in compact format*/ error:&error];
     if (error) {
         * o_error = error;
         return nil;

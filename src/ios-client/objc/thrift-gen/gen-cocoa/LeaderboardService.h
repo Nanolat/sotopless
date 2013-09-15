@@ -20,10 +20,12 @@ enum ErrorCode {
   ErrorCode_NL_SUCCESS = 0,
   ErrorCode_NL_ERROR_CODE_START = -1000,
   ErrorCode_NL_FAILURE = -1000,
-  ErrorCode_NL_INCOMPATIBLE_CLINET_VERSION = -1001,
-  ErrorCode_NL_INVALID_ARGUMENT = -1002,
-  ErrorCode_NL_INVALID_CREDENTIAL = -1003,
-  ErrorCode_NL_ERROR_CODE_END = -1003
+  ErrorCode_NL_NOT_SUPPORTED = -1001,
+  ErrorCode_NL_INCOMPATIBLE_CLINET_VERSION = -1002,
+  ErrorCode_NL_INVALID_SESSION_HANDLE = -1003,
+  ErrorCode_NL_INVALID_ARGUMENT = -1004,
+  ErrorCode_NL_INVALID_CREDENTIAL = -1005,
+  ErrorCode_NL_ERROR_CODE_END = -1005
 };
 
 @interface ReplyStatus : NSObject <TBase, NSCoding> {
@@ -169,8 +171,8 @@ enum ErrorCode {
 @interface Score : NSObject <TBase, NSCoding> {
   int64_t __value;
   int64_t __date_epoch;
-  NSString * __player_alias;
-  NSString * __player_id;
+  NSString * __user_alias;
+  NSString * __user_id;
   int32_t __rank;
   NSData * __situation;
   int32_t __vote_up_count;
@@ -178,8 +180,8 @@ enum ErrorCode {
 
   BOOL __value_isset;
   BOOL __date_epoch_isset;
-  BOOL __player_alias_isset;
-  BOOL __player_id_isset;
+  BOOL __user_alias_isset;
+  BOOL __user_id_isset;
   BOOL __rank_isset;
   BOOL __situation_isset;
   BOOL __vote_up_count_isset;
@@ -189,8 +191,8 @@ enum ErrorCode {
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 @property (nonatomic, getter=value, setter=setValue:) int64_t value;
 @property (nonatomic, getter=date_epoch, setter=setDate_epoch:) int64_t date_epoch;
-@property (nonatomic, retain, getter=player_alias, setter=setPlayer_alias:) NSString * player_alias;
-@property (nonatomic, retain, getter=player_id, setter=setPlayer_id:) NSString * player_id;
+@property (nonatomic, retain, getter=user_alias, setter=setUser_alias:) NSString * user_alias;
+@property (nonatomic, retain, getter=user_id, setter=setUser_id:) NSString * user_id;
 @property (nonatomic, getter=rank, setter=setRank:) int32_t rank;
 @property (nonatomic, retain, getter=situation, setter=setSituation:) NSData * situation;
 @property (nonatomic, getter=vote_up_count, setter=setVote_up_count:) int32_t vote_up_count;
@@ -198,7 +200,7 @@ enum ErrorCode {
 #endif
 
 - (id) init;
-- (id) initWithValue: (int64_t) value date_epoch: (int64_t) date_epoch player_alias: (NSString *) player_alias player_id: (NSString *) player_id rank: (int32_t) rank situation: (NSData *) situation vote_up_count: (int32_t) vote_up_count vote_down_count: (int32_t) vote_down_count;
+- (id) initWithValue: (int64_t) value date_epoch: (int64_t) date_epoch user_alias: (NSString *) user_alias user_id: (NSString *) user_id rank: (int32_t) rank situation: (NSData *) situation vote_up_count: (int32_t) vote_up_count vote_down_count: (int32_t) vote_down_count;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
@@ -218,16 +220,16 @@ enum ErrorCode {
 - (BOOL) date_epochIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) player_alias;
-- (void) setPlayer_alias: (NSString *) player_alias;
+- (NSString *) user_alias;
+- (void) setUser_alias: (NSString *) user_alias;
 #endif
-- (BOOL) player_aliasIsSet;
+- (BOOL) user_aliasIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) player_id;
-- (void) setPlayer_id: (NSString *) player_id;
+- (NSString *) user_id;
+- (void) setUser_id: (NSString *) user_id;
 #endif
-- (BOOL) player_idIsSet;
+- (BOOL) user_idIsSet;
 
 #if !__has_feature(objc_arc)
 - (int32_t) rank;
@@ -255,27 +257,27 @@ enum ErrorCode {
 
 @end
 
-@interface GetScoresReply : NSObject <TBase, NSCoding> {
-  Score * __player_score;
+@interface UserScoreAndTopScores : NSObject <TBase, NSCoding> {
+  Score * __user_score;
   int32_t __from_rank;
   int64_t __count;
   NSMutableArray * __top_scores;
 
-  BOOL __player_score_isset;
+  BOOL __user_score_isset;
   BOOL __from_rank_isset;
   BOOL __count_isset;
   BOOL __top_scores_isset;
 }
 
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
-@property (nonatomic, retain, getter=player_score, setter=setPlayer_score:) Score * player_score;
+@property (nonatomic, retain, getter=user_score, setter=setUser_score:) Score * user_score;
 @property (nonatomic, getter=from_rank, setter=setFrom_rank:) int32_t from_rank;
 @property (nonatomic, getter=count, setter=setCount:) int64_t count;
 @property (nonatomic, retain, getter=top_scores, setter=setTop_scores:) NSMutableArray * top_scores;
 #endif
 
 - (id) init;
-- (id) initWithPlayer_score: (Score *) player_score from_rank: (int32_t) from_rank count: (int64_t) count top_scores: (NSMutableArray *) top_scores;
+- (id) initWithUser_score: (Score *) user_score from_rank: (int32_t) from_rank count: (int64_t) count top_scores: (NSMutableArray *) top_scores;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
@@ -283,10 +285,10 @@ enum ErrorCode {
 - (void) validate;
 
 #if !__has_feature(objc_arc)
-- (Score *) player_score;
-- (void) setPlayer_score: (Score *) player_score;
+- (Score *) user_score;
+- (void) setUser_score: (Score *) user_score;
 #endif
-- (BOOL) player_scoreIsSet;
+- (BOOL) user_scoreIsSet;
 
 #if !__has_feature(objc_arc)
 - (int32_t) from_rank;
@@ -310,7 +312,7 @@ enum ErrorCode {
 
 @interface PostScoreReply : NSObject <TBase, NSCoding> {
   ReplyStatus * __status;
-  GetScoresReply * __scores;
+  UserScoreAndTopScores * __scores;
 
   BOOL __status_isset;
   BOOL __scores_isset;
@@ -318,11 +320,11 @@ enum ErrorCode {
 
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 @property (nonatomic, retain, getter=status, setter=setStatus:) ReplyStatus * status;
-@property (nonatomic, retain, getter=scores, setter=setScores:) GetScoresReply * scores;
+@property (nonatomic, retain, getter=scores, setter=setScores:) UserScoreAndTopScores * scores;
 #endif
 
 - (id) init;
-- (id) initWithStatus: (ReplyStatus *) status scores: (GetScoresReply *) scores;
+- (id) initWithStatus: (ReplyStatus *) status scores: (UserScoreAndTopScores *) scores;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
@@ -336,8 +338,43 @@ enum ErrorCode {
 - (BOOL) statusIsSet;
 
 #if !__has_feature(objc_arc)
-- (GetScoresReply *) scores;
-- (void) setScores: (GetScoresReply *) scores;
+- (UserScoreAndTopScores *) scores;
+- (void) setScores: (UserScoreAndTopScores *) scores;
+#endif
+- (BOOL) scoresIsSet;
+
+@end
+
+@interface GetScoresReply : NSObject <TBase, NSCoding> {
+  ReplyStatus * __status;
+  UserScoreAndTopScores * __scores;
+
+  BOOL __status_isset;
+  BOOL __scores_isset;
+}
+
+#if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+@property (nonatomic, retain, getter=status, setter=setStatus:) ReplyStatus * status;
+@property (nonatomic, retain, getter=scores, setter=setScores:) UserScoreAndTopScores * scores;
+#endif
+
+- (id) init;
+- (id) initWithStatus: (ReplyStatus *) status scores: (UserScoreAndTopScores *) scores;
+
+- (void) read: (id <TProtocol>) inProtocol;
+- (void) write: (id <TProtocol>) outProtocol;
+
+- (void) validate;
+
+#if !__has_feature(objc_arc)
+- (ReplyStatus *) status;
+- (void) setStatus: (ReplyStatus *) status;
+#endif
+- (BOOL) statusIsSet;
+
+#if !__has_feature(objc_arc)
+- (UserScoreAndTopScores *) scores;
+- (void) setScores: (UserScoreAndTopScores *) scores;
 #endif
 - (BOOL) scoresIsSet;
 
@@ -397,11 +434,11 @@ enum ErrorCode {
 @end
 
 @protocol LeaderboardService <NSObject>
-- (ConnectReply *) connect: (int32_t) protocol_version player_id: (NSString *) player_id player_password: (NSString *) player_password user_data: (NSData *) user_data;  // throws TException
+- (ConnectReply *) connect: (int32_t) protocol_version tenant_id: (NSString *) tenant_id user_id: (NSString *) user_id user_password: (NSString *) user_password user_data: (NSData *) user_data;  // throws TException
 - (DefaultReply *) disconnect: (Session *) session;  // throws TException
 - (PostScoreReply *) post_score: (Session *) session category: (NSString *) category score: (Score *) score;  // throws TException
-- (GetScoresReply *) get_scores: (Session *) session categoy: (NSString *) categoy player_id: (NSString *) player_id from_rank: (int32_t) from_rank count: (int64_t) count;  // throws TException
-- (DefaultReply *) vote_score: (Session *) session voting_player_id: (NSString *) voting_player_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment;  // throws TException
+- (GetScoresReply *) get_scores: (Session *) session category: (NSString *) category user_id: (NSString *) user_id from_rank: (int32_t) from_rank count: (int64_t) count;  // throws TException
+- (DefaultReply *) vote_score: (Session *) session voting_user_id: (NSString *) voting_user_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment;  // throws TException
 @end
 
 @interface LeaderboardServiceClient : NSObject <LeaderboardService> {

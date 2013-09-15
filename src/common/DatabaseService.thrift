@@ -80,7 +80,7 @@ struct ConnectReply {
 }
 
 service DatabaseService {
-    ConnectReply           connect              (1: i32 protocol_version),
+    ConnectReply           connect              (1: i32 protocol_version, 2: string tenant_id),
     DefaultReply           disconnect           (1: Session session),
 
     DefaultReply           database_create      (1: Session session, 2: string db_name),

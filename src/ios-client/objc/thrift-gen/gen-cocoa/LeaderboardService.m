@@ -721,17 +721,17 @@
   return self;
 }
 
-- (id) initWithValue: (int64_t) value date_epoch: (int64_t) date_epoch player_alias: (NSString *) player_alias player_id: (NSString *) player_id rank: (int32_t) rank situation: (NSData *) situation vote_up_count: (int32_t) vote_up_count vote_down_count: (int32_t) vote_down_count
+- (id) initWithValue: (int64_t) value date_epoch: (int64_t) date_epoch user_alias: (NSString *) user_alias user_id: (NSString *) user_id rank: (int32_t) rank situation: (NSData *) situation vote_up_count: (int32_t) vote_up_count vote_down_count: (int32_t) vote_down_count
 {
   self = [super init];
   __value = value;
   __value_isset = YES;
   __date_epoch = date_epoch;
   __date_epoch_isset = YES;
-  __player_alias = [player_alias retain_stub];
-  __player_alias_isset = YES;
-  __player_id = [player_id retain_stub];
-  __player_id_isset = YES;
+  __user_alias = [user_alias retain_stub];
+  __user_alias_isset = YES;
+  __user_id = [user_id retain_stub];
+  __user_id_isset = YES;
   __rank = rank;
   __rank_isset = YES;
   __situation = [situation retain_stub];
@@ -756,15 +756,15 @@
     __date_epoch = [decoder decodeInt64ForKey: @"date_epoch"];
     __date_epoch_isset = YES;
   }
-  if ([decoder containsValueForKey: @"player_alias"])
+  if ([decoder containsValueForKey: @"user_alias"])
   {
-    __player_alias = [[decoder decodeObjectForKey: @"player_alias"] retain_stub];
-    __player_alias_isset = YES;
+    __user_alias = [[decoder decodeObjectForKey: @"user_alias"] retain_stub];
+    __user_alias_isset = YES;
   }
-  if ([decoder containsValueForKey: @"player_id"])
+  if ([decoder containsValueForKey: @"user_id"])
   {
-    __player_id = [[decoder decodeObjectForKey: @"player_id"] retain_stub];
-    __player_id_isset = YES;
+    __user_id = [[decoder decodeObjectForKey: @"user_id"] retain_stub];
+    __user_id_isset = YES;
   }
   if ([decoder containsValueForKey: @"rank"])
   {
@@ -799,13 +799,13 @@
   {
     [encoder encodeInt64: __date_epoch forKey: @"date_epoch"];
   }
-  if (__player_alias_isset)
+  if (__user_alias_isset)
   {
-    [encoder encodeObject: __player_alias forKey: @"player_alias"];
+    [encoder encodeObject: __user_alias forKey: @"user_alias"];
   }
-  if (__player_id_isset)
+  if (__user_id_isset)
   {
-    [encoder encodeObject: __player_id forKey: @"player_id"];
+    [encoder encodeObject: __user_id forKey: @"user_id"];
   }
   if (__rank_isset)
   {
@@ -827,8 +827,8 @@
 
 - (void) dealloc
 {
-  [__player_alias release_stub];
-  [__player_id release_stub];
+  [__user_alias release_stub];
+  [__user_id release_stub];
   [__situation release_stub];
   [super dealloc_stub];
 }
@@ -867,46 +867,46 @@
   __date_epoch_isset = NO;
 }
 
-- (NSString *) player_alias {
-  return [[__player_alias retain_stub] autorelease_stub];
+- (NSString *) user_alias {
+  return [[__user_alias retain_stub] autorelease_stub];
 }
 
-- (void) setPlayer_alias: (NSString *) player_alias {
-  [player_alias retain_stub];
-  [__player_alias release_stub];
-  __player_alias = player_alias;
-  __player_alias_isset = YES;
+- (void) setUser_alias: (NSString *) user_alias {
+  [user_alias retain_stub];
+  [__user_alias release_stub];
+  __user_alias = user_alias;
+  __user_alias_isset = YES;
 }
 
-- (BOOL) player_aliasIsSet {
-  return __player_alias_isset;
+- (BOOL) user_aliasIsSet {
+  return __user_alias_isset;
 }
 
-- (void) unsetPlayer_alias {
-  [__player_alias release_stub];
-  __player_alias = nil;
-  __player_alias_isset = NO;
+- (void) unsetUser_alias {
+  [__user_alias release_stub];
+  __user_alias = nil;
+  __user_alias_isset = NO;
 }
 
-- (NSString *) player_id {
-  return [[__player_id retain_stub] autorelease_stub];
+- (NSString *) user_id {
+  return [[__user_id retain_stub] autorelease_stub];
 }
 
-- (void) setPlayer_id: (NSString *) player_id {
-  [player_id retain_stub];
-  [__player_id release_stub];
-  __player_id = player_id;
-  __player_id_isset = YES;
+- (void) setUser_id: (NSString *) user_id {
+  [user_id retain_stub];
+  [__user_id release_stub];
+  __user_id = user_id;
+  __user_id_isset = YES;
 }
 
-- (BOOL) player_idIsSet {
-  return __player_id_isset;
+- (BOOL) user_idIsSet {
+  return __user_id_isset;
 }
 
-- (void) unsetPlayer_id {
-  [__player_id release_stub];
-  __player_id = nil;
-  __player_id_isset = NO;
+- (void) unsetUser_id {
+  [__user_id release_stub];
+  __user_id = nil;
+  __user_id_isset = NO;
 }
 
 - (int32_t) rank {
@@ -1015,7 +1015,7 @@
       case 3:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setPlayer_alias: fieldValue];
+          [self setUser_alias: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
@@ -1023,7 +1023,7 @@
       case 4:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setPlayer_id: fieldValue];
+          [self setUser_id: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
@@ -1081,17 +1081,17 @@
     [outProtocol writeI64: __date_epoch];
     [outProtocol writeFieldEnd];
   }
-  if (__player_alias_isset) {
-    if (__player_alias != nil) {
-      [outProtocol writeFieldBeginWithName: @"player_alias" type: TType_STRING fieldID: 3];
-      [outProtocol writeString: __player_alias];
+  if (__user_alias_isset) {
+    if (__user_alias != nil) {
+      [outProtocol writeFieldBeginWithName: @"user_alias" type: TType_STRING fieldID: 3];
+      [outProtocol writeString: __user_alias];
       [outProtocol writeFieldEnd];
     }
   }
-  if (__player_id_isset) {
-    if (__player_id != nil) {
-      [outProtocol writeFieldBeginWithName: @"player_id" type: TType_STRING fieldID: 4];
-      [outProtocol writeString: __player_id];
+  if (__user_id_isset) {
+    if (__user_id != nil) {
+      [outProtocol writeFieldBeginWithName: @"user_id" type: TType_STRING fieldID: 4];
+      [outProtocol writeString: __user_id];
       [outProtocol writeFieldEnd];
     }
   }
@@ -1131,10 +1131,10 @@
   [ms appendFormat: @"%qi", __value];
   [ms appendString: @",date_epoch:"];
   [ms appendFormat: @"%qi", __date_epoch];
-  [ms appendString: @",player_alias:"];
-  [ms appendFormat: @"\"%@\"", __player_alias];
-  [ms appendString: @",player_id:"];
-  [ms appendFormat: @"\"%@\"", __player_id];
+  [ms appendString: @",user_alias:"];
+  [ms appendFormat: @"\"%@\"", __user_alias];
+  [ms appendString: @",user_id:"];
+  [ms appendFormat: @"\"%@\"", __user_id];
   [ms appendString: @",rank:"];
   [ms appendFormat: @"%i", __rank];
   [ms appendString: @",situation:"];
@@ -1149,7 +1149,7 @@
 
 @end
 
-@implementation GetScoresReply
+@implementation UserScoreAndTopScores
 
 - (id) init
 {
@@ -1159,11 +1159,11 @@
   return self;
 }
 
-- (id) initWithPlayer_score: (Score *) player_score from_rank: (int32_t) from_rank count: (int64_t) count top_scores: (NSMutableArray *) top_scores
+- (id) initWithUser_score: (Score *) user_score from_rank: (int32_t) from_rank count: (int64_t) count top_scores: (NSMutableArray *) top_scores
 {
   self = [super init];
-  __player_score = [player_score retain_stub];
-  __player_score_isset = YES;
+  __user_score = [user_score retain_stub];
+  __user_score_isset = YES;
   __from_rank = from_rank;
   __from_rank_isset = YES;
   __count = count;
@@ -1176,10 +1176,10 @@
 - (id) initWithCoder: (NSCoder *) decoder
 {
   self = [super init];
-  if ([decoder containsValueForKey: @"player_score"])
+  if ([decoder containsValueForKey: @"user_score"])
   {
-    __player_score = [[decoder decodeObjectForKey: @"player_score"] retain_stub];
-    __player_score_isset = YES;
+    __user_score = [[decoder decodeObjectForKey: @"user_score"] retain_stub];
+    __user_score_isset = YES;
   }
   if ([decoder containsValueForKey: @"from_rank"])
   {
@@ -1201,9 +1201,9 @@
 
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
-  if (__player_score_isset)
+  if (__user_score_isset)
   {
-    [encoder encodeObject: __player_score forKey: @"player_score"];
+    [encoder encodeObject: __user_score forKey: @"user_score"];
   }
   if (__from_rank_isset)
   {
@@ -1221,30 +1221,30 @@
 
 - (void) dealloc
 {
-  [__player_score release_stub];
+  [__user_score release_stub];
   [__top_scores release_stub];
   [super dealloc_stub];
 }
 
-- (Score *) player_score {
-  return [[__player_score retain_stub] autorelease_stub];
+- (Score *) user_score {
+  return [[__user_score retain_stub] autorelease_stub];
 }
 
-- (void) setPlayer_score: (Score *) player_score {
-  [player_score retain_stub];
-  [__player_score release_stub];
-  __player_score = player_score;
-  __player_score_isset = YES;
+- (void) setUser_score: (Score *) user_score {
+  [user_score retain_stub];
+  [__user_score release_stub];
+  __user_score = user_score;
+  __user_score_isset = YES;
 }
 
-- (BOOL) player_scoreIsSet {
-  return __player_score_isset;
+- (BOOL) user_scoreIsSet {
+  return __user_score_isset;
 }
 
-- (void) unsetPlayer_score {
-  [__player_score release_stub];
-  __player_score = nil;
-  __player_score_isset = NO;
+- (void) unsetUser_score {
+  [__user_score release_stub];
+  __user_score = nil;
+  __user_score_isset = NO;
 }
 
 - (int32_t) from_rank {
@@ -1321,7 +1321,7 @@
         if (fieldType == TType_STRUCT) {
           Score *fieldValue = [[Score alloc] init];
           [fieldValue read: inProtocol];
-          [self setPlayer_score: fieldValue];
+          [self setUser_score: fieldValue];
           [fieldValue release_stub];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
@@ -1373,11 +1373,11 @@
 }
 
 - (void) write: (id <TProtocol>) outProtocol {
-  [outProtocol writeStructBeginWithName: @"GetScoresReply"];
-  if (__player_score_isset) {
-    if (__player_score != nil) {
-      [outProtocol writeFieldBeginWithName: @"player_score" type: TType_STRUCT fieldID: 1];
-      [__player_score write: outProtocol];
+  [outProtocol writeStructBeginWithName: @"UserScoreAndTopScores"];
+  if (__user_score_isset) {
+    if (__user_score != nil) {
+      [outProtocol writeFieldBeginWithName: @"user_score" type: TType_STRUCT fieldID: 1];
+      [__user_score write: outProtocol];
       [outProtocol writeFieldEnd];
     }
   }
@@ -1415,9 +1415,9 @@
 }
 
 - (NSString *) description {
-  NSMutableString * ms = [NSMutableString stringWithString: @"GetScoresReply("];
-  [ms appendString: @"player_score:"];
-  [ms appendFormat: @"%@", __player_score];
+  NSMutableString * ms = [NSMutableString stringWithString: @"UserScoreAndTopScores("];
+  [ms appendString: @"user_score:"];
+  [ms appendFormat: @"%@", __user_score];
   [ms appendString: @",from_rank:"];
   [ms appendFormat: @"%i", __from_rank];
   [ms appendString: @",count:"];
@@ -1440,7 +1440,7 @@
   return self;
 }
 
-- (id) initWithStatus: (ReplyStatus *) status scores: (GetScoresReply *) scores
+- (id) initWithStatus: (ReplyStatus *) status scores: (UserScoreAndTopScores *) scores
 {
   self = [super init];
   __status = [status retain_stub];
@@ -1506,11 +1506,11 @@
   __status_isset = NO;
 }
 
-- (GetScoresReply *) scores {
+- (UserScoreAndTopScores *) scores {
   return [[__scores retain_stub] autorelease_stub];
 }
 
-- (void) setScores: (GetScoresReply *) scores {
+- (void) setScores: (UserScoreAndTopScores *) scores {
   [scores retain_stub];
   [__scores release_stub];
   __scores = scores;
@@ -1554,7 +1554,7 @@
         break;
       case 2:
         if (fieldType == TType_STRUCT) {
-          GetScoresReply *fieldValue = [[GetScoresReply alloc] init];
+          UserScoreAndTopScores *fieldValue = [[UserScoreAndTopScores alloc] init];
           [fieldValue read: inProtocol];
           [self setScores: fieldValue];
           [fieldValue release_stub];
@@ -1597,6 +1597,183 @@
 
 - (NSString *) description {
   NSMutableString * ms = [NSMutableString stringWithString: @"PostScoreReply("];
+  [ms appendString: @"status:"];
+  [ms appendFormat: @"%@", __status];
+  [ms appendString: @",scores:"];
+  [ms appendFormat: @"%@", __scores];
+  [ms appendString: @")"];
+  return [NSString stringWithString: ms];
+}
+
+@end
+
+@implementation GetScoresReply
+
+- (id) init
+{
+  self = [super init];
+#if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
+#endif
+  return self;
+}
+
+- (id) initWithStatus: (ReplyStatus *) status scores: (UserScoreAndTopScores *) scores
+{
+  self = [super init];
+  __status = [status retain_stub];
+  __status_isset = YES;
+  __scores = [scores retain_stub];
+  __scores_isset = YES;
+  return self;
+}
+
+- (id) initWithCoder: (NSCoder *) decoder
+{
+  self = [super init];
+  if ([decoder containsValueForKey: @"status"])
+  {
+    __status = [[decoder decodeObjectForKey: @"status"] retain_stub];
+    __status_isset = YES;
+  }
+  if ([decoder containsValueForKey: @"scores"])
+  {
+    __scores = [[decoder decodeObjectForKey: @"scores"] retain_stub];
+    __scores_isset = YES;
+  }
+  return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *) encoder
+{
+  if (__status_isset)
+  {
+    [encoder encodeObject: __status forKey: @"status"];
+  }
+  if (__scores_isset)
+  {
+    [encoder encodeObject: __scores forKey: @"scores"];
+  }
+}
+
+- (void) dealloc
+{
+  [__status release_stub];
+  [__scores release_stub];
+  [super dealloc_stub];
+}
+
+- (ReplyStatus *) status {
+  return [[__status retain_stub] autorelease_stub];
+}
+
+- (void) setStatus: (ReplyStatus *) status {
+  [status retain_stub];
+  [__status release_stub];
+  __status = status;
+  __status_isset = YES;
+}
+
+- (BOOL) statusIsSet {
+  return __status_isset;
+}
+
+- (void) unsetStatus {
+  [__status release_stub];
+  __status = nil;
+  __status_isset = NO;
+}
+
+- (UserScoreAndTopScores *) scores {
+  return [[__scores retain_stub] autorelease_stub];
+}
+
+- (void) setScores: (UserScoreAndTopScores *) scores {
+  [scores retain_stub];
+  [__scores release_stub];
+  __scores = scores;
+  __scores_isset = YES;
+}
+
+- (BOOL) scoresIsSet {
+  return __scores_isset;
+}
+
+- (void) unsetScores {
+  [__scores release_stub];
+  __scores = nil;
+  __scores_isset = NO;
+}
+
+- (void) read: (id <TProtocol>) inProtocol
+{
+  NSString * fieldName;
+  int fieldType;
+  int fieldID;
+
+  [inProtocol readStructBeginReturningName: NULL];
+  while (true)
+  {
+    [inProtocol readFieldBeginReturningName: &fieldName type: &fieldType fieldID: &fieldID];
+    if (fieldType == TType_STOP) { 
+      break;
+    }
+    switch (fieldID)
+    {
+      case 1:
+        if (fieldType == TType_STRUCT) {
+          ReplyStatus *fieldValue = [[ReplyStatus alloc] init];
+          [fieldValue read: inProtocol];
+          [self setStatus: fieldValue];
+          [fieldValue release_stub];
+        } else { 
+          [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        }
+        break;
+      case 2:
+        if (fieldType == TType_STRUCT) {
+          UserScoreAndTopScores *fieldValue = [[UserScoreAndTopScores alloc] init];
+          [fieldValue read: inProtocol];
+          [self setScores: fieldValue];
+          [fieldValue release_stub];
+        } else { 
+          [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        }
+        break;
+      default:
+        [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        break;
+    }
+    [inProtocol readFieldEnd];
+  }
+  [inProtocol readStructEnd];
+}
+
+- (void) write: (id <TProtocol>) outProtocol {
+  [outProtocol writeStructBeginWithName: @"GetScoresReply"];
+  if (__status_isset) {
+    if (__status != nil) {
+      [outProtocol writeFieldBeginWithName: @"status" type: TType_STRUCT fieldID: 1];
+      [__status write: outProtocol];
+      [outProtocol writeFieldEnd];
+    }
+  }
+  if (__scores_isset) {
+    if (__scores != nil) {
+      [outProtocol writeFieldBeginWithName: @"scores" type: TType_STRUCT fieldID: 2];
+      [__scores write: outProtocol];
+      [outProtocol writeFieldEnd];
+    }
+  }
+  [outProtocol writeFieldStop];
+  [outProtocol writeStructEnd];
+}
+
+- (void) validate {
+  // check for required fields
+}
+
+- (NSString *) description {
+  NSMutableString * ms = [NSMutableString stringWithString: @"GetScoresReply("];
   [ms appendString: @"status:"];
   [ms appendFormat: @"%@", __status];
   [ms appendString: @",scores:"];
@@ -1887,25 +2064,28 @@ static int32_t PROTOCOL_VERSION = 1;
 
 @interface connect_args : NSObject <TBase, NSCoding> {
   int32_t __protocol_version;
-  NSString * __player_id;
-  NSString * __player_password;
+  NSString * __tenant_id;
+  NSString * __user_id;
+  NSString * __user_password;
   NSData * __user_data;
 
   BOOL __protocol_version_isset;
-  BOOL __player_id_isset;
-  BOOL __player_password_isset;
+  BOOL __tenant_id_isset;
+  BOOL __user_id_isset;
+  BOOL __user_password_isset;
   BOOL __user_data_isset;
 }
 
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 @property (nonatomic, getter=protocol_version, setter=setProtocol_version:) int32_t protocol_version;
-@property (nonatomic, retain, getter=player_id, setter=setPlayer_id:) NSString * player_id;
-@property (nonatomic, retain, getter=player_password, setter=setPlayer_password:) NSString * player_password;
+@property (nonatomic, retain, getter=tenant_id, setter=setTenant_id:) NSString * tenant_id;
+@property (nonatomic, retain, getter=user_id, setter=setUser_id:) NSString * user_id;
+@property (nonatomic, retain, getter=user_password, setter=setUser_password:) NSString * user_password;
 @property (nonatomic, retain, getter=user_data, setter=setUser_data:) NSData * user_data;
 #endif
 
 - (id) init;
-- (id) initWithProtocol_version: (int32_t) protocol_version player_id: (NSString *) player_id player_password: (NSString *) player_password user_data: (NSData *) user_data;
+- (id) initWithProtocol_version: (int32_t) protocol_version tenant_id: (NSString *) tenant_id user_id: (NSString *) user_id user_password: (NSString *) user_password user_data: (NSData *) user_data;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
@@ -1919,16 +2099,22 @@ static int32_t PROTOCOL_VERSION = 1;
 - (BOOL) protocol_versionIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) player_id;
-- (void) setPlayer_id: (NSString *) player_id;
+- (NSString *) tenant_id;
+- (void) setTenant_id: (NSString *) tenant_id;
 #endif
-- (BOOL) player_idIsSet;
+- (BOOL) tenant_idIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) player_password;
-- (void) setPlayer_password: (NSString *) player_password;
+- (NSString *) user_id;
+- (void) setUser_id: (NSString *) user_id;
 #endif
-- (BOOL) player_passwordIsSet;
+- (BOOL) user_idIsSet;
+
+#if !__has_feature(objc_arc)
+- (NSString *) user_password;
+- (void) setUser_password: (NSString *) user_password;
+#endif
+- (BOOL) user_passwordIsSet;
 
 #if !__has_feature(objc_arc)
 - (NSData *) user_data;
@@ -1948,15 +2134,17 @@ static int32_t PROTOCOL_VERSION = 1;
   return self;
 }
 
-- (id) initWithProtocol_version: (int32_t) protocol_version player_id: (NSString *) player_id player_password: (NSString *) player_password user_data: (NSData *) user_data
+- (id) initWithProtocol_version: (int32_t) protocol_version tenant_id: (NSString *) tenant_id user_id: (NSString *) user_id user_password: (NSString *) user_password user_data: (NSData *) user_data
 {
   self = [super init];
   __protocol_version = protocol_version;
   __protocol_version_isset = YES;
-  __player_id = [player_id retain_stub];
-  __player_id_isset = YES;
-  __player_password = [player_password retain_stub];
-  __player_password_isset = YES;
+  __tenant_id = [tenant_id retain_stub];
+  __tenant_id_isset = YES;
+  __user_id = [user_id retain_stub];
+  __user_id_isset = YES;
+  __user_password = [user_password retain_stub];
+  __user_password_isset = YES;
   __user_data = [user_data retain_stub];
   __user_data_isset = YES;
   return self;
@@ -1970,15 +2158,20 @@ static int32_t PROTOCOL_VERSION = 1;
     __protocol_version = [decoder decodeInt32ForKey: @"protocol_version"];
     __protocol_version_isset = YES;
   }
-  if ([decoder containsValueForKey: @"player_id"])
+  if ([decoder containsValueForKey: @"tenant_id"])
   {
-    __player_id = [[decoder decodeObjectForKey: @"player_id"] retain_stub];
-    __player_id_isset = YES;
+    __tenant_id = [[decoder decodeObjectForKey: @"tenant_id"] retain_stub];
+    __tenant_id_isset = YES;
   }
-  if ([decoder containsValueForKey: @"player_password"])
+  if ([decoder containsValueForKey: @"user_id"])
   {
-    __player_password = [[decoder decodeObjectForKey: @"player_password"] retain_stub];
-    __player_password_isset = YES;
+    __user_id = [[decoder decodeObjectForKey: @"user_id"] retain_stub];
+    __user_id_isset = YES;
+  }
+  if ([decoder containsValueForKey: @"user_password"])
+  {
+    __user_password = [[decoder decodeObjectForKey: @"user_password"] retain_stub];
+    __user_password_isset = YES;
   }
   if ([decoder containsValueForKey: @"user_data"])
   {
@@ -1994,13 +2187,17 @@ static int32_t PROTOCOL_VERSION = 1;
   {
     [encoder encodeInt32: __protocol_version forKey: @"protocol_version"];
   }
-  if (__player_id_isset)
+  if (__tenant_id_isset)
   {
-    [encoder encodeObject: __player_id forKey: @"player_id"];
+    [encoder encodeObject: __tenant_id forKey: @"tenant_id"];
   }
-  if (__player_password_isset)
+  if (__user_id_isset)
   {
-    [encoder encodeObject: __player_password forKey: @"player_password"];
+    [encoder encodeObject: __user_id forKey: @"user_id"];
+  }
+  if (__user_password_isset)
+  {
+    [encoder encodeObject: __user_password forKey: @"user_password"];
   }
   if (__user_data_isset)
   {
@@ -2010,8 +2207,9 @@ static int32_t PROTOCOL_VERSION = 1;
 
 - (void) dealloc
 {
-  [__player_id release_stub];
-  [__player_password release_stub];
+  [__tenant_id release_stub];
+  [__user_id release_stub];
+  [__user_password release_stub];
   [__user_data release_stub];
   [super dealloc_stub];
 }
@@ -2033,46 +2231,67 @@ static int32_t PROTOCOL_VERSION = 1;
   __protocol_version_isset = NO;
 }
 
-- (NSString *) player_id {
-  return [[__player_id retain_stub] autorelease_stub];
+- (NSString *) tenant_id {
+  return [[__tenant_id retain_stub] autorelease_stub];
 }
 
-- (void) setPlayer_id: (NSString *) player_id {
-  [player_id retain_stub];
-  [__player_id release_stub];
-  __player_id = player_id;
-  __player_id_isset = YES;
+- (void) setTenant_id: (NSString *) tenant_id {
+  [tenant_id retain_stub];
+  [__tenant_id release_stub];
+  __tenant_id = tenant_id;
+  __tenant_id_isset = YES;
 }
 
-- (BOOL) player_idIsSet {
-  return __player_id_isset;
+- (BOOL) tenant_idIsSet {
+  return __tenant_id_isset;
 }
 
-- (void) unsetPlayer_id {
-  [__player_id release_stub];
-  __player_id = nil;
-  __player_id_isset = NO;
+- (void) unsetTenant_id {
+  [__tenant_id release_stub];
+  __tenant_id = nil;
+  __tenant_id_isset = NO;
 }
 
-- (NSString *) player_password {
-  return [[__player_password retain_stub] autorelease_stub];
+- (NSString *) user_id {
+  return [[__user_id retain_stub] autorelease_stub];
 }
 
-- (void) setPlayer_password: (NSString *) player_password {
-  [player_password retain_stub];
-  [__player_password release_stub];
-  __player_password = player_password;
-  __player_password_isset = YES;
+- (void) setUser_id: (NSString *) user_id {
+  [user_id retain_stub];
+  [__user_id release_stub];
+  __user_id = user_id;
+  __user_id_isset = YES;
 }
 
-- (BOOL) player_passwordIsSet {
-  return __player_password_isset;
+- (BOOL) user_idIsSet {
+  return __user_id_isset;
 }
 
-- (void) unsetPlayer_password {
-  [__player_password release_stub];
-  __player_password = nil;
-  __player_password_isset = NO;
+- (void) unsetUser_id {
+  [__user_id release_stub];
+  __user_id = nil;
+  __user_id_isset = NO;
+}
+
+- (NSString *) user_password {
+  return [[__user_password retain_stub] autorelease_stub];
+}
+
+- (void) setUser_password: (NSString *) user_password {
+  [user_password retain_stub];
+  [__user_password release_stub];
+  __user_password = user_password;
+  __user_password_isset = YES;
+}
+
+- (BOOL) user_passwordIsSet {
+  return __user_password_isset;
+}
+
+- (void) unsetUser_password {
+  [__user_password release_stub];
+  __user_password = nil;
+  __user_password_isset = NO;
 }
 
 - (NSData *) user_data {
@@ -2122,7 +2341,7 @@ static int32_t PROTOCOL_VERSION = 1;
       case 2:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setPlayer_id: fieldValue];
+          [self setTenant_id: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
@@ -2130,12 +2349,20 @@ static int32_t PROTOCOL_VERSION = 1;
       case 3:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setPlayer_password: fieldValue];
+          [self setUser_id: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
         break;
       case 4:
+        if (fieldType == TType_STRING) {
+          NSString * fieldValue = [inProtocol readString];
+          [self setUser_password: fieldValue];
+        } else { 
+          [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
+        }
+        break;
+      case 5:
         if (fieldType == TType_STRING) {
           NSData * fieldValue = [inProtocol readBinary];
           [self setUser_data: fieldValue];
@@ -2159,23 +2386,30 @@ static int32_t PROTOCOL_VERSION = 1;
     [outProtocol writeI32: __protocol_version];
     [outProtocol writeFieldEnd];
   }
-  if (__player_id_isset) {
-    if (__player_id != nil) {
-      [outProtocol writeFieldBeginWithName: @"player_id" type: TType_STRING fieldID: 2];
-      [outProtocol writeString: __player_id];
+  if (__tenant_id_isset) {
+    if (__tenant_id != nil) {
+      [outProtocol writeFieldBeginWithName: @"tenant_id" type: TType_STRING fieldID: 2];
+      [outProtocol writeString: __tenant_id];
       [outProtocol writeFieldEnd];
     }
   }
-  if (__player_password_isset) {
-    if (__player_password != nil) {
-      [outProtocol writeFieldBeginWithName: @"player_password" type: TType_STRING fieldID: 3];
-      [outProtocol writeString: __player_password];
+  if (__user_id_isset) {
+    if (__user_id != nil) {
+      [outProtocol writeFieldBeginWithName: @"user_id" type: TType_STRING fieldID: 3];
+      [outProtocol writeString: __user_id];
+      [outProtocol writeFieldEnd];
+    }
+  }
+  if (__user_password_isset) {
+    if (__user_password != nil) {
+      [outProtocol writeFieldBeginWithName: @"user_password" type: TType_STRING fieldID: 4];
+      [outProtocol writeString: __user_password];
       [outProtocol writeFieldEnd];
     }
   }
   if (__user_data_isset) {
     if (__user_data != nil) {
-      [outProtocol writeFieldBeginWithName: @"user_data" type: TType_STRING fieldID: 4];
+      [outProtocol writeFieldBeginWithName: @"user_data" type: TType_STRING fieldID: 5];
       [outProtocol writeBinary: __user_data];
       [outProtocol writeFieldEnd];
     }
@@ -2192,10 +2426,12 @@ static int32_t PROTOCOL_VERSION = 1;
   NSMutableString * ms = [NSMutableString stringWithString: @"connect_args("];
   [ms appendString: @"protocol_version:"];
   [ms appendFormat: @"%i", __protocol_version];
-  [ms appendString: @",player_id:"];
-  [ms appendFormat: @"\"%@\"", __player_id];
-  [ms appendString: @",player_password:"];
-  [ms appendFormat: @"\"%@\"", __player_password];
+  [ms appendString: @",tenant_id:"];
+  [ms appendFormat: @"\"%@\"", __tenant_id];
+  [ms appendString: @",user_id:"];
+  [ms appendFormat: @"\"%@\"", __user_id];
+  [ms appendString: @",user_password:"];
+  [ms appendFormat: @"\"%@\"", __user_password];
   [ms appendString: @",user_data:"];
   [ms appendFormat: @"\"%@\"", __user_data];
   [ms appendString: @")"];
@@ -3084,28 +3320,28 @@ static int32_t PROTOCOL_VERSION = 1;
 
 @interface get_scores_args : NSObject <TBase, NSCoding> {
   Session * __session;
-  NSString * __categoy;
-  NSString * __player_id;
+  NSString * __category;
+  NSString * __user_id;
   int32_t __from_rank;
   int64_t __count;
 
   BOOL __session_isset;
-  BOOL __categoy_isset;
-  BOOL __player_id_isset;
+  BOOL __category_isset;
+  BOOL __user_id_isset;
   BOOL __from_rank_isset;
   BOOL __count_isset;
 }
 
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 @property (nonatomic, retain, getter=session, setter=setSession:) Session * session;
-@property (nonatomic, retain, getter=categoy, setter=setCategoy:) NSString * categoy;
-@property (nonatomic, retain, getter=player_id, setter=setPlayer_id:) NSString * player_id;
+@property (nonatomic, retain, getter=category, setter=setCategory:) NSString * category;
+@property (nonatomic, retain, getter=user_id, setter=setUser_id:) NSString * user_id;
 @property (nonatomic, getter=from_rank, setter=setFrom_rank:) int32_t from_rank;
 @property (nonatomic, getter=count, setter=setCount:) int64_t count;
 #endif
 
 - (id) init;
-- (id) initWithSession: (Session *) session categoy: (NSString *) categoy player_id: (NSString *) player_id from_rank: (int32_t) from_rank count: (int64_t) count;
+- (id) initWithSession: (Session *) session category: (NSString *) category user_id: (NSString *) user_id from_rank: (int32_t) from_rank count: (int64_t) count;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
@@ -3119,16 +3355,16 @@ static int32_t PROTOCOL_VERSION = 1;
 - (BOOL) sessionIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) categoy;
-- (void) setCategoy: (NSString *) categoy;
+- (NSString *) category;
+- (void) setCategory: (NSString *) category;
 #endif
-- (BOOL) categoyIsSet;
+- (BOOL) categoryIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) player_id;
-- (void) setPlayer_id: (NSString *) player_id;
+- (NSString *) user_id;
+- (void) setUser_id: (NSString *) user_id;
 #endif
-- (BOOL) player_idIsSet;
+- (BOOL) user_idIsSet;
 
 #if !__has_feature(objc_arc)
 - (int32_t) from_rank;
@@ -3154,15 +3390,15 @@ static int32_t PROTOCOL_VERSION = 1;
   return self;
 }
 
-- (id) initWithSession: (Session *) session categoy: (NSString *) categoy player_id: (NSString *) player_id from_rank: (int32_t) from_rank count: (int64_t) count
+- (id) initWithSession: (Session *) session category: (NSString *) category user_id: (NSString *) user_id from_rank: (int32_t) from_rank count: (int64_t) count
 {
   self = [super init];
   __session = [session retain_stub];
   __session_isset = YES;
-  __categoy = [categoy retain_stub];
-  __categoy_isset = YES;
-  __player_id = [player_id retain_stub];
-  __player_id_isset = YES;
+  __category = [category retain_stub];
+  __category_isset = YES;
+  __user_id = [user_id retain_stub];
+  __user_id_isset = YES;
   __from_rank = from_rank;
   __from_rank_isset = YES;
   __count = count;
@@ -3178,15 +3414,15 @@ static int32_t PROTOCOL_VERSION = 1;
     __session = [[decoder decodeObjectForKey: @"session"] retain_stub];
     __session_isset = YES;
   }
-  if ([decoder containsValueForKey: @"categoy"])
+  if ([decoder containsValueForKey: @"category"])
   {
-    __categoy = [[decoder decodeObjectForKey: @"categoy"] retain_stub];
-    __categoy_isset = YES;
+    __category = [[decoder decodeObjectForKey: @"category"] retain_stub];
+    __category_isset = YES;
   }
-  if ([decoder containsValueForKey: @"player_id"])
+  if ([decoder containsValueForKey: @"user_id"])
   {
-    __player_id = [[decoder decodeObjectForKey: @"player_id"] retain_stub];
-    __player_id_isset = YES;
+    __user_id = [[decoder decodeObjectForKey: @"user_id"] retain_stub];
+    __user_id_isset = YES;
   }
   if ([decoder containsValueForKey: @"from_rank"])
   {
@@ -3207,13 +3443,13 @@ static int32_t PROTOCOL_VERSION = 1;
   {
     [encoder encodeObject: __session forKey: @"session"];
   }
-  if (__categoy_isset)
+  if (__category_isset)
   {
-    [encoder encodeObject: __categoy forKey: @"categoy"];
+    [encoder encodeObject: __category forKey: @"category"];
   }
-  if (__player_id_isset)
+  if (__user_id_isset)
   {
-    [encoder encodeObject: __player_id forKey: @"player_id"];
+    [encoder encodeObject: __user_id forKey: @"user_id"];
   }
   if (__from_rank_isset)
   {
@@ -3228,8 +3464,8 @@ static int32_t PROTOCOL_VERSION = 1;
 - (void) dealloc
 {
   [__session release_stub];
-  [__categoy release_stub];
-  [__player_id release_stub];
+  [__category release_stub];
+  [__user_id release_stub];
   [super dealloc_stub];
 }
 
@@ -3254,46 +3490,46 @@ static int32_t PROTOCOL_VERSION = 1;
   __session_isset = NO;
 }
 
-- (NSString *) categoy {
-  return [[__categoy retain_stub] autorelease_stub];
+- (NSString *) category {
+  return [[__category retain_stub] autorelease_stub];
 }
 
-- (void) setCategoy: (NSString *) categoy {
-  [categoy retain_stub];
-  [__categoy release_stub];
-  __categoy = categoy;
-  __categoy_isset = YES;
+- (void) setCategory: (NSString *) category {
+  [category retain_stub];
+  [__category release_stub];
+  __category = category;
+  __category_isset = YES;
 }
 
-- (BOOL) categoyIsSet {
-  return __categoy_isset;
+- (BOOL) categoryIsSet {
+  return __category_isset;
 }
 
-- (void) unsetCategoy {
-  [__categoy release_stub];
-  __categoy = nil;
-  __categoy_isset = NO;
+- (void) unsetCategory {
+  [__category release_stub];
+  __category = nil;
+  __category_isset = NO;
 }
 
-- (NSString *) player_id {
-  return [[__player_id retain_stub] autorelease_stub];
+- (NSString *) user_id {
+  return [[__user_id retain_stub] autorelease_stub];
 }
 
-- (void) setPlayer_id: (NSString *) player_id {
-  [player_id retain_stub];
-  [__player_id release_stub];
-  __player_id = player_id;
-  __player_id_isset = YES;
+- (void) setUser_id: (NSString *) user_id {
+  [user_id retain_stub];
+  [__user_id release_stub];
+  __user_id = user_id;
+  __user_id_isset = YES;
 }
 
-- (BOOL) player_idIsSet {
-  return __player_id_isset;
+- (BOOL) user_idIsSet {
+  return __user_id_isset;
 }
 
-- (void) unsetPlayer_id {
-  [__player_id release_stub];
-  __player_id = nil;
-  __player_id_isset = NO;
+- (void) unsetUser_id {
+  [__user_id release_stub];
+  __user_id = nil;
+  __user_id_isset = NO;
 }
 
 - (int32_t) from_rank {
@@ -3358,7 +3594,7 @@ static int32_t PROTOCOL_VERSION = 1;
       case 2:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setCategoy: fieldValue];
+          [self setCategory: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
@@ -3366,7 +3602,7 @@ static int32_t PROTOCOL_VERSION = 1;
       case 3:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setPlayer_id: fieldValue];
+          [self setUser_id: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
@@ -3405,17 +3641,17 @@ static int32_t PROTOCOL_VERSION = 1;
       [outProtocol writeFieldEnd];
     }
   }
-  if (__categoy_isset) {
-    if (__categoy != nil) {
-      [outProtocol writeFieldBeginWithName: @"categoy" type: TType_STRING fieldID: 2];
-      [outProtocol writeString: __categoy];
+  if (__category_isset) {
+    if (__category != nil) {
+      [outProtocol writeFieldBeginWithName: @"category" type: TType_STRING fieldID: 2];
+      [outProtocol writeString: __category];
       [outProtocol writeFieldEnd];
     }
   }
-  if (__player_id_isset) {
-    if (__player_id != nil) {
-      [outProtocol writeFieldBeginWithName: @"player_id" type: TType_STRING fieldID: 3];
-      [outProtocol writeString: __player_id];
+  if (__user_id_isset) {
+    if (__user_id != nil) {
+      [outProtocol writeFieldBeginWithName: @"user_id" type: TType_STRING fieldID: 3];
+      [outProtocol writeString: __user_id];
       [outProtocol writeFieldEnd];
     }
   }
@@ -3441,10 +3677,10 @@ static int32_t PROTOCOL_VERSION = 1;
   NSMutableString * ms = [NSMutableString stringWithString: @"get_scores_args("];
   [ms appendString: @"session:"];
   [ms appendFormat: @"%@", __session];
-  [ms appendString: @",categoy:"];
-  [ms appendFormat: @"\"%@\"", __categoy];
-  [ms appendString: @",player_id:"];
-  [ms appendFormat: @"\"%@\"", __player_id];
+  [ms appendString: @",category:"];
+  [ms appendFormat: @"\"%@\"", __category];
+  [ms appendString: @",user_id:"];
+  [ms appendFormat: @"\"%@\"", __user_id];
   [ms appendString: @",from_rank:"];
   [ms appendFormat: @"%i", __from_rank];
   [ms appendString: @",count:"];
@@ -3609,14 +3845,14 @@ static int32_t PROTOCOL_VERSION = 1;
 
 @interface vote_score_args : NSObject <TBase, NSCoding> {
   Session * __session;
-  NSString * __voting_player_id;
+  NSString * __voting_user_id;
   int64_t __score_value;
   int64_t __score_date_epoch;
   int32_t __vote_up_down;
   NSString * __comment;
 
   BOOL __session_isset;
-  BOOL __voting_player_id_isset;
+  BOOL __voting_user_id_isset;
   BOOL __score_value_isset;
   BOOL __score_date_epoch_isset;
   BOOL __vote_up_down_isset;
@@ -3625,7 +3861,7 @@ static int32_t PROTOCOL_VERSION = 1;
 
 #if TARGET_OS_IPHONE || (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5)
 @property (nonatomic, retain, getter=session, setter=setSession:) Session * session;
-@property (nonatomic, retain, getter=voting_player_id, setter=setVoting_player_id:) NSString * voting_player_id;
+@property (nonatomic, retain, getter=voting_user_id, setter=setVoting_user_id:) NSString * voting_user_id;
 @property (nonatomic, getter=score_value, setter=setScore_value:) int64_t score_value;
 @property (nonatomic, getter=score_date_epoch, setter=setScore_date_epoch:) int64_t score_date_epoch;
 @property (nonatomic, getter=vote_up_down, setter=setVote_up_down:) int32_t vote_up_down;
@@ -3633,7 +3869,7 @@ static int32_t PROTOCOL_VERSION = 1;
 #endif
 
 - (id) init;
-- (id) initWithSession: (Session *) session voting_player_id: (NSString *) voting_player_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment;
+- (id) initWithSession: (Session *) session voting_user_id: (NSString *) voting_user_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment;
 
 - (void) read: (id <TProtocol>) inProtocol;
 - (void) write: (id <TProtocol>) outProtocol;
@@ -3647,10 +3883,10 @@ static int32_t PROTOCOL_VERSION = 1;
 - (BOOL) sessionIsSet;
 
 #if !__has_feature(objc_arc)
-- (NSString *) voting_player_id;
-- (void) setVoting_player_id: (NSString *) voting_player_id;
+- (NSString *) voting_user_id;
+- (void) setVoting_user_id: (NSString *) voting_user_id;
 #endif
-- (BOOL) voting_player_idIsSet;
+- (BOOL) voting_user_idIsSet;
 
 #if !__has_feature(objc_arc)
 - (int64_t) score_value;
@@ -3688,13 +3924,13 @@ static int32_t PROTOCOL_VERSION = 1;
   return self;
 }
 
-- (id) initWithSession: (Session *) session voting_player_id: (NSString *) voting_player_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment
+- (id) initWithSession: (Session *) session voting_user_id: (NSString *) voting_user_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment
 {
   self = [super init];
   __session = [session retain_stub];
   __session_isset = YES;
-  __voting_player_id = [voting_player_id retain_stub];
-  __voting_player_id_isset = YES;
+  __voting_user_id = [voting_user_id retain_stub];
+  __voting_user_id_isset = YES;
   __score_value = score_value;
   __score_value_isset = YES;
   __score_date_epoch = score_date_epoch;
@@ -3714,10 +3950,10 @@ static int32_t PROTOCOL_VERSION = 1;
     __session = [[decoder decodeObjectForKey: @"session"] retain_stub];
     __session_isset = YES;
   }
-  if ([decoder containsValueForKey: @"voting_player_id"])
+  if ([decoder containsValueForKey: @"voting_user_id"])
   {
-    __voting_player_id = [[decoder decodeObjectForKey: @"voting_player_id"] retain_stub];
-    __voting_player_id_isset = YES;
+    __voting_user_id = [[decoder decodeObjectForKey: @"voting_user_id"] retain_stub];
+    __voting_user_id_isset = YES;
   }
   if ([decoder containsValueForKey: @"score_value"])
   {
@@ -3748,9 +3984,9 @@ static int32_t PROTOCOL_VERSION = 1;
   {
     [encoder encodeObject: __session forKey: @"session"];
   }
-  if (__voting_player_id_isset)
+  if (__voting_user_id_isset)
   {
-    [encoder encodeObject: __voting_player_id forKey: @"voting_player_id"];
+    [encoder encodeObject: __voting_user_id forKey: @"voting_user_id"];
   }
   if (__score_value_isset)
   {
@@ -3773,7 +4009,7 @@ static int32_t PROTOCOL_VERSION = 1;
 - (void) dealloc
 {
   [__session release_stub];
-  [__voting_player_id release_stub];
+  [__voting_user_id release_stub];
   [__comment release_stub];
   [super dealloc_stub];
 }
@@ -3799,25 +4035,25 @@ static int32_t PROTOCOL_VERSION = 1;
   __session_isset = NO;
 }
 
-- (NSString *) voting_player_id {
-  return [[__voting_player_id retain_stub] autorelease_stub];
+- (NSString *) voting_user_id {
+  return [[__voting_user_id retain_stub] autorelease_stub];
 }
 
-- (void) setVoting_player_id: (NSString *) voting_player_id {
-  [voting_player_id retain_stub];
-  [__voting_player_id release_stub];
-  __voting_player_id = voting_player_id;
-  __voting_player_id_isset = YES;
+- (void) setVoting_user_id: (NSString *) voting_user_id {
+  [voting_user_id retain_stub];
+  [__voting_user_id release_stub];
+  __voting_user_id = voting_user_id;
+  __voting_user_id_isset = YES;
 }
 
-- (BOOL) voting_player_idIsSet {
-  return __voting_player_id_isset;
+- (BOOL) voting_user_idIsSet {
+  return __voting_user_id_isset;
 }
 
-- (void) unsetVoting_player_id {
-  [__voting_player_id release_stub];
-  __voting_player_id = nil;
-  __voting_player_id_isset = NO;
+- (void) unsetVoting_user_id {
+  [__voting_user_id release_stub];
+  __voting_user_id = nil;
+  __voting_user_id_isset = NO;
 }
 
 - (int64_t) score_value {
@@ -3920,7 +4156,7 @@ static int32_t PROTOCOL_VERSION = 1;
       case 2:
         if (fieldType == TType_STRING) {
           NSString * fieldValue = [inProtocol readString];
-          [self setVoting_player_id: fieldValue];
+          [self setVoting_user_id: fieldValue];
         } else { 
           [TProtocolUtil skipType: fieldType onProtocol: inProtocol];
         }
@@ -3975,10 +4211,10 @@ static int32_t PROTOCOL_VERSION = 1;
       [outProtocol writeFieldEnd];
     }
   }
-  if (__voting_player_id_isset) {
-    if (__voting_player_id != nil) {
-      [outProtocol writeFieldBeginWithName: @"voting_player_id" type: TType_STRING fieldID: 2];
-      [outProtocol writeString: __voting_player_id];
+  if (__voting_user_id_isset) {
+    if (__voting_user_id != nil) {
+      [outProtocol writeFieldBeginWithName: @"voting_user_id" type: TType_STRING fieldID: 2];
+      [outProtocol writeString: __voting_user_id];
       [outProtocol writeFieldEnd];
     }
   }
@@ -4016,8 +4252,8 @@ static int32_t PROTOCOL_VERSION = 1;
   NSMutableString * ms = [NSMutableString stringWithString: @"vote_score_args("];
   [ms appendString: @"session:"];
   [ms appendFormat: @"%@", __session];
-  [ms appendString: @",voting_player_id:"];
-  [ms appendFormat: @"\"%@\"", __voting_player_id];
+  [ms appendString: @",voting_user_id:"];
+  [ms appendFormat: @"\"%@\"", __voting_user_id];
   [ms appendString: @",score_value:"];
   [ms appendFormat: @"%qi", __score_value];
   [ms appendString: @",score_date_epoch:"];
@@ -4205,25 +4441,30 @@ static int32_t PROTOCOL_VERSION = 1;
   [super dealloc_stub];
 }
 
-- (void) send_connect: (int32_t) protocol_version player_id: (NSString *) player_id player_password: (NSString *) player_password user_data: (NSData *) user_data
+- (void) send_connect: (int32_t) protocol_version tenant_id: (NSString *) tenant_id user_id: (NSString *) user_id user_password: (NSString *) user_password user_data: (NSData *) user_data
 {
   [outProtocol writeMessageBeginWithName: @"connect" type: TMessageType_CALL sequenceID: 0];
   [outProtocol writeStructBeginWithName: @"connect_args"];
   [outProtocol writeFieldBeginWithName: @"protocol_version" type: TType_I32 fieldID: 1];
   [outProtocol writeI32: protocol_version];
   [outProtocol writeFieldEnd];
-  if (player_id != nil)  {
-    [outProtocol writeFieldBeginWithName: @"player_id" type: TType_STRING fieldID: 2];
-    [outProtocol writeString: player_id];
+  if (tenant_id != nil)  {
+    [outProtocol writeFieldBeginWithName: @"tenant_id" type: TType_STRING fieldID: 2];
+    [outProtocol writeString: tenant_id];
     [outProtocol writeFieldEnd];
   }
-  if (player_password != nil)  {
-    [outProtocol writeFieldBeginWithName: @"player_password" type: TType_STRING fieldID: 3];
-    [outProtocol writeString: player_password];
+  if (user_id != nil)  {
+    [outProtocol writeFieldBeginWithName: @"user_id" type: TType_STRING fieldID: 3];
+    [outProtocol writeString: user_id];
+    [outProtocol writeFieldEnd];
+  }
+  if (user_password != nil)  {
+    [outProtocol writeFieldBeginWithName: @"user_password" type: TType_STRING fieldID: 4];
+    [outProtocol writeString: user_password];
     [outProtocol writeFieldEnd];
   }
   if (user_data != nil)  {
-    [outProtocol writeFieldBeginWithName: @"user_data" type: TType_STRING fieldID: 4];
+    [outProtocol writeFieldBeginWithName: @"user_data" type: TType_STRING fieldID: 5];
     [outProtocol writeBinary: user_data];
     [outProtocol writeFieldEnd];
   }
@@ -4252,9 +4493,9 @@ static int32_t PROTOCOL_VERSION = 1;
                                            reason: @"connect failed: unknown result"];
 }
 
-- (ConnectReply *) connect: (int32_t) protocol_version player_id: (NSString *) player_id player_password: (NSString *) player_password user_data: (NSData *) user_data
+- (ConnectReply *) connect: (int32_t) protocol_version tenant_id: (NSString *) tenant_id user_id: (NSString *) user_id user_password: (NSString *) user_password user_data: (NSData *) user_data
 {
-  [self send_connect : protocol_version player_id: player_id player_password: player_password user_data: user_data];
+  [self send_connect : protocol_version tenant_id: tenant_id user_id: user_id user_password: user_password user_data: user_data];
   return [self recv_connect];
 }
 
@@ -4348,7 +4589,7 @@ static int32_t PROTOCOL_VERSION = 1;
   return [self recv_post_score];
 }
 
-- (void) send_get_scores: (Session *) session categoy: (NSString *) categoy player_id: (NSString *) player_id from_rank: (int32_t) from_rank count: (int64_t) count
+- (void) send_get_scores: (Session *) session category: (NSString *) category user_id: (NSString *) user_id from_rank: (int32_t) from_rank count: (int64_t) count
 {
   [outProtocol writeMessageBeginWithName: @"get_scores" type: TMessageType_CALL sequenceID: 0];
   [outProtocol writeStructBeginWithName: @"get_scores_args"];
@@ -4357,14 +4598,14 @@ static int32_t PROTOCOL_VERSION = 1;
     [session write: outProtocol];
     [outProtocol writeFieldEnd];
   }
-  if (categoy != nil)  {
-    [outProtocol writeFieldBeginWithName: @"categoy" type: TType_STRING fieldID: 2];
-    [outProtocol writeString: categoy];
+  if (category != nil)  {
+    [outProtocol writeFieldBeginWithName: @"category" type: TType_STRING fieldID: 2];
+    [outProtocol writeString: category];
     [outProtocol writeFieldEnd];
   }
-  if (player_id != nil)  {
-    [outProtocol writeFieldBeginWithName: @"player_id" type: TType_STRING fieldID: 3];
-    [outProtocol writeString: player_id];
+  if (user_id != nil)  {
+    [outProtocol writeFieldBeginWithName: @"user_id" type: TType_STRING fieldID: 3];
+    [outProtocol writeString: user_id];
     [outProtocol writeFieldEnd];
   }
   [outProtocol writeFieldBeginWithName: @"from_rank" type: TType_I32 fieldID: 4];
@@ -4398,13 +4639,13 @@ static int32_t PROTOCOL_VERSION = 1;
                                            reason: @"get_scores failed: unknown result"];
 }
 
-- (GetScoresReply *) get_scores: (Session *) session categoy: (NSString *) categoy player_id: (NSString *) player_id from_rank: (int32_t) from_rank count: (int64_t) count
+- (GetScoresReply *) get_scores: (Session *) session category: (NSString *) category user_id: (NSString *) user_id from_rank: (int32_t) from_rank count: (int64_t) count
 {
-  [self send_get_scores : session categoy: categoy player_id: player_id from_rank: from_rank count: count];
+  [self send_get_scores : session category: category user_id: user_id from_rank: from_rank count: count];
   return [self recv_get_scores];
 }
 
-- (void) send_vote_score: (Session *) session voting_player_id: (NSString *) voting_player_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment
+- (void) send_vote_score: (Session *) session voting_user_id: (NSString *) voting_user_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment
 {
   [outProtocol writeMessageBeginWithName: @"vote_score" type: TMessageType_CALL sequenceID: 0];
   [outProtocol writeStructBeginWithName: @"vote_score_args"];
@@ -4413,9 +4654,9 @@ static int32_t PROTOCOL_VERSION = 1;
     [session write: outProtocol];
     [outProtocol writeFieldEnd];
   }
-  if (voting_player_id != nil)  {
-    [outProtocol writeFieldBeginWithName: @"voting_player_id" type: TType_STRING fieldID: 2];
-    [outProtocol writeString: voting_player_id];
+  if (voting_user_id != nil)  {
+    [outProtocol writeFieldBeginWithName: @"voting_user_id" type: TType_STRING fieldID: 2];
+    [outProtocol writeString: voting_user_id];
     [outProtocol writeFieldEnd];
   }
   [outProtocol writeFieldBeginWithName: @"score_value" type: TType_I64 fieldID: 3];
@@ -4457,9 +4698,9 @@ static int32_t PROTOCOL_VERSION = 1;
                                            reason: @"vote_score failed: unknown result"];
 }
 
-- (DefaultReply *) vote_score: (Session *) session voting_player_id: (NSString *) voting_player_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment
+- (DefaultReply *) vote_score: (Session *) session voting_user_id: (NSString *) voting_user_id score_value: (int64_t) score_value score_date_epoch: (int64_t) score_date_epoch vote_up_down: (int32_t) vote_up_down comment: (NSString *) comment
 {
-  [self send_vote_score : session voting_player_id: voting_player_id score_value: score_value score_date_epoch: score_date_epoch vote_up_down: vote_up_down comment: comment];
+  [self send_vote_score : session voting_user_id: voting_user_id score_value: score_value score_date_epoch: score_date_epoch vote_up_down: vote_up_down comment: comment];
   return [self recv_vote_score];
 }
 
@@ -4562,7 +4803,7 @@ static int32_t PROTOCOL_VERSION = 1;
   [args read: inProtocol];
   [inProtocol readMessageEnd];
   Connect_result * result = [[Connect_result alloc] init];
-  [result setSuccess: [mService connect: [args protocol_version] player_id: [args player_id] player_password: [args player_password] user_data: [args user_data]]];
+  [result setSuccess: [mService connect: [args protocol_version] tenant_id: [args tenant_id] user_id: [args user_id] user_password: [args user_password] user_data: [args user_data]]];
   [outProtocol writeMessageBeginWithName: @"connect"
                                     type: TMessageType_REPLY
                               sequenceID: seqID];
@@ -4613,7 +4854,7 @@ static int32_t PROTOCOL_VERSION = 1;
   [args read: inProtocol];
   [inProtocol readMessageEnd];
   Get_scores_result * result = [[Get_scores_result alloc] init];
-  [result setSuccess: [mService get_scores: [args session] categoy: [args categoy] player_id: [args player_id] from_rank: [args from_rank] count: [args count]]];
+  [result setSuccess: [mService get_scores: [args session] category: [args category] user_id: [args user_id] from_rank: [args from_rank] count: [args count]]];
   [outProtocol writeMessageBeginWithName: @"get_scores"
                                     type: TMessageType_REPLY
                               sequenceID: seqID];
@@ -4630,7 +4871,7 @@ static int32_t PROTOCOL_VERSION = 1;
   [args read: inProtocol];
   [inProtocol readMessageEnd];
   Vote_score_result * result = [[Vote_score_result alloc] init];
-  [result setSuccess: [mService vote_score: [args session] voting_player_id: [args voting_player_id] score_value: [args score_value] score_date_epoch: [args score_date_epoch] vote_up_down: [args vote_up_down] comment: [args comment]]];
+  [result setSuccess: [mService vote_score: [args session] voting_user_id: [args voting_user_id] score_value: [args score_value] score_date_epoch: [args score_date_epoch] vote_up_down: [args vote_up_down] comment: [args comment]]];
   [outProtocol writeMessageBeginWithName: @"vote_score"
                                     type: TMessageType_REPLY
                               sequenceID: seqID];

@@ -91,7 +91,10 @@
                     // Cache the result so that we don't have to send a new request in NLLeaderboard.loadScoresWithCompletionHandler.
                     NLLocalPlayer.localPlayer.postScoreReply = reply;
                 } else {
-                    error = [NLUtil errorWithCode:reply.status.error_code message:@"Error while posting user score to SoTopless leaderboard server."];
+                    // TODO : print arguments with format.
+                    NSString * message = [NLUtil append:@"Error while posting user score to SoTopless leaderboard server. Detail : ", reply.status.error_message_format, nil];
+                    
+                    error = [NLUtil errorWithCode:reply.status.error_code message:message];
                     assert(error);
                 }
             }
@@ -126,10 +129,10 @@
     NSNumber * deltaNumber = [NSNumber numberWithLongLong: delta];
     assert(deltaNumber);
     
-    NSDictionary * scoreChangeEnvet = [NSDictionary dictionaryWithObjectsAndKeys:deltaNumber, @"delta", reason, @"reason", nil];
+    NSDictionary * scoreChangeEnvet = [NSDictionary dictionaryWithObjectsAndKeys:deltaNumber, @"delta", nowEpoch, @"epoch", reason, @"reason", nil];
     assert(scoreChangeEnvet);
     
-    [scoreHistory_ setObject:scoreChangeEnvet forKey:nowEpoch];
+    [scoreHistory_ setObject:scoreChangeEnvet forKey:@"event"];
 }
 
 // Reset score value.

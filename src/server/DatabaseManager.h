@@ -10,6 +10,8 @@
 #include <functional>
 #include <string.h>
 
+// TODO : make sure nldb_value_free is called for all cases getting values from nldb API.
+
 #if !defined(NDEBUG)
 #  define TRACE printf
 #else
@@ -33,17 +35,18 @@
 	}
 
 
-#define GET_TABLE(tab, tx, table_name)                                  \
+#define GET_TABLE(tab, tx, table_name)                              \
 		open_database_t * db = sess_ctx->get_using_database();      \
 		NL_ASSERT(db);                                              \
-		nldb_table_t tab = db->get_table(table_name);               \
+		nldb_table_t tab = db->get_table(sess_ctx->get_tenant_id(), table_name);  \
 		if (!tab) {                                                 \
-	        server_error_t rc = db->open_table(tx, table_name, &tab);  \
+	        server_error_t rc = db->open_table(tx, sess_ctx->get_tenant_id(), table_name, &tab);  \
 	        if (rc) {                      \
 	        	_return.status.error_code = (ErrorCode::type)rc;    \
 	        	return;                                             \
 	        }                                                       \
         }
+
 
 #define GET_TRANSACTION(tx, session_ctx) \
         nldb_tx_t tx = session_ctx->get_transaction();
@@ -335,12 +338,13 @@ public :
 	 *
 	 */
 	static server_error_t create_table( nldb_db_t & db,
+                             			nldb_tx_t & tx,
 			                            const std::string & table_name ) {
 		nldb_table_id_t new_table_id;
-		server_error_t rc = next_table_id( db, &new_table_id );
+		server_error_t rc = next_table_id( db, tx, &new_table_id );
 		if (rc != NLDB_OK ) NL_RETURN(rc);
 
-		rc = put_table( db, table_name, new_table_id );
+		rc = put_table( db, tx, table_name, new_table_id );
 		if (rc != NLDB_OK ) NL_RETURN(rc);
 
 		NL_RETURN( NLDB_OK );
@@ -349,9 +353,10 @@ public :
 	/*! Drop a table.
 	 */
 	static server_error_t drop_table( nldb_db_t & db,
+            						  nldb_tx_t & tx,
 			                          const std::string & table_name ) {
 
-		server_error_t rc = del_table(db, table_name);
+		server_error_t rc = del_table(db, tx, table_name);
 		if (rc != NLDB_OK ) NL_RETURN(rc);
 
 		NL_RETURN( NLDB_OK );
@@ -410,13 +415,14 @@ private:
 	/*! Put the mapping of the table_name and new table ID into meta table.
 	 */
 	static server_error_t put_table( nldb_db_t & db,
+			                         nldb_tx_t & tx,
 			                         const std::string & table_name,
 						             const nldb_table_id_t & table_id) {
 
 		server_error_t rc;
 
 		rc = instant_db_env_t::exec_with_db(
-				db, META_TABLE_NAME_MAP,
+				db, tx, META_TABLE_NAME_MAP,
 				[=](nldb_tx_t & tx, nldb_table_t & table) -> server_error_t {
 					nldb_key_t key = { (void*)table_name.data(), (key_length_t)table_name.length() };
 					nldb_value_t value;
@@ -444,11 +450,12 @@ private:
 	/*! Delete the mapping of the given table name and its table ID.
 	 */
 	static server_error_t del_table( nldb_db_t & db,
+			                         nldb_tx_t & tx,
 			                         const std::string & table_name ) {
 		server_error_t rc;
 
 		rc = instant_db_env_t::exec_with_db(
-				db, META_TABLE_NAME_MAP,
+				db, tx, META_TABLE_NAME_MAP,
 				[=](nldb_tx_t & tx, nldb_table_t & table) -> server_error_t {
 					nldb_key_t key = { (void*)table_name.data(), (key_length_t)table_name.length() };
 
@@ -464,11 +471,11 @@ private:
 
 	/*! Increase the next table ID, return the table ID before the increment.
 	 */
-	static server_error_t next_table_id( nldb_db_t & db, nldb_table_id_t * o_next_table_id ) {
+	static server_error_t next_table_id( nldb_db_t & db, nldb_tx_t & tx, nldb_table_id_t * o_next_table_id ) {
 		// TODO : Two threads may increase the next table id at the same time.
 		server_error_t rc;
 		rc = instant_db_env_t::exec_with_db(
-				db, META_NEXT_TABLE_ID,
+				db, tx, META_NEXT_TABLE_ID,
 				[=](nldb_tx_t & tx, nldb_table_t & table) -> server_error_t {
 					nldb_key_t key = { (void*)NEXT_TABLE_ID_KEY, (key_length_t)strlen(NEXT_TABLE_ID_KEY) };
 					nldb_value_t value;
@@ -483,8 +490,8 @@ private:
 					nldb_table_id_t next_table_id = *( (nldb_table_id_t*)value.data );
 					nldb_table_id_t increased_next_table_id = next_table_id + 1;
 
+					value.length = sizeof(increased_next_table_id);
 					value.data = &increased_next_table_id;
-					// value.length is already set to sizeof(nldb_db_id_t).
 
 					// Put the increased database ID.
 					nrc = nldb_table_put(tx, table, key, value);
@@ -713,8 +720,8 @@ private:
 					nldb_db_id_t next_db_id = *( (nldb_db_id_t*)value.data );
 					nldb_db_id_t increased_next_db_id = next_db_id + 1;
 
+					value.length = sizeof(increased_next_db_id);
 					value.data = &increased_next_db_id;
-					// value.length is already set to sizeof(nldb_db_id_t).
 
 					// Put the increased database ID.
 					nrc = nldb_table_put(tx, table, key, value);
@@ -740,16 +747,18 @@ public :
 	}
 
 	/*! Create a new table in Nanolat Database engine. */
-	server_error_t create_table(const std::string & table_name) {
+	server_error_t create_table(nldb_tx_t & tx, const std::string & tenant_id, const std::string & table_name) {
+		std::string tenant_table_name = tenant_id + "." + table_name; // prepend the table name
+
 		nldb_table_id_t table_id;
 		server_error_t rc = NLDB_OK;
 		bool table_name_put_into_meta = false;
 
-		rc = meta_tables_t::create_table(db, table_name);
+		rc = meta_tables_t::create_table(db, tx, tenant_table_name);
 		if (rc) goto on_error;
 		table_name_put_into_meta = true;
 
-		rc = meta_tables_t::get_table_id(db, table_name, &table_id);
+		rc = meta_tables_t::get_table_id(db, tx, tenant_table_name, &table_id);
 		if (rc) goto on_error;
 
 		// TODO : Need to choose if the user wants to create a persistent table?
@@ -765,53 +774,59 @@ public :
 
 on_error:
 		if (table_name_put_into_meta) {
-			rc = meta_tables_t::drop_table(db, table_name);
+			rc = meta_tables_t::drop_table(db, tx, tenant_table_name);
 			NL_RELEASE_ASSERT (rc == NLDB_OK);
 		}
 		NL_RETURN(rc);
 	}
 
 	/*! Drop a table in Nanolat Database engine. */
-	server_error_t drop_table(const std::string & table_name) {
+	server_error_t drop_table(nldb_tx_t & tx, const std::string & tenant_id, const std::string & table_name) {
+		std::string tenant_table_name = tenant_id + "." + table_name; // prepend the table name
+
 		nldb_table_id_t table_id;
 
-		server_error_t rc = meta_tables_t::get_table_id(db, table_name, &table_id);
+		server_error_t rc = meta_tables_t::get_table_id(db, tx, tenant_table_name, &table_id);
 		if (rc) NL_RETURN(rc);
 
 		nldb_rc_t nrc = nldb_table_drop(db, table_id);
 		if (nrc) NL_RETURN( (server_error_t)nrc );
 
-		rc = meta_tables_t::drop_table(db, table_name);
+		rc = meta_tables_t::drop_table(db, tx, tenant_table_name);
 		NL_RELEASE_ASSERT( rc == NLDB_OK );
 
 		NL_RETURN( NLDB_OK );
 	}
 
 	/*! get the Nanolat Database table object by table name */
-	nldb_table_t get_table(const std::string & table_name ) {
-		nldb_table_t table = tables[ table_name ];
+	nldb_table_t get_table(const std::string & tenant_id, const std::string & table_name ) {
+
+		nldb_table_t table = tables[tenant_id][ table_name ];
 		return table;
 	}
 
-	void set_table(const std::string & table_name, const nldb_table_t & table ) {
-		tables[ table_name ] = table;
+	void set_table(const std::string & tenant_id, const std::string & table_name, const nldb_table_t & table ) {
+
+		tables[tenant_id][ table_name ] = table;
 	}
 
 	// TODO : Think about when to close tables.
 	/*! get the Nanolat Database table object by table name
 	 */
-	server_error_t open_table(nldb_tx_t & tx, const std::string & table_name, nldb_table_t * o_table ) {
+	server_error_t open_table(nldb_tx_t & tx, const std::string & tenant_id, const std::string & table_name, nldb_table_t * o_table ) {
 		NL_ASSERT(table_name != "");
 		NL_ASSERT(o_table);
 
+		std::string tenant_table_name = tenant_id + "." + table_name; // prepend the table name
+
 		nldb_table_id_t table_id;
 
-		if (get_table(table_name)) {
+		if (get_table(tenant_id, tenant_id)) {
 			NL_RETURN( ErrorCode::NL_TABLE_ALREADY_OPEN );
 		}
 
 		// Get the table ID by the table name from the meta table.
-		server_error_t rc = meta_tables_t::get_table_id(db, tx, table_name, &table_id);
+		server_error_t rc = meta_tables_t::get_table_id(db, tx, tenant_table_name, &table_id);
 		if (rc) NL_RETURN(rc);
 
 		nldb_table_t open_table;
@@ -822,7 +837,7 @@ on_error:
 		NL_RELEASE_ASSERT(open_table);
 
 		// Create a mapping table (the table name, table object) for quick lookup.
-		set_table(table_name, open_table);
+		set_table(tenant_id, table_name, open_table);
 
 		*o_table = open_table;
 
@@ -834,8 +849,8 @@ on_error:
 	}
 
 private :
-	// The mapping from table name to nldb table object.
-	std::map<std::string, nldb_table_t> tables;
+	// The mapping from tenant_id to (mapping from table name to nldb table object).
+	std::map<std::string,  std::map<std::string, nldb_table_t> > tables;
 
 	// The open database.
 	nldb_db_t db;
@@ -843,8 +858,9 @@ private :
 
 class session_context_t {
 public :
-	session_context_t(int session_handle) {
+	session_context_t(const std::string & tenant_id, int session_handle) {
 		this->session_handle = session_handle;
+		this->tenant_id = tenant_id;
 		transaction = NULL;
 		using_database = NULL;
 		is_auto_commit = false;
@@ -981,7 +997,15 @@ public :
 		}
 	}
 
+	inline std::string get_tenant_id() {
+		return tenant_id;
+	}
+
 private:
+	// The tenant ID. Multiple tenants can use the same database.
+	// To provide isolated namespace for tables for each tenant, tenant id is used for the prefix of the database table.
+	std::string tenant_id;
+
 	// The session handle generated by the server. Each client receives the session_handle when it connects to the server.
 	// For the subsequent requests, the client sends the received session_handle along with the request.
 	// The server checks if the session handle is the one provided by the server to see if the client is authorized to access the server.
@@ -1010,12 +1034,15 @@ class session_map_t {
 public:
 	session_map_t() {
 	}
-	session_context_t * new_session() {
+	/*! Multiple tenants can use the database service. Each tenant has unique tenant_id.
+	 * All table names start with the given tenant_id. It is similar to database schema name.
+	 */
+	session_context_t * new_session(const std::string & tenant_id) {
 		/* initialize random seed: */
 		srand( time(NULL) );
 
 		int session_handle = rand();
-		session_context_t * ctx = new session_context_t(session_handle);
+		session_context_t * ctx = new session_context_t(tenant_id, session_handle);
 		sessions[ session_handle ] = ctx;
 		return ctx;
 	}

@@ -36,6 +36,14 @@ uint32_t DatabaseService_connect_args::read(::apache::thrift::protocol::TProtoco
           xfer += iprot->skip(ftype);
         }
         break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->tenant_id);
+          this->__isset.tenant_id = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -56,6 +64,10 @@ uint32_t DatabaseService_connect_args::write(::apache::thrift::protocol::TProtoc
   xfer += oprot->writeI32(this->protocol_version);
   xfer += oprot->writeFieldEnd();
 
+  xfer += oprot->writeFieldBegin("tenant_id", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->tenant_id);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -67,6 +79,10 @@ uint32_t DatabaseService_connect_pargs::write(::apache::thrift::protocol::TProto
 
   xfer += oprot->writeFieldBegin("protocol_version", ::apache::thrift::protocol::T_I32, 1);
   xfer += oprot->writeI32((*(this->protocol_version)));
+  xfer += oprot->writeFieldEnd();
+
+  xfer += oprot->writeFieldBegin("tenant_id", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->tenant_id)));
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
@@ -3458,19 +3474,20 @@ uint32_t DatabaseService_cursor_close_presult::read(::apache::thrift::protocol::
   return xfer;
 }
 
-void DatabaseServiceClient::connect(ConnectReply& _return, const int32_t protocol_version)
+void DatabaseServiceClient::connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id)
 {
-  send_connect(protocol_version);
+  send_connect(protocol_version, tenant_id);
   recv_connect(_return);
 }
 
-void DatabaseServiceClient::send_connect(const int32_t protocol_version)
+void DatabaseServiceClient::send_connect(const int32_t protocol_version, const std::string& tenant_id)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("connect", ::apache::thrift::protocol::T_CALL, cseqid);
 
   DatabaseService_connect_pargs args;
   args.protocol_version = &protocol_version;
+  args.tenant_id = &tenant_id;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -4625,7 +4642,7 @@ void DatabaseServiceProcessor::process_connect(int32_t seqid, ::apache::thrift::
 
   DatabaseService_connect_result result;
   try {
-    iface_->connect(result.success, args.protocol_version);
+    iface_->connect(result.success, args.protocol_version, args.tenant_id);
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
