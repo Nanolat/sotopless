@@ -75,10 +75,10 @@ server_error_t get_table(session_context_t * sess_ctx, nldb_tx_t tx, const std::
 			rc = db->open_table(tx, sess_ctx->get_tenant_id(), table_name, &table);
 	    	if (rc) NL_RETURN(rc)
 
-	    } else {
-	    	NL_RETURN(rc)
 	    }
+	    if (rc) NL_RETURN(rc)
 	}
+	*o_table = table;
 	NL_RETURN(0)
 }
 
@@ -90,6 +90,8 @@ server_error_t get_table(session_context_t * sess_ctx, nldb_tx_t tx, const std::
 	}                                                                \
 }
 
+
+
 class LeaderboardServiceHandler : virtual public LeaderboardServiceIf {
 public:
 	LeaderboardServiceHandler() {
@@ -99,6 +101,8 @@ public:
 			exit(-1);
 		}
 	}
+
+
 
 	std::string ToString(int value) {
 		std::stringstream stream;
@@ -166,6 +170,7 @@ public:
 		_return.server_name = "Kangdori";
 		_return.session_handle = sess_ctx->get_session_handle();
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
+
 		return;
 on_error:
 		if (sess_ctx)
@@ -195,10 +200,12 @@ on_error:
 	void post_score(PostScoreReply& _return, const Session& session, const std::string& category, const Score& posting_score) {
 		TRACE("post_score\n");
 		server_error_t rc;
+		nldb_table_t by_score_table = NULL;
+		nldb_table_t by_user_table = NULL;
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
-		nldb_table_t by_score_table, by_user_table;
+		sess_ctx->auto_begin_transaction();
 
 		CHECK_ARGUMENT(category != "", "Category should not be an empty string.", goto on_error);
 		CHECK_ARGUMENT(posting_score.value >= 0, "Score value should be greater than or equal to 0.", goto on_error);
@@ -220,7 +227,6 @@ on_error:
 			goto on_error;
 		}
 
-		sess_ctx->auto_begin_transaction();
 
 		try {
 			rc = post_user_score(sess_ctx, by_score_table, by_user_table, posting_score);
@@ -278,9 +284,42 @@ on_error:
 	}
 };
 
+void Test(LeaderboardServiceHandler * service_handler)
+{
+
+	ConnectReply connectReply;
+	std::string tenant_id = "xcef";
+	std::string user_id = "id";
+	std::string user_password = "pw";
+	std::string user_data;
+	service_handler->connect(connectReply, 1, tenant_id, user_id, user_password, user_data);
+
+	PostScoreReply postScoreReply;
+	Score score;
+	score.value = 100;
+	score.date_epoch = 1000;
+	score.rank = 0;
+	score.user_alias.assign("kangmo");
+	score.user_id.assign( "hehe" );
+	score.vote_down_count = 0;
+	score.vote_up_count = 0;
+
+	Session session;
+	session.session_handle = connectReply.session_handle;
+
+	std::string category = "Test";
+
+	service_handler->post_score(postScoreReply, session, category, score);
+}
+
 int listen(int port) {
 	try {
-		shared_ptr<LeaderboardServiceHandler> handler(new LeaderboardServiceHandler());
+		LeaderboardServiceHandler * service_handler = new LeaderboardServiceHandler();
+
+		Test(service_handler);
+
+
+		shared_ptr<LeaderboardServiceHandler> handler(service_handler);
 	    shared_ptr<TProcessor> processor(new nanolat::leaderboard::LeaderboardServiceProcessor(handler));
 	    shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
@@ -291,6 +330,7 @@ int listen(int port) {
 	    threadManager->start();
 	    TNonblockingServer server(processor, protocolFactory, port, threadManager);
 	    server.serve();
+
 	} catch (TException * e) {
 		printf("Error : %s\n", e->what() );
 		return -1;
