@@ -177,6 +177,8 @@
 <span class='line-number'>55</span>
 <span class='line-number'>56</span>
 <span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>////////////////////////////////////////////////////////////////////////////////
 </span><span class='line'>// Login ( User Authentication )
 </span><span class='line'>NSString * identifier = [ NSString stringWithFormat:@"unique identifier for a the user or phone"];
@@ -193,7 +195,9 @@
 </span><span class='line'>    ////////////////////////////////////////////////////////////////////////////////
 </span><span class='line'>    // Report Score
 </span><span class='line'>    NLScore * myScore = [[NLScore alloc] initWithCategory:@"all"];
-</span><span class='line'>    myScore.value = 300; // score
+</span><span class='line'>    [myScore increaseValue:300 reason:@"Ate Apple"; // Increase the score with a description on how the user got the score. 
+</span><span class='line'>    [myScore increaseValue:500 reason:@"Ate Orange";  
+</span><span class='line'>    [myScore increaseValue:100 reason:@"Ate Water";  
 </span><span class='line'>
 </span><span class='line'>    [myScore reportScoreWithCompletionHandler:^(NSError * error) {
 </span><span class='line'>        if (error != NULL) {
@@ -236,13 +240,15 @@
 </span><span class='line'>}; // localPlayer.authenticateHandler</span></code></pre></td></tr></table></div></figure>
 
 
-<h2>Warning</h2>
+<h2>History &amp; Source Code</h2>
 
-<p>The iOS SDK was built during TechCrunch Disrupt 2013 Hackathon from 7th to 8th Sep. It took about 20 hours for coding and testing. More work needs to be done and the iOS SDK code is <em>experimental</em>.</p>
+<p>The first iOS SDK was built during TechCrunch Disrupt 2013 Hackathon from 7th to 8th Sep. It took about 20 hours for coding and testing.
+<a href="https://github.com/Nanolat/sotopless/tree/master/src/ios-legacy/objc">https://github.com/Nanolat/sotopless/tree/master/src/ios-legacy/objc</a></p>
 
-<p>Full source code of SoTopless iOS SDK is available at following github URL.</p>
+<p>After the Hackathon, Both server and client SDK was completely rewritten. The new version of SDK implementation eliminates unnecessary round trips between the server and client improving the time user needs to wait for posting scores and getting top scores as well as the user&rsquo;s score.</p>
 
-<p><a href="https://github.com/Nanolat/sotopless/tree/master/src/ios/objc">https://github.com/Nanolat/sotopless/tree/master/src/ios/objc</a></p>
+<p>Full source code of the new SoTopless iOS SDK is available at following github URL.
+<a href="https://github.com/Nanolat/sotopless/tree/master/src/ios-client/objc">https://github.com/Nanolat/sotopless/tree/master/src/ios-client/objc</a></p>
 
   
     <footer>

@@ -1,43 +1,43 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://www.sotopless.com/robots.txt</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
+        <loc>http://www.sotopless.com/blog/archives/</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
     </url>
     <url>
         <loc>http://www.sotopless.com/blog/</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/blog/archives/</loc>
-        <lastmod>2013-08-15T23:40:55-07:00</lastmod>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
     </url>
     <url>
         <loc>http://www.sotopless.com/</loc>
-        <lastmod>2013-09-13T04:59:54-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/rest.html</loc>
-        <lastmod>2013-08-16T03:00:02-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/cpp-api.html</loc>
-        <lastmod>2013-09-08T14:41:44-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/cpp.html</loc>
-        <lastmod>2013-09-08T12:43:10-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/javascript.html</loc>
-        <lastmod>2013-09-08T14:38:35-07:00</lastmod>
-    </url>
-    <url>
-        <loc>http://www.sotopless.com/tutorials/ios.html</loc>
-        <lastmod>2013-09-08T15:30:17-07:00</lastmod>
+        <lastmod>2013-09-14T19:18:05-07:00</lastmod>
     </url>
     <url>
         <loc>http://www.sotopless.com/join-alpha-test/</loc>
-        <lastmod>2013-09-08T22:33:39-07:00</lastmod>
+        <lastmod>2013-09-14T19:18:05-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/robots.txt</loc>
+        <lastmod>2013-08-15T18:18:15-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/cpp-api.html</loc>
+        <lastmod>2013-08-21T14:58:52-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/cpp.html</loc>
+        <lastmod>2013-09-01T18:57:35-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/ios.html</loc>
+        <lastmod>2013-09-14T19:27:12-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/javascript.html</loc>
+        <lastmod>2013-09-14T19:18:05-07:00</lastmod>
+    </url>
+    <url>
+        <loc>http://www.sotopless.com/tutorials/rest.html</loc>
+        <lastmod>2013-08-21T14:48:59-07:00</lastmod>
     </url>
 </urlset>
