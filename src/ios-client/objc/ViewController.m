@@ -26,7 +26,7 @@
     
     NSString * uuid = [ NSString stringWithFormat:@"abcde"];
     
-    NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"Kangdori" password:uuid ];
+    NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"ㅏ" password:uuid ];
     
     localPlayer.authenticateHandler = ^(NSString * connectedServerName, NSError * error) {
         if (error != NULL) {
@@ -39,9 +39,9 @@
         ////////////////////////////////////////////////////////////////////////////////
         // Report Score
         NLScore * myScore = [[NLScore alloc] initWithCategory:@"all"];
-        [myScore increaseValue:300 reason:@"Got apple"];  // increase score with reason of increment
-        [myScore increaseValue:500 reason:@"Got orange"]; // increase score with reason of increment
-        [myScore increaseValue:100 reason:@"Got water"];  // increase score with reason of increment
+        [myScore increaseValue:1 reason:@"Got apple"];  // increase score with reason of increment
+        [myScore increaseValue:3 reason:@"Got orange"]; // increase score with reason of increment
+        [myScore increaseValue:2 reason:@"Got water"];  // increase score with reason of increment
         
         [myScore reportScoreWithCompletionHandler:^(NSError * error) {
             if (error != NULL) {

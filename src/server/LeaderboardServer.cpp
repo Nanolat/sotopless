@@ -216,6 +216,7 @@ on_error:
 		CHECK_ARGUMENT(posting_score.value >= 0, "Score value should be greater than or equal to 0.", goto on_error);
 		CHECK_ARGUMENT(posting_score.user_alias != "", "User Alias in Score object should not be an empty string.", goto on_error);
 		CHECK_ARGUMENT(posting_score.user_id != "", "User ID in Score object should not be an empty string.", goto on_error);
+		CHECK_ARGUMENT(posting_score.user_id.length() <= MAX_USER_ID_LENGTH, "You hit the maximum length of User ID. Maximum length : " MAX_USER_ID_LENGHT_STR " ." , goto on_error);
 		CHECK_ARGUMENT(posting_score.rank == 0, "Rank in Score object should be 0 to post the score.", goto on_error);
 
 		rc = get_table(sess_ctx, sess_ctx->get_transaction(), by_score_table_name(category), &by_score_table);
@@ -275,7 +276,66 @@ on_error:
 
 	void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count) {
 		TRACE("get_scores\n");
-		_return.status.error_code = ErrorCode::NL_NOT_SUPPORTED;
+		server_error_t rc;
+		nldb_table_t by_score_table = NULL;
+		nldb_table_t by_user_table = NULL;
+
+		GET_SESSION_CONTEXT(sess_ctx, session);
+
+		sess_ctx->auto_begin_transaction();
+
+		CHECK_ARGUMENT(category != "", "Category should not be an empty string.", goto on_error);
+		CHECK_ARGUMENT(user_id != "", "User ID in should not be an empty string.", goto on_error);
+		CHECK_ARGUMENT(user_id.length() <= MAX_USER_ID_LENGTH, "You hit the maximum length of User ID. Maximum length : " MAX_USER_ID_LENGHT_STR " ." , goto on_error);
+		CHECK_ARGUMENT(from_rank > 0, "From Rank should be greater than zero.", goto on_error);
+		CHECK_ARGUMENT(count > 0, "Count should be greater than zero.", goto on_error);
+
+		rc = get_table(sess_ctx, sess_ctx->get_transaction(), by_score_table_name(category), &by_score_table);
+		if (rc) {
+			_return.status.error_code = ErrorCode::NL_FAILURE;
+			_return.status.error_message_format = error_message("By-Score Table Open Failure", rc);
+			goto on_error;
+		}
+
+		rc = get_table(sess_ctx, sess_ctx->get_transaction(), by_user_table_name(category), &by_user_table);
+		if (rc) {
+			_return.status.error_code = ErrorCode::NL_FAILURE;
+			_return.status.error_message_format = error_message("By-User Table Open Failure", rc);
+			goto on_error;
+		}
+
+
+		try {
+
+			rc = get_user_score(sess_ctx, by_score_table, by_user_table, user_id, & _return.scores.user_score );
+			if (rc) {
+				_return.status.error_code = ErrorCode::NL_FAILURE;
+				_return.status.error_message_format = error_message("User Score Retrieval Failure", rc);
+				goto on_error;
+			}
+
+			_return.scores.from_rank = from_rank;
+			_return.scores.count = count;
+
+			rc = get_scores_by_ranking(sess_ctx, by_score_table, _return.scores.from_rank, _return.scores.count, & _return.scores.top_scores);
+			if (rc) {
+				_return.status.error_code = ErrorCode::NL_FAILURE;
+				_return.status.error_message_format = error_message("Score Retrieval (By Ranking) Failure", rc);
+				goto on_error;
+			}
+		} catch (apache::thrift::TException * e) {
+			_return.status.error_code = ErrorCode::NL_FAILURE;
+			_return.status.error_message_format = error_message(e->what());
+			goto on_error;
+		}
+
+		sess_ctx->auto_commit_transaction();
+
+		_return.status.error_code = ErrorCode::NL_SUCCESS;
+
+		return;
+on_error:
+		sess_ctx->auto_abort_transaction();
 	}
 
 	void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) {
@@ -285,7 +345,7 @@ on_error:
 };
 
 void print_score(const char * summary, const Score & score) {
-	printf("%s : value:%lld, date_epoch:%lld, rank:%d, user_alias:%s, user_id:%s, vote_down_count:%d, vote_up_count%d\n",
+	printf("%s : value:%lld, date_epoch:%lld, rank:%d, user_alias:%s, user_id:%s, vote_down_count:%d, vote_up_count:%d\n",
 			summary, score.value, score.date_epoch, score.rank, score.user_alias.c_str(), score.user_id.c_str(), score.vote_down_count, score.vote_up_count);
 }
 
@@ -296,6 +356,7 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 	std::string tenant_id = "test";
 
 	std::string user_id = concat_int("uid", index);
+
 	std::string user_password = concat_int("pwd", index);
 	std::string user_data;
 
@@ -307,7 +368,7 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 	score.date_epoch = time(NULL);
 	score.rank = 0;
 	score.user_alias = concat_int("alias", index);
-	score.user_id = concat_int("uid", index);
+	score.user_id = user_id;
 	score.vote_down_count = 0;
 	score.vote_up_count = 0;
 
@@ -320,14 +381,25 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 
 	service_handler->post_score(postScoreReply, session, category, score);
 
-	print_score("user score", postScoreReply.scores.user_score );
+	print_score("user score (post score)", postScoreReply.scores.user_score );
 
 	for (std::vector<Score>::iterator it = postScoreReply.scores.top_scores.begin();
 		 it != postScoreReply.scores.top_scores.end();
 		 it++) {
-		print_score("top score", *it);
+		print_score("top score (post score)", *it);
 	}
+/*
+	GetScoresReply getScoreReply;
+	service_handler->get_scores(getScoreReply, session, category, user_id, 50, 15);
 
+	print_score("user score (get scores)", getScoreReply.scores.user_score );
+
+	for (std::vector<Score>::iterator it = getScoreReply.scores.top_scores.begin();
+		 it != postScoreReply.scores.top_scores.end();
+		 it++) {
+		print_score("scores (get scores)", *it);
+	}
+*/
 }
 
 int listen(int port) {

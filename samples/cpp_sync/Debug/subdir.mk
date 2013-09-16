@@ -5,18 +5,24 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../common.cpp \
-../main.cpp \
-../perf.cpp 
+../database.cpp \
+../database_perf.cpp \
+../leaderboard.cpp \
+../main.cpp 
 
 OBJS += \
 ./common.o \
-./main.o \
-./perf.o 
+./database.o \
+./database_perf.o \
+./leaderboard.o \
+./main.o 
 
 CPP_DEPS += \
 ./common.d \
-./main.d \
-./perf.d 
+./database.d \
+./database_perf.d \
+./leaderboard.d \
+./main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

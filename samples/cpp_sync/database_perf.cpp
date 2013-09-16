@@ -18,7 +18,7 @@
 #include <nanolat/client/SyncClient.h>
 
 #include "common.h"
-#include "perf.h"
+#include "database_perf.h"
 
 using namespace nanolat::client;
 

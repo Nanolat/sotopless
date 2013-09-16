@@ -12,6 +12,11 @@
 #include "DatabaseManager.h"
 #include "LeaderboardService.h"
 
+
+// This is based64 encoded UUID. UUID is 16 bytes. After applying base64 encoding,it becomes 21 bytes.
+#define MAX_USER_ID_LENGTH (21)
+#define MAX_USER_ID_LENGHT_STR "21"
+
 namespace nanolat {
 namespace leaderboard {
 

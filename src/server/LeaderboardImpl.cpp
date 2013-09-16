@@ -47,11 +47,10 @@ int64_t unpack_epoch_from_key(const std::string & packed_score) {
 	return to_host_endian(big_endian_epoch);
 }
 
-
 std::string pack_user_id_key(const std::string & user_id) {
-	assert(user_id.length() <= 20);
-	char buffer[20+1];
-	sprintf(buffer, "%-20s", user_id.c_str() );
+	assert(user_id.length() <= MAX_USER_ID_LENGTH);
+	char buffer[MAX_USER_ID_LENGTH+1];
+	sprintf(buffer, "%-" MAX_USER_ID_LENGHT_STR "s", user_id.c_str() );
 
 	std::string packed_string = buffer;
 	return packed_string;

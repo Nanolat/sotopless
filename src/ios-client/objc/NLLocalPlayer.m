@@ -41,7 +41,8 @@
 
 // Try three servers for connecting to the server. If any of them is successfully connected, simply use the connection.
 NSString * SOTOPLESS_HOST_NAMES[] = {
-    @"54.200.19.178",
+    @"127.0.0.1",
+//    @"54.200.19.178",
     @"nanolat.kr",
     @"vigsql.com",
     nil
