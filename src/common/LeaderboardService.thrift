@@ -43,7 +43,7 @@ struct Score {
 struct UserScoreAndTopScores {
     1: Score       user_score,
     2: i32         from_rank,
-    3: i64         count,
+    3: i32         count,
     4: list<Score> top_scores
 }
 

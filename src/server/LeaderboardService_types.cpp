@@ -421,8 +421,8 @@ void swap(Score &a, Score &b) {
   swap(a.__isset, b.__isset);
 }
 
-const char* UserScoreAndTopScores::ascii_fingerprint = "BDF6090738155A1FB5C43743D545B40E";
-const uint8_t UserScoreAndTopScores::binary_fingerprint[16] = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
+const char* UserScoreAndTopScores::ascii_fingerprint = "F66962824FC83B55980EA8327A7C5BC2";
+const uint8_t UserScoreAndTopScores::binary_fingerprint[16] = {0xF6,0x69,0x62,0x82,0x4F,0xC8,0x3B,0x55,0x98,0x0E,0xA8,0x32,0x7A,0x7C,0x5B,0xC2};
 
 uint32_t UserScoreAndTopScores::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -461,8 +461,8 @@ uint32_t UserScoreAndTopScores::read(::apache::thrift::protocol::TProtocol* ipro
         }
         break;
       case 3:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->count);
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->count);
           this->__isset.count = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -512,8 +512,8 @@ uint32_t UserScoreAndTopScores::write(::apache::thrift::protocol::TProtocol* opr
   xfer += oprot->writeI32(this->from_rank);
   xfer += oprot->writeFieldEnd();
 
-  xfer += oprot->writeFieldBegin("count", ::apache::thrift::protocol::T_I64, 3);
-  xfer += oprot->writeI64(this->count);
+  xfer += oprot->writeFieldBegin("count", ::apache::thrift::protocol::T_I32, 3);
+  xfer += oprot->writeI32(this->count);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("top_scores", ::apache::thrift::protocol::T_LIST, 4);
@@ -542,8 +542,8 @@ void swap(UserScoreAndTopScores &a, UserScoreAndTopScores &b) {
   swap(a.__isset, b.__isset);
 }
 
-const char* PostScoreReply::ascii_fingerprint = "ED20B4254D63522D4314AC4E224FABE5";
-const uint8_t PostScoreReply::binary_fingerprint[16] = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
+const char* PostScoreReply::ascii_fingerprint = "2953D34D63BA6FEEE9139FFE0DF6B6A0";
+const uint8_t PostScoreReply::binary_fingerprint[16] = {0x29,0x53,0xD3,0x4D,0x63,0xBA,0x6F,0xEE,0xE9,0x13,0x9F,0xFE,0x0D,0xF6,0xB6,0xA0};
 
 uint32_t PostScoreReply::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -617,8 +617,8 @@ void swap(PostScoreReply &a, PostScoreReply &b) {
   swap(a.__isset, b.__isset);
 }
 
-const char* GetScoresReply::ascii_fingerprint = "ED20B4254D63522D4314AC4E224FABE5";
-const uint8_t GetScoresReply::binary_fingerprint[16] = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
+const char* GetScoresReply::ascii_fingerprint = "2953D34D63BA6FEEE9139FFE0DF6B6A0";
+const uint8_t GetScoresReply::binary_fingerprint[16] = {0x29,0x53,0xD3,0x4D,0x63,0xBA,0x6F,0xEE,0xE9,0x13,0x9F,0xFE,0x0D,0xF6,0xB6,0xA0};
 
 uint32_t GetScoresReply::read(::apache::thrift::protocol::TProtocol* iprot) {
 

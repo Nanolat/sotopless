@@ -176,12 +176,14 @@ public:
 		_return.session_handle = sess_ctx->get_session_handle();
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
+		FLUSH_TRACE();
 		return;
 on_error:
 		if (sess_ctx)
 		{
 			server_instance.session_map.delete_session(sess_ctx);
 		}
+		FLUSH_TRACE();
 	}
 
 	void disconnect(DefaultReply& _return, const Session& session) {
@@ -192,6 +194,7 @@ on_error:
 		server_instance.session_map.delete_session( sess_ctx );
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
+		FLUSH_TRACE();
 	}
 
 	inline std::string by_score_table_name(const std::string & category) {
@@ -269,9 +272,13 @@ on_error:
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
+		FLUSH_TRACE();
+
 		return;
 on_error:
 		sess_ctx->auto_abort_transaction();
+
+		FLUSH_TRACE();
 	}
 
 	void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count) {
@@ -332,10 +339,12 @@ on_error:
 		sess_ctx->auto_commit_transaction();
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
+		FLUSH_TRACE();
 
 		return;
 on_error:
 		sess_ctx->auto_abort_transaction();
+		FLUSH_TRACE();
 	}
 
 	void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) {
@@ -344,23 +353,45 @@ on_error:
 	}
 };
 
-void print_score(const char * summary, const Score & score) {
+void print_score(const std::string & summary, const Score & score) {
 	printf("%s : value:%lld, date_epoch:%lld, rank:%d, user_alias:%s, user_id:%s, vote_down_count:%d, vote_up_count:%d\n",
-			summary, score.value, score.date_epoch, score.rank, score.user_alias.c_str(), score.user_id.c_str(), score.vote_down_count, score.vote_up_count);
+			summary.c_str(), score.value, score.date_epoch, score.rank, score.user_alias.c_str(), score.user_id.c_str(), score.vote_down_count, score.vote_up_count);
 }
 
-void Test(LeaderboardServiceHandler * service_handler, int index)
+void PrintUserScoreAndTopScores(const UserScoreAndTopScores &userScoreAndTopScores, const std::string & description) {
+	print_score("user score ("+description+")", userScoreAndTopScores.user_score );
+
+	printf("top score ranking range: from_rank:%d, count:%d\n", userScoreAndTopScores.from_rank, userScoreAndTopScores.count);
+
+	for (std::vector<Score>::const_iterator it = userScoreAndTopScores.top_scores.begin();
+		 it != userScoreAndTopScores.top_scores.end();
+		 it++) {
+		print_score("top score ("+description+")", *it);
+	}
+}
+
+void TestConnect(LeaderboardServiceHandler * service_handler, const std::string & tenant_id, int index, Session * session)
 {
 	ConnectReply connectReply;
 
-	std::string tenant_id = "test";
-
 	std::string user_id = concat_int("uid", index);
-
 	std::string user_password = concat_int("pwd", index);
 	std::string user_data;
 
 	service_handler->connect(connectReply, 1, tenant_id, user_id, user_password, user_data);
+
+	printf("Connected to server. Session Handle : %d, Name : %s\n", connectReply.session_handle, connectReply.server_name.c_str() );
+
+	session->session_handle = connectReply.session_handle;
+}
+
+inline std::string get_user_id(int index) {
+	return concat_int("uid", index);
+}
+
+void TestPostScore(LeaderboardServiceHandler * service_handler, const Session & session, const std::string & category, int index) {
+
+	std::string user_id = get_user_id(index);
 
 	PostScoreReply postScoreReply;
 	Score score;
@@ -372,42 +403,50 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 	score.vote_down_count = 0;
 	score.vote_up_count = 0;
 
-	Session session;
-	session.session_handle = connectReply.session_handle;
 
-	std::string category = "TestCategory";
 
 	print_score("posting score", score );
 
 	service_handler->post_score(postScoreReply, session, category, score);
 
-	print_score("user score (post score)", postScoreReply.scores.user_score );
+	PrintUserScoreAndTopScores(postScoreReply.scores, "post score");
+}
 
-	for (std::vector<Score>::iterator it = postScoreReply.scores.top_scores.begin();
-		 it != postScoreReply.scores.top_scores.end();
-		 it++) {
-		print_score("top score (post score)", *it);
-	}
 
+void TestGetScores(LeaderboardServiceHandler * service_handler, const Session & session, const std::string & category, int index) {
 	GetScoresReply getScoreReply;
+
+	std::string user_id = get_user_id(index);
 
 	service_handler->get_scores(getScoreReply, session, category, user_id, 50, 15);
 
-	print_score("user score (get scores)", getScoreReply.scores.user_score );
-
-	for (std::vector<Score>::iterator it = getScoreReply.scores.top_scores.begin();
-		 it != getScoreReply.scores.top_scores.end();
-		 it++) {
-		print_score("scores (get scores)", *it);
-	}
-
+	PrintUserScoreAndTopScores(getScoreReply.scores, "get scores");
 }
+
+void Test(LeaderboardServiceHandler * service_handler, int index)
+{
+	std::string category = "TestCategory";
+
+	std::string tenant_id = "test";
+	std::string user_password = concat_int("pwd", index);
+	std::string user_data;
+
+	Session session;
+
+	TestConnect(service_handler, tenant_id, index, & session);
+
+	TestPostScore(service_handler, session, category, index);
+
+	TestGetScores(service_handler, session, category, index);
+}
+
+#define SANITY_TEST_USER_COUNT (1024)
 
 int listen(int port) {
 	try {
 		LeaderboardServiceHandler * service_handler = new LeaderboardServiceHandler();
 
-		for (int i=0; i<1000; i++) {
+		for (int i=0; i<SANITY_TEST_USER_COUNT; i++) {
 			Test(service_handler, i);
 		}
 
