@@ -133,6 +133,8 @@
     assert(scoreChangeEnvet);
     
     [scoreHistory_ setObject:scoreChangeEnvet forKey:@"event"];
+    
+    value_ += delta;
 }
 
 // Reset score value.

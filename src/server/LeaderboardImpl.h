@@ -12,8 +12,6 @@
 #include "DatabaseManager.h"
 #include "LeaderboardService.h"
 
-#define INVALID_ARGUMENT_ERROR -999999
-
 namespace nanolat {
 namespace leaderboard {
 

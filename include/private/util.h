@@ -62,4 +62,12 @@ inline uint64_t hash(const char *str)
     return hash;
 }
 
+
+inline std::string concat_int(std::string str, int index) {
+	std::stringstream stream;
+	stream << str << index;
+	return stream.str();
+}
+
+
 #endif // _UTIL_H_

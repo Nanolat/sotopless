@@ -47,7 +47,26 @@ public:
 		memory->getBuffer(&buf, &len);
 
 		*data_length = len;
-		*data = data;
+		*data = buf;
+	}
+
+private:
+	boost::shared_ptr<TMemoryBuffer>   memory;
+	boost::shared_ptr<TBinaryProtocol> protocol;
+};
+
+class ThriftDeserializer {
+public:
+
+	ThriftDeserializer() {
+		memory.reset(new TMemoryBuffer());
+		protocol.reset(new TBinaryProtocol(memory));
+		memory->open();
+	}
+
+	~ThriftDeserializer() {
+		// TODO Auto-generated destructor stub
+		memory->close();
 	}
 
 	template <class T>
@@ -66,6 +85,7 @@ private:
 	boost::shared_ptr<TMemoryBuffer>   memory;
 	boost::shared_ptr<TBinaryProtocol> protocol;
 };
+
 
 } /* namespace leaderboard */
 } /* namespace nanolat */

@@ -17,11 +17,16 @@ using namespace ::apache::thrift::protocol;
 using namespace ::apache::thrift::transport;
 using namespace ::apache::thrift::server;
 
+/* for test code */
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
 #include <stdlib.h> // for exit
 #include <sstream>
 #include <string>
 #include <nanolat/client/common.h>
 #include <private/stacktrace.h>
+#include <private/util.h>
 #include <nldb/nldb.h>
 
 #include "LeaderboardImpl.h"
@@ -158,7 +163,7 @@ public:
 					}
 				}
 			}
-		} catch (TException * e) {
+		} catch (apache::thrift::TException * e) {
 			_return.status.error_code = ErrorCode::NL_FAILURE;
 			_return.status.error_message_format = error_message(e->what());
 			goto on_error;
@@ -249,16 +254,11 @@ on_error:
 
 			rc = get_scores_by_ranking(sess_ctx, by_score_table, _return.scores.from_rank, _return.scores.count, & _return.scores.top_scores);
 			if (rc) {
-				if (rc == INVALID_ARGUMENT_ERROR) {
-					_return.status.error_code = ErrorCode::NL_INVALID_ARGUMENT;
-					_return.status.error_message_format = error_message("Invalid 'from_rank' and 'count' argument.", rc);
-				} else {
-					_return.status.error_code = ErrorCode::NL_FAILURE;
-					_return.status.error_message_format = error_message("Top 10 Score Retrieval Failure", rc);
-				}
+				_return.status.error_code = ErrorCode::NL_FAILURE;
+				_return.status.error_message_format = error_message("Top 10 Score Retrieval Failure", rc);
 				goto on_error;
 			}
-		} catch (TException * e) {
+		} catch (apache::thrift::TException * e) {
 			_return.status.error_code = ErrorCode::NL_FAILURE;
 			_return.status.error_message_format = error_message(e->what());
 			goto on_error;
@@ -284,40 +284,59 @@ on_error:
 	}
 };
 
-void Test(LeaderboardServiceHandler * service_handler)
-{
+void print_score(const char * summary, const Score & score) {
+	printf("%s : value:%lld, date_epoch:%lld, rank:%d, user_alias:%s, user_id:%s, vote_down_count:%d, vote_up_count%d\n",
+			summary, score.value, score.date_epoch, score.rank, score.user_alias.c_str(), score.user_id.c_str(), score.vote_down_count, score.vote_up_count);
+}
 
+void Test(LeaderboardServiceHandler * service_handler, int index)
+{
 	ConnectReply connectReply;
-	std::string tenant_id = "xcef";
-	std::string user_id = "id";
-	std::string user_password = "pw";
+
+	std::string tenant_id = "test";
+
+	std::string user_id = concat_int("uid", index);
+	std::string user_password = concat_int("pwd", index);
 	std::string user_data;
+
 	service_handler->connect(connectReply, 1, tenant_id, user_id, user_password, user_data);
 
 	PostScoreReply postScoreReply;
 	Score score;
-	score.value = 100;
-	score.date_epoch = 1000;
+	score.value =  ( (unsigned int)(index * 561) ) % 1000;
+	score.date_epoch = time(NULL);
 	score.rank = 0;
-	score.user_alias.assign("kangmo");
-	score.user_id.assign( "hehe" );
+	score.user_alias = concat_int("alias", index);
+	score.user_id = concat_int("uid", index);
 	score.vote_down_count = 0;
 	score.vote_up_count = 0;
 
 	Session session;
 	session.session_handle = connectReply.session_handle;
 
-	std::string category = "Test";
+	std::string category = "TestCategory";
+
+	print_score("posting score", score );
 
 	service_handler->post_score(postScoreReply, session, category, score);
+
+	print_score("user score", postScoreReply.scores.user_score );
+
+	for (std::vector<Score>::iterator it = postScoreReply.scores.top_scores.begin();
+		 it != postScoreReply.scores.top_scores.end();
+		 it++) {
+		print_score("top score", *it);
+	}
+
 }
 
 int listen(int port) {
 	try {
 		LeaderboardServiceHandler * service_handler = new LeaderboardServiceHandler();
 
-		Test(service_handler);
-
+		for (int i=0; i<1000; i++) {
+			Test(service_handler, i);
+		}
 
 		shared_ptr<LeaderboardServiceHandler> handler(service_handler);
 	    shared_ptr<TProcessor> processor(new nanolat::leaderboard::LeaderboardServiceProcessor(handler));

@@ -88,9 +88,6 @@
     
     NSMutableArray * client_scores = [[[NSMutableArray alloc] init] autorelease];
     
-    if ( scores.count < count ) {
-        return nil;
-    }
     NSError * error = nil;
     
     for ( Score * score in scores ) {
@@ -98,7 +95,7 @@
         assert(client_score);
         if (error) {
             *o_error = error;
-            return nil;
+            return client_scores;
         }
         
         [client_scores addObject:client_score];

@@ -94,10 +94,15 @@ extern NLLocalPlayer * gLocalPlayer;
             assert(localPlayerScore_);
             if (!error) {
                 if (range_.location == postScoreReply.scores.from_rank &&
-                    range_.length < postScoreReply.scores.count ) {
+                    range_.length <= postScoreReply.scores.count ) {
                     
                     scores_ = [NLScore getClientScoresFrom:category_ scores:postScoreReply.scores.top_scores count:range_.length error:&error];
+                    if (error) {
+                         goto finally;
+                    }
                     assert(scores_);
+                } else {
+                    // TODO : Send a request to server to get the score in a range specified by _range variable.
                 }
             }
         }
@@ -115,6 +120,7 @@ extern NLLocalPlayer * gLocalPlayer;
             
         // Retain error object to use it in user thread.
     finally:
+        [scores_ retain];
         [error retain];
         
         NSLog(@"Finished work in background");
@@ -123,6 +129,7 @@ extern NLLocalPlayer * gLocalPlayer;
             completionHandler(scores_, error);
             
             // release the error object retained in background thread.
+            [scores_ release];
             [error release];
             
             NSLog(@"Back on main thread");

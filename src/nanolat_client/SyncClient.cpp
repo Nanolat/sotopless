@@ -41,7 +41,9 @@ int nl_connect(const std::string & address, const int port, connection_t ** o_co
 
 	thrift::ConnectReply reply;
 
-	conn->get_client().connect(reply, thrift::g_DatabaseService_constants.PROTOCOL_VERSION);
+	// The Tenant ID is used for cloud service. Because these APIs are not for cloud service, pass the defaul tenant ID, "D".
+	// The tenant ID will become a prefix for all table names.
+	conn->get_client().connect(reply, thrift::g_DatabaseService_constants.PROTOCOL_VERSION, "D"/*The default tenant */ );
 
 	copy_reply_status(conn->reply_status, reply.status);
 

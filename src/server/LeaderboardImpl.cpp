@@ -66,13 +66,14 @@ std::string unpack_user_name_key(const std::string & packed_user_id) {
 
 // TODO : Multi-thread : Need to have this object for each session, in case we support multi threading.
 ThriftSerializer serializer;
+ThriftDeserializer deserializer;
 
 inline void pack_score_value(const Score & score, size_t * packed_score_length, void ** packed_score_data ) {
 	serializer.serialize<Score>(score, packed_score_length, packed_score_data );
 }
 
 inline void unpack_score_value(size_t packed_score_length, void * packed_score_data, Score * score) {
-	serializer.deserialize<Score>(packed_score_length, packed_score_data, score);
+	deserializer.deserialize<Score>(packed_score_length, packed_score_data, score);
 }
 
 server_error_t authenticate_user (db::session_context_t * sess_ctx, const std::string & player_id, const std::string & player_password, bool * user_exists) {
@@ -111,9 +112,16 @@ server_error_t post_user_score(db::session_context_t * sess_ctx, nldb_table_t ta
 	NL_RETURN( (server_error_t) NLDB_OK );
 }
 
+int get_descending_key_order(nldb_order_t key_count, nldb_order_t ascending_key_order) {
+	return key_count - ascending_key_order + 1;
+}
+
 server_error_t get_user_score(db::session_context_t * sess_ctx, nldb_table_t table_by_score, nldb_table_t table_by_user, const std::string & player_id, Score * score) {
 	nldb_tx_t tx = sess_ctx->get_transaction();
 	NL_ASSERT(tx);
+
+    nldb_order_t ascending_score_order;
+	nldb_table_stat_t stat;
 
 	std::string packed_user_id_key_string  = pack_user_id_key(player_id);
 	nldb_key_t packed_user_id_key = { (void*)packed_user_id_key_string.data(), (key_length_t)packed_user_id_key_string.length() };
@@ -121,14 +129,19 @@ server_error_t get_user_score(db::session_context_t * sess_ctx, nldb_table_t tab
 	nldb_value_t packed_score_value;
 
 	// Get the packed score key to search table_by_score by a specific score record.
-	nldb_rc_t rc = nldb_table_get(tx, table_by_user, packed_user_id_key, & packed_score_key_for_value);
-	if (rc) NL_RETURN( (server_error_t) rc );
+	nldb_rc_t nrc = nldb_table_get(tx, table_by_user, packed_user_id_key, & packed_score_key_for_value);
+	if (nrc) NL_RETURN( (server_error_t) nrc );
 
 	nldb_key_t packed_score_key = { (void*)packed_score_key_for_value.data, (key_length_t)packed_score_key_for_value.length };
-	rc = nldb_table_get(tx, table_by_score, packed_score_key, & packed_score_value);
-	if (rc) NL_RETURN( (server_error_t) rc );
+	nrc = nldb_table_get(tx, table_by_score, packed_score_key, & packed_score_value, &ascending_score_order);
+	if (nrc) NL_RETURN( (server_error_t) nrc );
 
 	unpack_score_value(packed_score_value.length, packed_score_value.data, score);
+
+	nrc = nldb_table_stat(tx, table_by_score, &stat);
+	if (nrc) NL_RETURN( (server_error_t) nrc );
+
+	score->rank = get_descending_key_order(stat.key_count, ascending_score_order);
 
 	NL_RETURN( (server_error_t) NLDB_OK );
 }
@@ -138,7 +151,7 @@ server_error_t get_scores_by_ranking(db::session_context_t * sess_ctx, nldb_tabl
 
 	nldb_key_t packed_score_key;
     nldb_value_t packed_score_value;
-    nldb_order_t key_order;
+    nldb_order_t ascending_score_order;
 
 	nldb_table_stat_t stat;
 
@@ -155,45 +168,42 @@ server_error_t get_scores_by_ranking(db::session_context_t * sess_ctx, nldb_tabl
 	nrc = nldb_table_stat(tx, table_by_score, &stat);
 	if (nrc) goto on_error;
 
-	if (stat.key_count <= from_rank) {
-		nrc = INVALID_ARGUMENT_ERROR;
-		goto on_error;
-	}
+	if (stat.key_count >= from_rank) {
+		initial_key_order = stat.key_count - from_rank + 1;
 
-	if (stat.key_count < (from_rank + count -1) ) {
-		nrc = INVALID_ARGUMENT_ERROR;
-		goto on_error;
-	}
+		nrc = nldb_cursor_open(tx, table_by_score, &cursor);
+		if (nrc) goto on_error;
 
-	initial_key_order = stat.key_count - from_rank + 1;
+		nrc = nldb_cursor_seek(cursor, NLDB_CURSOR_BACKWARD, initial_key_order);
+		if (nrc) goto on_error;
 
-	nrc = nldb_cursor_open(tx, table_by_score, &cursor);
-	if (nrc) goto on_error;
+		while(1) {
+			nrc = nldb_cursor_fetch(cursor, & packed_score_key, & packed_score_value, &ascending_score_order);
+			if (nrc == NLDB_ERROR_END_OF_ITERATION)
+				break;
+			if (nrc) {
+				goto on_error;
+			}
 
-	nrc = nldb_cursor_seek(cursor, NLDB_CURSOR_BACKWARD, initial_key_order);
-	if (nrc) goto on_error;
+			Score score;
+			unpack_score_value(packed_score_value.length, packed_score_value.data, &score);
 
-	while(1) {
-		nrc = nldb_cursor_fetch(cursor, & packed_score_key, & packed_score_value, &key_order);
-		if (nrc == NLDB_ERROR_END_OF_ITERATION)
-			break;
-		if (nrc) {
-			goto on_error;
+			score.rank = get_descending_key_order(stat.key_count, ascending_score_order);
+
+			scores->push_back(score);
+
+	        nrc = nldb_key_free( table_by_score, packed_score_key );
+	        NL_RELEASE_ASSERT(nrc==NLDB_OK);
+
+	        nrc = nldb_value_free( table_by_score, packed_score_value );
+	        NL_RELEASE_ASSERT(nrc==NLDB_OK);
+
+	        if (--score_count_left <= 0) {
+	        	break;
+	        }
 		}
-
-		Score score;
-		unpack_score_value(packed_score_value.length, packed_score_value.data, &score);
-		scores->push_back(score);
-
-        nrc = nldb_key_free( table_by_score, packed_score_key );
-        NL_RELEASE_ASSERT(nrc==NLDB_OK);
-
-        nrc = nldb_value_free( table_by_score, packed_score_value );
-        NL_RELEASE_ASSERT(nrc==NLDB_OK);
-
-        if (--score_count_left <= 0) {
-        	break;
-        }
+	} else {
+		// the rank is out of range. do not return any score to the client.
 	}
 
 on_error:
