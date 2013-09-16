@@ -388,18 +388,19 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 		 it++) {
 		print_score("top score (post score)", *it);
 	}
-/*
+
 	GetScoresReply getScoreReply;
+
 	service_handler->get_scores(getScoreReply, session, category, user_id, 50, 15);
 
 	print_score("user score (get scores)", getScoreReply.scores.user_score );
 
 	for (std::vector<Score>::iterator it = getScoreReply.scores.top_scores.begin();
-		 it != postScoreReply.scores.top_scores.end();
+		 it != getScoreReply.scores.top_scores.end();
 		 it++) {
 		print_score("scores (get scores)", *it);
 	}
-*/
+
 }
 
 int listen(int port) {
