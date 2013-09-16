@@ -3,6 +3,7 @@
 
 #define MINIMUM_PROTOCOL_VERSION (1)
 
+#include "Logger.h"
 #include "LeaderboardService.h"
 
 #include <thrift/protocol/TBinaryProtocol.h>
@@ -28,6 +29,8 @@ using namespace ::apache::thrift::server;
 #include <private/stacktrace.h>
 #include <private/util.h>
 #include <nldb/nldb.h>
+
+#include "Logger.h"
 
 #include "LeaderboardImpl.h"
 #include "DatabaseManager.h"
@@ -95,8 +98,6 @@ server_error_t get_table(session_context_t * sess_ctx, nldb_tx_t tx, const std::
 	}                                                                \
 }
 
-
-
 class LeaderboardServiceHandler : virtual public LeaderboardServiceIf {
 public:
 	LeaderboardServiceHandler() {
@@ -107,8 +108,6 @@ public:
 		}
 	}
 
-
-
 	std::string ToString(int value) {
 		std::stringstream stream;
 		stream << value;
@@ -116,7 +115,7 @@ public:
 	}
 
 	void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data) {
-		TRACE("connect\n");
+		NL_LOG_TRACE("connect\n");
 
 		session_context_t * sess_ctx = NULL;
 		open_database_t * db = NULL;
@@ -176,25 +175,23 @@ public:
 		_return.session_handle = sess_ctx->get_session_handle();
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
-		FLUSH_TRACE();
 		return;
 on_error:
 		if (sess_ctx)
 		{
 			server_instance.session_map.delete_session(sess_ctx);
 		}
-		FLUSH_TRACE();
 	}
 
 	void disconnect(DefaultReply& _return, const Session& session) {
-		TRACE("disconnect\n");
+		NL_LOG_TRACE("disconnect\n");
+
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		// Remove from the session context map, delete it.
 		server_instance.session_map.delete_session( sess_ctx );
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
-		FLUSH_TRACE();
 	}
 
 	inline std::string by_score_table_name(const std::string & category) {
@@ -206,7 +203,8 @@ on_error:
 	}
 
 	void post_score(PostScoreReply& _return, const Session& session, const std::string& category, const Score& posting_score) {
-		TRACE("post_score\n");
+		NL_LOG_TRACE("post_score\n");
+
 		server_error_t rc;
 		nldb_table_t by_score_table = NULL;
 		nldb_table_t by_user_table = NULL;
@@ -272,17 +270,14 @@ on_error:
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
-		FLUSH_TRACE();
-
 		return;
 on_error:
 		sess_ctx->auto_abort_transaction();
-
-		FLUSH_TRACE();
 	}
 
 	void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count) {
-		TRACE("get_scores\n");
+		NL_LOG_TRACE("get_scores\n");
+
 		server_error_t rc;
 		nldb_table_t by_score_table = NULL;
 		nldb_table_t by_user_table = NULL;
@@ -339,16 +334,14 @@ on_error:
 		sess_ctx->auto_commit_transaction();
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
-		FLUSH_TRACE();
 
 		return;
 on_error:
 		sess_ctx->auto_abort_transaction();
-		FLUSH_TRACE();
 	}
 
 	void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) {
-		TRACE("vote_score\n");
+		NL_LOG_TRACE("vote_score\n");
 		_return.status.error_code = ErrorCode::NL_NOT_SUPPORTED;
 	}
 };
@@ -444,7 +437,10 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 
 int listen(int port) {
 	try {
+		Logger logger;
+
 		LeaderboardServiceHandler * service_handler = new LeaderboardServiceHandler();
+
 
 		for (int i=0; i<SANITY_TEST_USER_COUNT; i++) {
 			Test(service_handler, i);

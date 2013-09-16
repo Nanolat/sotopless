@@ -12,15 +12,6 @@
 
 // TODO : make sure nldb_value_free is called for all cases getting values from nldb API.
 
-#if !defined(NDEBUG)
-#include <stdio.h>
-#  define TRACE printf
-#  define FLUSH_TRACE() fflush(stdout)
-#else
-#  define TRACE(...)
-#  define FLUSH_TRACE()
-#endif
-
 
 #define GET_SESSION_CONTEXT(ctx, session) \
 	session_context_t * ctx = server_instance.session_map.get_session(session.session_handle); \

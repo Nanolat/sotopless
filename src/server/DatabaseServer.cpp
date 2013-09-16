@@ -13,6 +13,8 @@ using namespace ::apache::thrift::server;
 
 using boost::shared_ptr;
 
+#include "Logger.h"
+
 #include <stdlib.h> // for exit
 #include <nanolat/client/common.h>
 #include <nldb/nldb.h>
@@ -46,7 +48,7 @@ private :
 	}
 
 	void connect(ConnectReply& _return, const int32_t protocol_version, const std::string & tenant_id ) {
-		TRACE("connect\n");
+		NL_LOG_TRACE("connect\n");
 
 		// TODO : Check the protocol version
 
@@ -77,7 +79,7 @@ on_error:
 	}
 
 	void disconnect(DefaultReply& _return, const Session& session) {
-		TRACE("disconnect\n");
+		NL_LOG_TRACE("disconnect\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		// Remove from the session context map, delete it.
@@ -87,7 +89,7 @@ on_error:
 	}
 
 	void database_create(DefaultReply& _return, const Session& session, const std::string& db_name) {
-		TRACE("database_create\n");
+		NL_LOG_TRACE("database_create\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		server_error_t rc = server_instance.database_mgr.create_database(db_name);
@@ -96,7 +98,7 @@ on_error:
 	}
 
 	void database_drop(DefaultReply& _return, const Session& session, const std::string& db_name) {
-		TRACE("database_drop\n");
+		NL_LOG_TRACE("database_drop\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		server_error_t rc = server_instance.database_mgr.drop_database(db_name);
@@ -105,7 +107,7 @@ on_error:
 	}
 
 	void database_use(DefaultReply& _return, const Session& session, const std::string& db_name) {
-		TRACE("database_use\n");
+		NL_LOG_TRACE("database_use\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		open_database_t * db = server_instance.database_mgr.get_database(db_name);
@@ -122,7 +124,7 @@ on_error:
 	}
 
 	void table_create(DefaultReply& _return, const Session& session, const std::string& table_name) {
-		TRACE("table_create\n");
+		NL_LOG_TRACE("table_create\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		sess_ctx->auto_begin_transaction();
@@ -136,7 +138,7 @@ on_error:
 	}
 
 	void table_drop(DefaultReply& _return, const Session& session, const std::string& table_name) {
-		TRACE("table_drop\n");
+		NL_LOG_TRACE("table_drop\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		sess_ctx->auto_begin_transaction();
@@ -150,7 +152,7 @@ on_error:
 	}
 
 	void table_stat(TableStatReply& _return, const Session& session, const std::string& table_name) {
-		TRACE("table_stat\n");
+		NL_LOG_TRACE("table_stat\n");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -191,7 +193,7 @@ on_error:
 	}
 
 	void table_put(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key, const std::string& value) {
-		TRACE("table_put\n");
+		NL_LOG_TRACE("table_put\n");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -215,7 +217,7 @@ on_error:
 	}
 
 	void table_get_by_key(TableGetReply& _return, const Session& session, const std::string& table_name, const std::string& key) {
-		TRACE("table_get_by_key\n");
+		NL_LOG_TRACE("table_get_by_key\n");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -251,7 +253,7 @@ on_error:
 	}
 
 	void table_get_by_order(TableGetReply& _return, const Session& session, const std::string& table_name, const KeyOrder key_order) {
-		TRACE("table_get_by_order\n");
+		NL_LOG_TRACE("table_get_by_order\n");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -286,7 +288,7 @@ on_error:
 	}
 
 	void table_del(DefaultReply& _return, const Session& session, const std::string& table_name, const std::string& key) {
-		TRACE("table_del\n");
+		NL_LOG_TRACE("table_del\n");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -309,21 +311,21 @@ on_error:
 	}
 
 	void transaction_begin(DefaultReply& _return, const Session& session) {
-		TRACE("transaction_begin\n");
+		NL_LOG_TRACE("transaction_begin\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		_return.status.error_code = (ErrorCode::type) sess_ctx->begin_transaction();
 	}
 
 	void transaction_abort(DefaultReply& _return, const Session& session) {
-		TRACE("transaction_abort\n");
+		NL_LOG_TRACE("transaction_abort\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		_return.status.error_code = (ErrorCode::type) sess_ctx->abort_transaction();
 	}
 
 	void transaction_commit(DefaultReply& _return, const Session& session) {
-		TRACE("transaction_commit\n");
+		NL_LOG_TRACE("transaction_commit\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
 		_return.status.error_code = (ErrorCode::type) sess_ctx->commit_transaction();
@@ -352,7 +354,7 @@ on_error:
 	}cursor_open_arg_t;
 
 	void cursor_open(CursorOpenReply& _return, const Session& session, const std::string& table_name, const CursorDirection::type dir, const std::string& key, const KeyOrder key_order, const cursor_open_arg_t which_arg) {
-		TRACE("cursor_open_by_order\n");
+		NL_LOG_TRACE("cursor_open_by_order\n");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -423,7 +425,7 @@ on_error:
 	}
 
     void cursor_fetch(CursorFetchReply& _return, const Session& session, const CursorHandle cursor_handle) {
-		TRACE("cursor_fetch\n");
+		NL_LOG_TRACE("cursor_fetch\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_CURSOR_CONTEXT(sess_ctx, cur_ctx, cursor_handle);
 
@@ -456,7 +458,7 @@ on_error:
 	}
 
 	void cursor_close(DefaultReply& _return, const Session& session, const CursorHandle cursor_handle) {
-		TRACE("cursor_close\n");
+		NL_LOG_TRACE("cursor_close\n");
 		GET_SESSION_CONTEXT(sess_ctx, session);
 		GET_CURSOR_CONTEXT(sess_ctx, cur_ctx, cursor_handle);
 
@@ -478,6 +480,8 @@ on_error:
 
 	int listen(int port) {
 		try {
+			Logger logger;
+
 			shared_ptr<DatabaseServiceHandler> handler(new DatabaseServiceHandler());
 			shared_ptr<TProcessor> processor(new nanolat::thrift::DatabaseServiceProcessor(handler));
 			shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());

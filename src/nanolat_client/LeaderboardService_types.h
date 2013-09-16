@@ -288,8 +288,8 @@ typedef struct _UserScoreAndTopScores__isset {
 class UserScoreAndTopScores {
  public:
 
-  static const char* ascii_fingerprint; // = "BDF6090738155A1FB5C43743D545B40E";
-  static const uint8_t binary_fingerprint[16]; // = {0xBD,0xF6,0x09,0x07,0x38,0x15,0x5A,0x1F,0xB5,0xC4,0x37,0x43,0xD5,0x45,0xB4,0x0E};
+  static const char* ascii_fingerprint; // = "F66962824FC83B55980EA8327A7C5BC2";
+  static const uint8_t binary_fingerprint[16]; // = {0xF6,0x69,0x62,0x82,0x4F,0xC8,0x3B,0x55,0x98,0x0E,0xA8,0x32,0x7A,0x7C,0x5B,0xC2};
 
   UserScoreAndTopScores() : from_rank(0), count(0) {
   }
@@ -298,7 +298,7 @@ class UserScoreAndTopScores {
 
   Score user_score;
   int32_t from_rank;
-  int64_t count;
+  int32_t count;
   std::vector<Score>  top_scores;
 
   _UserScoreAndTopScores__isset __isset;
@@ -311,7 +311,7 @@ class UserScoreAndTopScores {
     from_rank = val;
   }
 
-  void __set_count(const int64_t val) {
+  void __set_count(const int32_t val) {
     count = val;
   }
 
@@ -353,8 +353,8 @@ typedef struct _PostScoreReply__isset {
 class PostScoreReply {
  public:
 
-  static const char* ascii_fingerprint; // = "ED20B4254D63522D4314AC4E224FABE5";
-  static const uint8_t binary_fingerprint[16]; // = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
+  static const char* ascii_fingerprint; // = "2953D34D63BA6FEEE9139FFE0DF6B6A0";
+  static const uint8_t binary_fingerprint[16]; // = {0x29,0x53,0xD3,0x4D,0x63,0xBA,0x6F,0xEE,0xE9,0x13,0x9F,0xFE,0x0D,0xF6,0xB6,0xA0};
 
   PostScoreReply() {
   }
@@ -404,8 +404,8 @@ typedef struct _GetScoresReply__isset {
 class GetScoresReply {
  public:
 
-  static const char* ascii_fingerprint; // = "ED20B4254D63522D4314AC4E224FABE5";
-  static const uint8_t binary_fingerprint[16]; // = {0xED,0x20,0xB4,0x25,0x4D,0x63,0x52,0x2D,0x43,0x14,0xAC,0x4E,0x22,0x4F,0xAB,0xE5};
+  static const char* ascii_fingerprint; // = "2953D34D63BA6FEEE9139FFE0DF6B6A0";
+  static const uint8_t binary_fingerprint[16]; // = {0x29,0x53,0xD3,0x4D,0x63,0xBA,0x6F,0xEE,0xE9,0x13,0x9F,0xFE,0x0D,0xF6,0xB6,0xA0};
 
   GetScoresReply() {
   }
