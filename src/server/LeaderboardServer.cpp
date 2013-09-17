@@ -31,6 +31,7 @@ using namespace ::apache::thrift::server;
 #include <nldb/nldb.h>
 
 #include "Logger.h"
+#include "StackDumper.h"
 
 #include "LeaderboardImpl.h"
 #include "DatabaseManager.h"
@@ -117,10 +118,17 @@ public:
 	void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data) {
 		NL_LOG_TRACE("connect\n");
 
+
+
 		session_context_t * sess_ctx = NULL;
 		open_database_t * db = NULL;
 		bool user_exists = false;
 
+		// Use these statements to kill the process to check if the stack tracing is working well on process crash.
+		/*
+		char * p = NULL;
+		*p = 'A';
+        */
 		try {
 			// Check the protocol version
 			if ( protocol_version < MINIMUM_PROTOCOL_VERSION ) {
@@ -437,7 +445,8 @@ void Test(LeaderboardServiceHandler * service_handler, int index)
 
 int listen(int port) {
 	try {
-		Logger logger;
+		Logger logger;      // Initialize logger to use logging function such as NL_LOG_FATAL, NL_LOG_TRACE, ... .
+		StackDumper dumper; // Install stack dumper which dumps call stack in the log file as well as standard output.
 
 		LeaderboardServiceHandler * service_handler = new LeaderboardServiceHandler();
 

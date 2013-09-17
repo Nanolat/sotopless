@@ -15,7 +15,8 @@ CPP_SRCS += \
 ../LeaderboardService_constants.cpp \
 ../LeaderboardService_types.cpp \
 ../Logger.cpp \
-../NanolatDatabaseError.cpp 
+../NanolatDatabaseError.cpp \
+../StackDumper.cpp 
 
 OBJS += \
 ./DatabaseServer.o \
@@ -29,7 +30,8 @@ OBJS += \
 ./LeaderboardService_constants.o \
 ./LeaderboardService_types.o \
 ./Logger.o \
-./NanolatDatabaseError.o 
+./NanolatDatabaseError.o \
+./StackDumper.o 
 
 CPP_DEPS += \
 ./DatabaseServer.d \
@@ -43,7 +45,8 @@ CPP_DEPS += \
 ./LeaderboardService_constants.d \
 ./LeaderboardService_types.d \
 ./Logger.d \
-./NanolatDatabaseError.d 
+./NanolatDatabaseError.d \
+./StackDumper.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
