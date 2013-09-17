@@ -5,6 +5,7 @@
 
 #include "Logger.h"
 #include "LeaderboardService.h"
+#include "LeaderboardProtocolPrinter.h"
 
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/server/TNonblockingServer.h>
@@ -25,6 +26,7 @@ using namespace ::apache::thrift::server;
 #include <stdlib.h> // for exit
 #include <sstream>
 #include <string>
+#include <iostream>
 #include <nanolat/client/common.h>
 #include <private/stacktrace.h>
 #include <private/util.h>
@@ -36,6 +38,9 @@ using namespace ::apache::thrift::server;
 
 #include "LeaderboardImpl.h"
 #include "DatabaseManager.h"
+
+#include "LeaderboardProtocolPrinter.h"
+
 
 using boost::shared_ptr;
 
@@ -117,9 +122,12 @@ public:
 	}
 
 	void connect(ConnectReply& _return, const int32_t protocol_version, const std::string& tenant_id, const std::string& user_id, const std::string& user_password, const std::string& user_data) {
-		NL_LOG_TRACE("connect\n");
-
-
+		NL_LOG_TRACE("request to connect[protocol_version:"<< protocol_version
+				           << ", tenant_id:"<< tenant_id
+				           << ", user_id:" << user_id
+				           << ", user_password:" << user_password
+				           << ", user_data: " << user_data
+				           << "]");
 
 		session_context_t * sess_ctx = NULL;
 		open_database_t * db = NULL;
@@ -131,6 +139,8 @@ public:
 		*p = 'A';
         */
 		try {
+
+
 			// Check the protocol version
 			if ( protocol_version < MINIMUM_PROTOCOL_VERSION ) {
 				_return.status.error_code = ErrorCode::NL_INCOMPATIBLE_CLINET_VERSION;
@@ -184,16 +194,23 @@ public:
 		_return.session_handle = sess_ctx->get_session_handle();
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
+		NL_LOG_TRACE("reply to connect[server_name:" << _return.server_name
+				           << ", session_handle:"<< _return.session_handle
+				           << ", user_data:" << _return.user_data
+				           << "]");
+
 		return;
 on_error:
 		if (sess_ctx)
 		{
 			server_instance.session_map.delete_session(sess_ctx);
 		}
+
+		NL_LOG_TRACE("error in connect["<<ReplyStatusToString(_return.status)<<"]");
 	}
 
 	void disconnect(DefaultReply& _return, const Session& session) {
-		NL_LOG_TRACE("disconnect\n");
+		NL_LOG_TRACE("disconnect[session="<< session.session_handle << "]");
 
 		GET_SESSION_CONTEXT(sess_ctx, session);
 
@@ -212,7 +229,10 @@ on_error:
 	}
 
 	void post_score(PostScoreReply& _return, const Session& session, const std::string& category, const Score& posting_score) {
-		NL_LOG_TRACE("post_score\n");
+		NL_LOG_TRACE("request to post_score[session:" << session.session_handle
+				                         << ", category:" << category
+				                         << ", score:" << ScoreToString(posting_score)
+				                         <<"]");
 
 		server_error_t rc;
 		nldb_table_t by_score_table = NULL;
@@ -279,13 +299,22 @@ on_error:
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
+		NL_LOG_TRACE("reply to post_score["<< UserScoreAndTopScoresToString( _return.scores ) << "]");
+
 		return;
 on_error:
 		sess_ctx->auto_abort_transaction();
+
+		NL_LOG_TRACE("error in post_score["<<ReplyStatusToString(_return.status)<<"]");
 	}
 
 	void get_scores(GetScoresReply& _return, const Session& session, const std::string& category, const std::string& user_id, const int32_t from_rank, const int64_t count) {
-		NL_LOG_TRACE("get_scores\n");
+		NL_LOG_TRACE("request to get_scores[ session:" << session.session_handle
+				                         << ", category:" << category
+				                         << ", user_id:" << user_id
+				                         << ", from_rank:" << from_rank
+				                         << ", count:" << count
+				                         << "\n");
 
 		server_error_t rc;
 		nldb_table_t by_score_table = NULL;
@@ -344,9 +373,13 @@ on_error:
 
 		_return.status.error_code = ErrorCode::NL_SUCCESS;
 
+		NL_LOG_TRACE("reply to get_scores[UserScoreAndTopScores:"<< UserScoreAndTopScoresToString( _return.scores ) << "]");
+
 		return;
 on_error:
 		sess_ctx->auto_abort_transaction();
+
+		NL_LOG_TRACE("error in get_scores["<<ReplyStatusToString(_return.status)<<"]");
 	}
 
 	void vote_score(DefaultReply& _return, const Session& session, const std::string& voting_user_id, const int64_t score_value, const int64_t score_date_epoch, const int32_t vote_up_down, const std::string& comment) {
@@ -355,22 +388,6 @@ on_error:
 	}
 };
 
-void print_score(const std::string & summary, const Score & score) {
-	printf("%s : value:%lld, date_epoch:%lld, rank:%d, user_alias:%s, user_id:%s, vote_down_count:%d, vote_up_count:%d\n",
-			summary.c_str(), score.value, score.date_epoch, score.rank, score.user_alias.c_str(), score.user_id.c_str(), score.vote_down_count, score.vote_up_count);
-}
-
-void PrintUserScoreAndTopScores(const UserScoreAndTopScores &userScoreAndTopScores, const std::string & description) {
-	print_score("user score ("+description+")", userScoreAndTopScores.user_score );
-
-	printf("top score ranking range: from_rank:%d, count:%d\n", userScoreAndTopScores.from_rank, userScoreAndTopScores.count);
-
-	for (std::vector<Score>::const_iterator it = userScoreAndTopScores.top_scores.begin();
-		 it != userScoreAndTopScores.top_scores.end();
-		 it++) {
-		print_score("top score ("+description+")", *it);
-	}
-}
 
 void TestConnect(LeaderboardServiceHandler * service_handler, const std::string & tenant_id, int index, Session * session)
 {
@@ -407,11 +424,11 @@ void TestPostScore(LeaderboardServiceHandler * service_handler, const Session & 
 
 
 
-	print_score("posting score", score );
+	std::cout << "posting score:" << ScoreToString(score );
 
 	service_handler->post_score(postScoreReply, session, category, score);
 
-	PrintUserScoreAndTopScores(postScoreReply.scores, "post score");
+	std::cout << "reply to post_score:" << UserScoreAndTopScoresToString(postScoreReply.scores);
 }
 
 
@@ -422,7 +439,7 @@ void TestGetScores(LeaderboardServiceHandler * service_handler, const Session & 
 
 	service_handler->get_scores(getScoreReply, session, category, user_id, 50, 15);
 
-	PrintUserScoreAndTopScores(getScoreReply.scores, "get scores");
+	std::cout << "reply to get_score:" << UserScoreAndTopScoresToString (getScoreReply.scores);
 }
 
 void Test(LeaderboardServiceHandler * service_handler, int index)

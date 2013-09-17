@@ -20,7 +20,7 @@ then
     then
         echo "clean up, build all dependencies."
         # List of project on which SoTopless depends.
-        DEP_LIST="clean boost event thrift nldb gtest xunit v8"
+        DEP_LIST="clean boost poco event thrift nldb gtest xunit v8"
     fi
 fi 
 

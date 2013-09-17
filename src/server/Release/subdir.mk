@@ -10,6 +10,7 @@ CPP_SRCS += \
 ../DatabaseService_constants.cpp \
 ../DatabaseService_types.cpp \
 ../LeaderboardImpl.cpp \
+../LeaderboardProtocolPrinter.cpp \
 ../LeaderboardServer.cpp \
 ../LeaderboardService.cpp \
 ../LeaderboardService_constants.cpp \
@@ -25,6 +26,7 @@ OBJS += \
 ./DatabaseService_constants.o \
 ./DatabaseService_types.o \
 ./LeaderboardImpl.o \
+./LeaderboardProtocolPrinter.o \
 ./LeaderboardServer.o \
 ./LeaderboardService.o \
 ./LeaderboardService_constants.o \
@@ -40,6 +42,7 @@ CPP_DEPS += \
 ./DatabaseService_constants.d \
 ./DatabaseService_types.d \
 ./LeaderboardImpl.d \
+./LeaderboardProtocolPrinter.d \
 ./LeaderboardServer.d \
 ./LeaderboardService.d \
 ./LeaderboardService_constants.d \
