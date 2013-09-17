@@ -94,10 +94,11 @@ void abortHandler( int signum, siginfo_t* si, void* unused)
 	printStackTrace();
 
 	// NL_LOG_FATAL itself may fail. use NL_LOG_FATAL at the end of the handler.
-	if ( name )
-		NL_LOG_FATAL( "Caught signal " << signum << "("<<name<<")" );
-	else
+	if ( name ) {
+		NL_LOG_FATAL( "Caught signal " << signum << "(" << name << ")" );
+	} else {
 		NL_LOG_FATAL( "Caught signal " << signum );
+	}
 
 	// Call the original signal handler.
 	struct sigaction sa = original_signal_handlers[signum];

@@ -4,7 +4,6 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../BoostLogger.cpp \
 ../DatabaseServer.cpp \
 ../DatabaseServerError.cpp \
 ../DatabaseService.cpp \
@@ -16,11 +15,11 @@ CPP_SRCS += \
 ../LeaderboardService.cpp \
 ../LeaderboardService_constants.cpp \
 ../LeaderboardService_types.cpp \
+../Logger.cpp \
 ../NanolatDatabaseError.cpp \
 ../StackDumper.cpp 
 
 OBJS += \
-./BoostLogger.o \
 ./DatabaseServer.o \
 ./DatabaseServerError.o \
 ./DatabaseService.o \
@@ -32,11 +31,11 @@ OBJS += \
 ./LeaderboardService.o \
 ./LeaderboardService_constants.o \
 ./LeaderboardService_types.o \
+./Logger.o \
 ./NanolatDatabaseError.o \
 ./StackDumper.o 
 
 CPP_DEPS += \
-./BoostLogger.d \
 ./DatabaseServer.d \
 ./DatabaseServerError.d \
 ./DatabaseService.d \
@@ -48,6 +47,7 @@ CPP_DEPS += \
 ./LeaderboardService.d \
 ./LeaderboardService_constants.d \
 ./LeaderboardService_types.d \
+./Logger.d \
 ./NanolatDatabaseError.d \
 ./StackDumper.d 
 
@@ -56,7 +56,7 @@ CPP_DEPS += \
 %.o: ../%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross G++ Compiler'
-	g++ -DBOOST_ALL_DYN_LINK -I../../../include -I../../../deps/include -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	g++ -I../../../include -I../../../deps/include -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
