@@ -12,6 +12,7 @@
 #  define NDEBUG (1)
 #endif
 
+// TODO : NL_RELEASE_ASSERT is doing nothing in release mode in OSX. check why.
 #define NL_RELEASE_ASSERT assert
 
 #if defined(NDEBUG)

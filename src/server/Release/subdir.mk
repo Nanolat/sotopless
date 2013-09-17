@@ -4,32 +4,56 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../DatabaseServer.cpp \
+../DatabaseServerError.cpp \
 ../DatabaseService.cpp \
 ../DatabaseService_constants.cpp \
 ../DatabaseService_types.cpp \
-../Server.cpp \
-../ServerImpl.cpp 
+../LeaderboardImpl.cpp \
+../LeaderboardServer.cpp \
+../LeaderboardService.cpp \
+../LeaderboardService_constants.cpp \
+../LeaderboardService_types.cpp \
+../Logger.cpp \
+../NanolatDatabaseError.cpp \
+../StackDumper.cpp 
 
 OBJS += \
+./DatabaseServer.o \
+./DatabaseServerError.o \
 ./DatabaseService.o \
 ./DatabaseService_constants.o \
 ./DatabaseService_types.o \
-./Server.o \
-./ServerImpl.o 
+./LeaderboardImpl.o \
+./LeaderboardServer.o \
+./LeaderboardService.o \
+./LeaderboardService_constants.o \
+./LeaderboardService_types.o \
+./Logger.o \
+./NanolatDatabaseError.o \
+./StackDumper.o 
 
 CPP_DEPS += \
+./DatabaseServer.d \
+./DatabaseServerError.d \
 ./DatabaseService.d \
 ./DatabaseService_constants.d \
 ./DatabaseService_types.d \
-./Server.d \
-./ServerImpl.d 
+./LeaderboardImpl.d \
+./LeaderboardServer.d \
+./LeaderboardService.d \
+./LeaderboardService_constants.d \
+./LeaderboardService_types.d \
+./Logger.d \
+./NanolatDatabaseError.d \
+./StackDumper.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 %.o: ../%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross G++ Compiler'
-	g++ -DNDEBUG -I../../../include -I../../../deps/include -O3 -Wall -c -fmessage-length=0 -std=c++11 -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	g++ -DBOOST_ALL_DYN_LINK -DNDEBUG -I../../../include -I../../../deps/include -O3 -Wall -c -fmessage-length=0 -std=c++11 -fPIC -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

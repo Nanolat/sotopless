@@ -573,6 +573,8 @@ public :
 		server_error_t rc = NLDB_OK;
 
 		nldb_rc_t nrc = nldb_db_create(META_DATABASE_ID);
+		if (nrc) NL_RETURN((server_error_t)rc);
+
 		db_created = true;
 
 		rc = meta_t::create_meta_tables(META_DATABASE_ID, META_DATABASE_NAME_MAP, META_DATABASE_NEXT_ID, NEXT_DATABASE_ID_KEY, META_DATABASE_ID+1);

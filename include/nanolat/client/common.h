@@ -1,10 +1,7 @@
 #ifndef _NANOLAT_CLIENT_COMMON_H_
 #define _NANOLAT_CLIENT_COMMON_H_ (1)
 
-#include <cassert>
 #include <string>
-
-#define NL_ASSERT assert
 
 namespace nanolat {
 	namespace client {

@@ -28,6 +28,7 @@ using namespace ::apache::thrift::server;
 #include <nanolat/client/common.h>
 #include <private/stacktrace.h>
 #include <private/util.h>
+#include <private/assert.h>
 #include <nldb/nldb.h>
 
 #include "Logger.h"
@@ -79,16 +80,16 @@ server_error_t get_table(session_context_t * sess_ctx, nldb_tx_t tx, const std::
 	    server_error_t rc = db->open_table(tx, sess_ctx->get_tenant_id(), table_name, &table);
 	    if (rc == nanolat::thrift::ErrorCode::NL_TABLE_DOES_NOT_EXIST) {
 	    	rc = db->create_table(tx, sess_ctx->get_tenant_id(), table_name);
-	    	if (rc) NL_RETURN(rc)
+	    	if (rc) NL_RETURN(rc);
 
 			rc = db->open_table(tx, sess_ctx->get_tenant_id(), table_name, &table);
-	    	if (rc) NL_RETURN(rc)
+	    	if (rc) NL_RETURN(rc);
 
 	    }
-	    if (rc) NL_RETURN(rc)
+	    if (rc) NL_RETURN(rc);
 	}
 	*o_table = table;
-	NL_RETURN(0)
+	NL_RETURN(0);
 }
 
 #define CHECK_ARGUMENT(cond, msg, branch_stmt) {                     \
