@@ -31,7 +31,7 @@
     localPlayer.authenticateHandler = ^(NSString * connectedServerName, NSError * error) {
         if (error != NULL) {
             if ( error.code == NLErrorIncompatibleClientVersion) {
-                NSLog( @"Error : Client upgrade required. : URL => %@", error.description );
+                NSLog( @"Error : Client upgrade required. : URL => %@", error.localizedDescription );
             }
             
             NSLog( @"Error : while authenticating : %@", error.description );

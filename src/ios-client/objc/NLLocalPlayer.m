@@ -98,7 +98,15 @@ NSString * SOTOPLESS_HOST_NAMES[] = {
                         serverName = reply.server_name;
                         self.session = [[Session alloc] initWithSession_handle:reply.session_handle];
                     } else {
-                        NSString * message = [NLUtil append:@"Error while connecting to SoTopless leaderboard server. Detail:", reply.status.error_message_format, nil];
+                        
+                        NSString * message = reply.status.error_message_format;
+                        
+                        // If the error is ErrorCode_NL_INCOMPATIBLE_CLINET_VERSION, do not append anything to the error message,
+                        // Because it contains the URL to the new version of the app.
+                        if ( reply.status.error_code != ErrorCode_NL_INCOMPATIBLE_CLINET_VERSION )
+                        {
+                            message = [NLUtil append:@"Error while connecting to SoTopless leaderboard server. Detail:", reply.status.error_message_format, nil];
+                        }
                         error = [NLUtil errorWithCode:reply.status.error_code message:message];
                         assert(error);
                     }
