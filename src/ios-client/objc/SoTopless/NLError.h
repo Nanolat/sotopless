@@ -2,16 +2,17 @@
 #import <SoTopless/NLDefines.h>
 
 enum {
-    NLErrorUnknown                   = 1,
-    NLErrorIncompatibleClientVersion = 2,
-    NLErrorInvalidUseOfSDK           = 3,
-    NLErrorInvalidParameter          = 4,
-    NLErrorNotSupported              = 5,
-    NLErrorCommunicationsFailure     = 6,
-    NLErrorInvalidCredentials        = 7,
-    NLErrorNotAuthenticated          = 8,
-    NLErrorAuthenticationInProgress  = 9,
-    NLErrorScoreNotSet               = 10
+    // Error codes set by client SDK
+    NLErrorCommunicationsFailure     =  -900,
+    NLErrorInvalidUseOfSDK           =  -901,
+    NLErrorNotAuthenticated          =  -902,
+    // Error codes sent from server
+    NLErrorUnknown                   = -1000,
+    NLErrorNotSupported              = -1001,
+    NLErrorIncompatibleClientVersion = -1002,
+    NLErrorInvalidSessionHandle      = -1003,
+    NLErrorInvalidArgument           = -1004,
+    NLErrorInvalidCredential         = -1005
 };
 
 typedef NSInteger NLErrorCode;

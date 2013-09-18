@@ -48,7 +48,7 @@
         NSError * error = nil;
         
         if ( value_ < 0 ) {
-            error = [NLUtil errorWithCode:NLErrorInvalidParameter message:@"Score not set."];
+            error = [NLUtil errorWithCode:NLErrorInvalidArgument message:@"Score not set."];
             goto finally;
         }
         

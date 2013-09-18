@@ -144,7 +144,7 @@ public:
 			// Check the protocol version
 			if ( protocol_version < MINIMUM_PROTOCOL_VERSION ) {
 				_return.status.error_code = ErrorCode::NL_INCOMPATIBLE_CLINET_VERSION;
-				_return.status.error_message_format = error_message("Incompatible Client Version.");
+				_return.status.error_message_format = "https://itunes.apple.com/us/app/angry-birds/id343200656?mt=8";
 				goto on_error;
 			}
 

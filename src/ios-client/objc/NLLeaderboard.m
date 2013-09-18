@@ -52,17 +52,17 @@ extern NLLocalPlayer * gLocalPlayer;
         loading_ = FALSE;
         
         if ( [category_ isEqualToString:@""] ) {
-            error = [NLUtil errorWithCode:NLErrorInvalidParameter message: @"Invalid Parameter for loadScore. Reason : Leaderboard category is nil or an empty string."];
+            error = [NLUtil errorWithCode:NLErrorInvalidArgument message: @"Invalid Parameter for loadScore. Reason : Leaderboard category is nil or an empty string."];
             goto finally;
         }
         
         if ( range_.location <= 0 ) {
-            error = [NLUtil errorWithCode:NLErrorInvalidParameter message: @"Invalid Parameter for loadScore. Reason : location of range should be greater than 1."];
+            error = [NLUtil errorWithCode:NLErrorInvalidArgument message: @"Invalid Parameter for loadScore. Reason : location of range should be greater than 1."];
             goto finally;
         }
         
         if ( range_.length > 100 ) {
-            error = [NLUtil errorWithCode:NLErrorInvalidParameter message: @"Invalid Parameter for loadScore. Reason : You have hit the maximum length of range, 100."];
+            error = [NLUtil errorWithCode:NLErrorInvalidArgument message: @"Invalid Parameter for loadScore. Reason : You have hit the maximum length of range, 100."];
             goto finally;
         }
         
