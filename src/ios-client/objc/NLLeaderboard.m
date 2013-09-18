@@ -95,7 +95,7 @@ extern NLLocalPlayer * gLocalPlayer;
             if (!error) {
                 if (range_.location == postScoreReply.scores.from_rank ) {
                     
-                    scores_ = [NLScore getClientScoresFrom:category_ scores:postScoreReply.scores.top_scores count:range_.length error:&error];
+                    scores_ = [[NLScore getClientScoresFrom:category_ scores:postScoreReply.scores.top_scores count:range_.length error:&error] retain];
                     if (error) {
                          goto finally;
                     }
