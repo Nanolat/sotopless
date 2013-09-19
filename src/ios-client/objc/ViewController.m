@@ -26,7 +26,7 @@
     
     NSString * uuid = [ NSString stringWithFormat:@"abcde"];
     
-    NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"ㅏ" password:uuid ];
+    NLLocalPlayer * localPlayer = [ NLLocalPlayer localPlayer:uuid playerAlias:@"test alias" password:uuid ];
     
     localPlayer.authenticateHandler = ^(NSString * connectedServerName, NSError * error) {
         if (error != NULL) {
@@ -66,6 +66,9 @@
                     return;
                 }
                 NSLog( @"Success : Scores loaded.");
+                
+                NSLog( @"User Score -> Rank: %d, Display Alias : %@, Score : %lld",
+                      leaderboard.localPlayerScore.rank, leaderboard.localPlayerScore.playerAlias, leaderboard.localPlayerScore.value );
                 
                 NSLog( @"Listing scores." );
                 
